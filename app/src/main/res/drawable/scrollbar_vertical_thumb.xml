@@ -1,0 +1,6 @@
+<!-- res/drawable/scrollbar_vertical_thumb.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <corners android:radius="2dp" />
+    <size android:width="4dp" /> <!-- 스크롤바의 너비 설정 -->
+    <solid android:color="#90CCCCCC" /> <!-- 스크롤바의 색상 설정 (연한 회색, 50% 불투명) -->
+</shape>
