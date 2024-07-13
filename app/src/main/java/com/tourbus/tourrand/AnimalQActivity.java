@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 public class AnimalQActivity extends AppCompatActivity {
-
+//hi
     private ImageView back;
     private Button nextBtn;
 
