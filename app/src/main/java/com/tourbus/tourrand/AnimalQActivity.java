@@ -8,11 +8,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.nex3z.togglebuttongroup.SingleSelectToggleGroup;
+
 public class AnimalQActivity extends AppCompatActivity {
-//hi
+
     private ImageView back;
     private Button nextBtn;
-
+    private SingleSelectToggleGroup withAnimalToggle;
+    boolean withAnimal = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +23,17 @@ public class AnimalQActivity extends AppCompatActivity {
 
         back = findViewById(R.id.back);
         nextBtn = findViewById(R.id.nextBtn);
+        withAnimalToggle = findViewById(R.id.withAnimal);
+
+        withAnimalToggle.setOnCheckedChangeListener(new SingleSelectToggleGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(SingleSelectToggleGroup group, int checkedId) {
+                if (checkedId == R.id.choice_yes)
+                    withAnimal = true;
+                else
+                    withAnimal = false;
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
