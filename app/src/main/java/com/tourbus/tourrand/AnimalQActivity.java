@@ -12,7 +12,7 @@ import com.nex3z.togglebuttongroup.SingleSelectToggleGroup;
 
 public class AnimalQActivity extends AppCompatActivity {
 
-    //개쩌네 진심
+    //개쩌네 진심..
 
     private ImageView back;
     private Button nextBtn;
