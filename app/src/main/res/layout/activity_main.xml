@@ -39,7 +39,8 @@
         android:text="룰렛에 운명을 맡겨보세요!"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <ImageView
         android:id="@+id/btn_kakao_login"
@@ -71,6 +72,7 @@
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/pyeongchang_regular" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
