@@ -20,10 +20,10 @@
             android:name=".DstActivity"
             android:exported="false" />
         <activity
-            android:name=".MovementQActivity"
+            android:name=".DepartureQActivity"
             android:exported="false" />
         <activity
-            android:name=".DepartureQActivity"
+            android:name=".DateQActivity"
             android:exported="false" />
         <activity
             android:name=".CustomSetActivity"

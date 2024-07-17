@@ -56,7 +56,8 @@
             android:layout_marginTop="140dp"
             android:text="여행 기록 보러 가기  >>"
             android:textColor="@color/white"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:fontFamily="@font/pyeongchang_regular"/>
 
         <TextView
             android:id="@+id/shakeText2"
@@ -69,7 +70,8 @@
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@id/shakeText1"
             app:layout_constraintRight_toRightOf="parent"
-            tools:ignore="TextSizeCheck" />
+            tools:ignore="TextSizeCheck"
+            android:fontFamily="@font/pyeongchang_regular" />
 
 
 <!--        <android.widget.Button-->
@@ -123,7 +125,8 @@
             android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/logo"/>
+            app:layout_constraintTop_toBottomOf="@+id/logo"
+            android:fontFamily="@font/pyeongchang_regular"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_trip_plans"
@@ -155,7 +158,8 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            app:layout_constraintTop_toTopOf="@+id/view"
+            android:fontFamily="@font/pyeongchang_regular" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

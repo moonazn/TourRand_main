@@ -1,15 +1,24 @@
 package com.tourbus.tourrand;
 
+import android.graphics.Path;
+import android.graphics.PathMeasure;
+import android.graphics.RectF;
+import android.graphics.Region;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.devs.vectorchildfinder.VectorChildFinder;
 import com.devs.vectorchildfinder.VectorDrawableCompat;
@@ -21,9 +30,10 @@ public class HomeFragment2 extends Fragment {
     private MainActivity mainActivity;
     private Handler handler;
     String local, visited, color, result;
-    int visitCnt; //방문 횟수 카운트 하는 거 서버에서 값 넘겨 주는 형식 확인 해야 함
+    int visitCnt,colorcode; //방문 횟수 카운트 하는 거 서버에서 값 넘겨 주는 형식 확인 해야 함
 
     private String[] VFullPath;
+    TextView visitTxt;
 
 
     public HomeFragment2() {
@@ -40,6 +50,7 @@ public class HomeFragment2 extends Fragment {
        // mainActivity = (MainActivity) getActivity();
 
         ImageView mapImg = view.findViewById(R.id.map);
+        visitTxt = view.findViewById(R.id.visitTxt);
         VectorChildFinder vector = new VectorChildFinder(getActivity(), R.drawable.map, mapImg);
 
         VectorDrawableCompat.VFullPath[] localVector = new VectorDrawableCompat.VFullPath[169];
@@ -49,14 +60,14 @@ public class HomeFragment2 extends Fragment {
                 "pyeongchang","hongcheon","hoengseong","wonju","yeongwol",
                 "hwacheon","cheorwon","chuncheon",
                 /*경기도 31*/   "yeoncheon","pocheon", "gapyeong","yangpyeong","yeoju",
-                "icheon","gwangju", "namyangju","hanam","guli",
+                "icheon","gwangju", "namyangju","hanam","guri",
                 "uijeongbu","yangju", "dongducheon","paju","goyang",
                 "gimpo","bucheon", "gwangmyeong","siheung","ansan",
                 "gunpo","anyang", "uiwang","gwacheon","seongnam",
                 "suwon","hwaseong", "pyeongtaeg","ansung","yongin",
                 "osan",//0~49
                 /*충북 13*/     "danyang", "jecheon","chungju","eumseong","jincheon",
-                "goeseong", "jeungpyeong","cheongju","boeun","ogcheon",
+                "goesan", "jeungpyeong","cheongju","boeun","ogcheon",
                 "youngdong", "daejeon","sejong",
                 /*충남 16*/     "cheonan","asan","yesan", "dangjin","seosan",
                 "taean1","taean2","hongseong","cheongyang","bolyeong",
@@ -65,7 +76,7 @@ public class HomeFragment2 extends Fragment {
                 /*경북 23*/      "uljin","bonghwa", "youngju","yecheon","mungyeong",
                 "sangju","andong", "yeongyang","yeongdeog","cheongsong",
                 "pohang","gyeongju", "yeongcheon","gunwi","uiseong",
-                "gumi","gincheon", "chilgog","seongju","golyeong",
+                "gumi","gincheon", "chilgog","seongju","goryeong",
                 "daegu","gyeongsan", "cheongdo",
                 /*경남 22*/      "geochang","hamyang","sancheong","habcheon", "changnyeong",
                 "milyang","ulsan","uilyeong","haman", "gimhae",
@@ -89,8 +100,40 @@ public class HomeFragment2 extends Fragment {
             localVector[i] = vector.findPathByName(pathNames[i]);
             //Log.d("제발",vector.findPathByName(pathNames[i]).toString());
         }
+        mapImg.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float x = event.getX();
+                    float y = event.getY();
 
+                    // ImageView의 실제 크기와 Drawable의 크기 가져오기
+                    int imgViewWidth = mapImg.getWidth();
+                    int imgViewHeight = mapImg.getHeight();
+                    Drawable drawable = mapImg.getDrawable();
+                    int drawableWidth = drawable.getIntrinsicWidth();
+                    int drawableHeight = drawable.getIntrinsicHeight();
 
+                    // ImageView의 scaleType이 FIT_CENTER인 경우 스케일 비율 계산
+                    float scaledX = x * (float)0.18* (float) drawableWidth / imgViewWidth;
+                    float scaledY = y *(float)0.18* (float) drawableHeight / imgViewHeight;
+
+                    Log.d("TouchEvent", "Original X: " + x + ", Y: " + y);
+                    Log.d("TouchEvent", "Scaled X: " + scaledX + ", Y: " + scaledY);
+
+                    // 각 VFullPath 객체에 대해 터치된 위치가 그 객체 내부에 있는지 확인합니다.
+                    for (int i = 0; i < localVector.length; i++) {
+                        VectorDrawableCompat.VFullPath path = localVector[i];
+                        if (path != null && isPointInPath(path, scaledX, scaledY)) {
+                            // 클릭된 VFullPath 객체가 확인되면 처리합니다.
+                            onPathClicked(path);
+                            return true;
+                        }
+                    }
+                }
+                return true;
+            }
+        });
 
 
       /*  //값이 제대로 넘어가고 받을 수 있는지는 서버랑 확인해봐야함
@@ -111,542 +154,584 @@ public class HomeFragment2 extends Fragment {
         String first = parts[0];
         String second = parts[1];
         String third = parts[2];*/
-        visited = "busan";
+        visited = "서울";
+        colorcode = 1;
+        visitCnt = 2;
 
         switch (visited){
 
             //서울1
-            case "seoul":
-                localVector[0].setFillColor(colorRC());
+            case "서울":
+                localVector[0].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //강원도
-            case "kw_goseong" :
-                localVector[1].setFillColor(colorRC());
+            case "강_고성" :
+                localVector[1].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sokcho" :
-                localVector[2].setFillColor(colorRC());
+            case "속초" :
+                localVector[2].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yangyang":
-                localVector[3].setFillColor(colorRC());
+            case "양양":
+                localVector[3].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
-            case "injae":
-                localVector[4].setFillColor(colorRC());
+            case "인제":
+                localVector[4].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yanggu" :
-                localVector[5].setFillColor(colorRC());
+            case "양구" :
+                localVector[5].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gangneung" :
-                localVector[6].setFillColor(colorRC());
+            case "강릉" :
+                localVector[6].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "donghae" :
-                localVector[7].setFillColor(colorRC());
+            case "동해" :
+                localVector[7].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "samcheok" :
-                localVector[8].setFillColor(colorRC());
+            case "삼척" :
+                localVector[8].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "taebeak" :
-                localVector[9].setFillColor(colorRC());
+            case "태백" :
+                localVector[9].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jeongseon" :
-                localVector[10].setFillColor(colorRC());
+            case "정선" :
+                localVector[10].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "pyeongchang" :
-                localVector[11].setFillColor(colorRC());
+            case "평창" :
+                localVector[11].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hongcheon" :
-                localVector[12].setFillColor(colorRC());
+            case "홍천" :
+                localVector[12].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hoengseong" :
-                localVector[13].setFillColor(colorRC());
+            case "횡성" :
+                localVector[13].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "wonju" :
-                localVector[14].setFillColor(colorRC());
+            case "원주" :
+                localVector[14].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongwol" :
-                localVector[15].setFillColor(colorRC());
+            case "영월" :
+                localVector[15].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hwacheon" :
-                localVector[16].setFillColor(colorRC());
+            case "화천" :
+                localVector[16].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheorwon" :
-                localVector[17].setFillColor(colorRC());
+            case "철원" :
+                localVector[17].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "chuncheon" :
-                localVector[18].setFillColor(colorRC());
+            case "춘천" :
+                localVector[18].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //경기도
-            case "yeoncheon" :
-                localVector[19].setFillColor(colorRC());
+            case "연천" :
+                localVector[19].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "pocheon" :
-                localVector[20].setFillColor(colorRC());
+            case "포천" :
+                localVector[20].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gapyeong" :
-                localVector[21].setFillColor(colorRC());
+            case "가평" :
+                localVector[21].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yangpyeong" :
-                localVector[22].setFillColor(colorRC());
+            case "양평" :
+                localVector[22].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeoju" :
-                localVector[23].setFillColor(colorRC());
+            case "여주" :
+                localVector[23].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "icheon" :
-                localVector[24].setFillColor(colorRC());
+            case "이천" :
+                localVector[24].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gwangju" :
-                localVector[25].setFillColor(colorRC());
+            case "광주" :
+                localVector[25].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "namyangju" :
-                localVector[26].setFillColor(colorRC());
+            case "남양주" :
+                localVector[26].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hanam" :
-                localVector[27].setFillColor(colorRC());
+            case "하남" :
+                localVector[27].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "guli" :
-                localVector[28].setFillColor(colorRC());
+            case "구리" :
+                localVector[28].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "uijeongbu" :
-                localVector[29].setFillColor(colorRC());
+            case "의정부" :
+                localVector[29].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yangju" :
-                localVector[30].setFillColor(colorRC());
+            case "양주" :
+                localVector[30].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "dongducheon" :
-                localVector[31].setFillColor(colorRC());
+            case "동두천" :
+                localVector[31].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "paju" :
-                localVector[32].setFillColor(colorRC());
+            case "파주" :
+                localVector[32].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "goyang" :
-                localVector[33].setFillColor(colorRC());
+            case "고양" :
+                localVector[33].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gimpo" :
-                localVector[34].setFillColor(colorRC());
+            case "김포" :
+                localVector[34].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "bucheon" :
-                localVector[35].setFillColor(colorRC());
+            case "부천" :
+                localVector[35].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gwangmyeong" :
-                localVector[36].setFillColor(colorRC());
+            case "광명" :
+                localVector[36].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "siheung" :
-                localVector[37].setFillColor(colorRC());
+            case "시흥" :
+                localVector[37].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "ansan" :
-                localVector[38].setFillColor(colorRC());
+            case "안산" :
+                localVector[38].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gunpo" :
-                localVector[39].setFillColor(colorRC());
+            case "군포" :
+                localVector[39].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "anyang" :
-                localVector[40].setFillColor(colorRC());
+            case "안양" :
+                localVector[40].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "uiwang" :
-                localVector[41].setFillColor(colorRC());
+            case "의왕" :
+                localVector[41].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gwacheon" :
-                localVector[42].setFillColor(colorRC());
+            case "과천" :
+                localVector[42].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "seongnam" :
-                localVector[43].setFillColor(colorRC());
+            case "성남" :
+                localVector[43].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "suwon" :
-                localVector[44].setFillColor(colorRC());
+            case "수원" :
+                localVector[44].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hwaseong" :
-                localVector[45].setFillColor(colorRC());
+            case "화성" :
+                localVector[45].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "pyeongtaeg" :
-                localVector[46].setFillColor(colorRC());
+            case "평택" :
+                localVector[46].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "ansung" :
-                localVector[47].setFillColor(colorRC());
+            case "안성" :
+                localVector[47].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yongin" :
-                localVector[48].setFillColor(colorRC());
+            case "용인" :
+                localVector[48].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "osan" :
-                localVector[49].setFillColor(colorRC());
+            case "오산" :
+                localVector[49].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //충북
-            case "danyang" :
-                localVector[50].setFillColor(colorRC());
+            case "단양" :
+                localVector[50].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jecheon" :
-                localVector[51].setFillColor(colorRC());
+            case "제천" :
+                localVector[51].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "chungju" :
-                localVector[52].setFillColor(colorRC());
+            case "충주" :
+                localVector[52].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "eumseong" :
-                localVector[53].setFillColor(colorRC());
+            case "음성" :
+                localVector[53].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jincheon" :
-                localVector[54].setFillColor(colorRC());
+            case "진천" :
+                localVector[54].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "goeseong" :
-                localVector[55].setFillColor(colorRC());
+            case "괴산" :
+                localVector[55].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jeungpyeong" :
-                localVector[56].setFillColor(colorRC());
+            case "증평" :
+                localVector[56].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheongju" :
-                localVector[57].setFillColor(colorRC());
+            case "청주" :
+                localVector[57].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "boeun" :
-                localVector[58].setFillColor(colorRC());
+            case "보은" :
+                localVector[58].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "ogcheon" :
-                localVector[59].setFillColor(colorRC());
+            case "옥천" :
+                localVector[59].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "youngdong" :
-                localVector[60].setFillColor(colorRC());
+            case "영동" :
+                localVector[60].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "daejeon" :
-                localVector[61].setFillColor(colorRC());
+            case "대전" :
+                localVector[61].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sejong" :
-                localVector[62].setFillColor(colorRC());
+            case "세종" :
+                localVector[62].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //충남
-            case "cheonan" :
-                localVector[63].setFillColor(colorRC());
+            case "천안" :
+                localVector[63].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "asan" :
-                localVector[64].setFillColor(colorRC());
+            case "아산" :
+                localVector[64].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yesan" :
-                localVector[65].setFillColor(colorRC());
+            case "예산" :
+                localVector[65].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "dangjin" :
-                localVector[66].setFillColor(colorRC());
+            case "당진" :
+                localVector[66].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "seosan" :
-                localVector[67].setFillColor(colorRC());
+            case "서산" :
+                localVector[67].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "taean" :
-                localVector[68].setFillColor(colorRC());
-                localVector[69].setFillColor(colorRC());
+            case "태안" :
+                localVector[68].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[69].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hongseong" :
-                localVector[70].setFillColor(colorRC());
+            case "홍성" :
+                localVector[70].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheongyang" :
-                localVector[71].setFillColor(colorRC());
+            case "청양" :
+                localVector[71].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "bolyeong" :
-                localVector[72].setFillColor(colorRC());
+            case "보령" :
+                localVector[72].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "buyeo" :
-                localVector[73].setFillColor(colorRC());
+            case "부여" :
+                localVector[73].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "nonsan" :
-                localVector[74].setFillColor(colorRC());
+            case "논산" :
+                localVector[74].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "geumsan" :
-                localVector[75].setFillColor(colorRC());
+            case "금산" :
+                localVector[75].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "seocheon" :
-                localVector[76].setFillColor(colorRC());
+            case "서천" :
+                localVector[76].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gyelyong" :
-                localVector[77].setFillColor(colorRC());
+            case "계룡" :
+                localVector[77].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gongju" :
-                localVector[78].setFillColor(colorRC());
+            case "공주" :
+                localVector[78].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //경북
-            case "uljin" :
-                localVector[79].setFillColor(colorRC());
+            case "울진" :
+                localVector[79].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "bonghwa" :
-                localVector[80].setFillColor(colorRC());
+            case "봉화" :
+                localVector[80].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "youngju" :
-                localVector[81].setFillColor(colorRC());
+            case "영주" :
+                localVector[81].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yecheon" :
-                localVector[82].setFillColor(colorRC());
+            case "예천" :
+                localVector[82].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "mungyeong" :
-                localVector[83].setFillColor(colorRC());
+            case "문경" :
+                localVector[83].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sangju" :
-                localVector[84].setFillColor(colorRC());
+            case "상주" :
+                localVector[84].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "andong" :
-                localVector[85].setFillColor(colorRC());
+            case "안동" :
+                localVector[85].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongyang" :
-                localVector[86].setFillColor(colorRC());
+            case "영양" :
+                localVector[86].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongdeog" :
-                localVector[87].setFillColor(colorRC());
+            case "영덕" :
+                localVector[87].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheongsong" :
-                localVector[88].setFillColor(colorRC());
+            case "청송" :
+                localVector[88].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "pohang" :
-                localVector[89].setFillColor(colorRC());
+            case "포항" :
+                localVector[89].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gyeongju" :
-                localVector[90].setFillColor(colorRC());
+            case "경주" :
+                localVector[90].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongcheon" :
-                localVector[91].setFillColor(colorRC());
+            case "영천" :
+                localVector[91].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gunwi" :
-                localVector[92].setFillColor(colorRC());
+            case "군위" :
+                localVector[92].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "uiseong" :
-                localVector[93].setFillColor(colorRC());
+            case "의성" :
+                localVector[93].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gumi" :
-                localVector[94].setFillColor(colorRC());
+            case "구미" :
+                localVector[94].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gincheon" :
-                localVector[95].setFillColor(colorRC());
+            case "김천" :
+                localVector[95].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "chilgog" :
-                localVector[96].setFillColor(colorRC());
+            case "칠곡" :
+                localVector[96].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "seongju" :
-                localVector[97].setFillColor(colorRC());
+            case "성주" :
+                localVector[97].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "golyeong" :
-                localVector[98].setFillColor(colorRC());
+            case "고령" :
+                localVector[98].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "daegu" :
-                localVector[99].setFillColor(colorRC());
+            case "대구" :
+                localVector[99].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gyeongsan" :
-                localVector[100].setFillColor(colorRC());
+            case "경산" :
+                localVector[100].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheongdo" :
-                localVector[101].setFillColor(colorRC());
+            case "청도" :
+                localVector[101].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //경남
-            case "geochang" :
-                localVector[102].setFillColor(colorRC());
+            case "거창" :
+                localVector[102].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hamyang" :
-                localVector[103].setFillColor(colorRC());
+            case "함양" :
+                localVector[103].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sancheong" :
-                localVector[104].setFillColor(colorRC());
+            case "산청" :
+                localVector[104].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "habcheon" :
-                localVector[105].setFillColor(colorRC());
+            case "합천" :
+                localVector[105].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "changnyeong" :
-                localVector[106].setFillColor(colorRC());
+            case "창녕" :
+                localVector[106].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "milyang" :
-                localVector[107].setFillColor(colorRC());
+            case "밀양" :
+                localVector[107].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "ulsan" :
-                localVector[108].setFillColor(colorRC());
+            case "울산" :
+                localVector[108].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "uilyeong" :
-                localVector[109].setFillColor(colorRC());
+            case "의령" :
+                localVector[109].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "haman" :
-                localVector[110].setFillColor(colorRC());
+            case "함안" :
+                localVector[110].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gimhae" :
-                localVector[111].setFillColor(colorRC());
+            case "김해" :
+                localVector[111].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "busan" :
-                localVector[112].setFillColor(colorRC());
+            case "부산" :
+                localVector[112].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "cheongwon" :
-                localVector[113].setFillColor(colorRC());
+            case "창원" :
+                localVector[113].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hadong" :
-                localVector[114].setFillColor(colorRC());
+            case "하동" :
+                localVector[114].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jinju" :
-                localVector[115].setFillColor(colorRC());
+            case "진주" :
+                localVector[115].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sacheon" :
-                localVector[116].setFillColor(colorRC());
+            case "사천" :
+                localVector[116].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "kn_goseong" :
-                localVector[117].setFillColor(colorRC());
+            case "경_고성" :
+                localVector[117].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "geoje" :
-                localVector[118].setFillColor(colorRC());
+            case "거제" :
+                localVector[118].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "namhae" :
-                localVector[119].setFillColor(colorRC());
+            case "남해" :
+                localVector[119].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "tongyeong" :
-                localVector[120].setFillColor(colorRC());
-                localVector[121].setFillColor(colorRC());
-                localVector[122].setFillColor(colorRC());
+            case "통영" :
+                localVector[120].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[121].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[122].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yangsan" :
-                localVector[123].setFillColor(colorRC());
+            case "양산" :
+                localVector[123].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //전북
-            case "gunsan" :
-                localVector[124].setFillColor(colorRC());
+            case "군산" :
+                localVector[124].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "igsan" :
-                localVector[125].setFillColor(colorRC());
+            case "익산" :
+                localVector[125].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "wanju" :
-                localVector[126].setFillColor(colorRC());
-                localVector[127].setFillColor(colorRC());
+            case "완주" :
+                localVector[126].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[127].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jinan" :
-                localVector[128].setFillColor(colorRC());
+            case "진안" :
+                localVector[128].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "muju" :
-                localVector[129].setFillColor(colorRC());
+            case "무주" :
+                localVector[129].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jangsu" :
-                localVector[130].setFillColor(colorRC());
+            case "장수" :
+                localVector[130].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jeonju" :
-                localVector[131].setFillColor(colorRC());
+            case "전주" :
+                localVector[131].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gimjae" :
-                localVector[132].setFillColor(colorRC());
+            case "김제" :
+                localVector[132].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "imsil" :
-                localVector[133].setFillColor(colorRC());
+            case "임실" :
+                localVector[133].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "namwon" :
-                localVector[134].setFillColor(colorRC());
+            case "남원" :
+                localVector[134].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sunchang" :
-                localVector[135].setFillColor(colorRC());
+            case "순창" :
+                localVector[135].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jeongeub" :
-                localVector[136].setFillColor(colorRC());
+            case "정읍" :
+                localVector[136].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "buan" :
-                localVector[137].setFillColor(colorRC());
+            case "부안" :
+                localVector[137].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gochang" :
-                localVector[138].setFillColor(colorRC());
+            case "고창" :
+                localVector[138].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //전남
-            case "yeonggwang" :
-                localVector[139].setFillColor(colorRC());
+            case "영광" :
+                localVector[139].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jangseong" :
-                localVector[140].setFillColor(colorRC());
+            case "장성" :
+                localVector[140].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "damyang" :
-                localVector[141].setFillColor(colorRC());
+            case "담양" :
+                localVector[141].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gogseong" :
-                localVector[142].setFillColor(colorRC());
+            case "곡성" :
+                localVector[142].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gulye" :
-                localVector[143].setFillColor(colorRC());
+            case "구례" :
+                localVector[143].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gwangyang" :
-                localVector[144].setFillColor(colorRC());
+            case "광양" :
+                localVector[144].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "suncheon" :
-                localVector[145].setFillColor(colorRC());
+            case "순천" :
+                localVector[145].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeosu" :
-                localVector[146].setFillColor(colorRC());
+            case "여수" :
+                localVector[146].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "goheung" :
-                localVector[147].setFillColor(colorRC());
+            case "고흥" :
+                localVector[147].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "boseong" :
-                localVector[148].setFillColor(colorRC());
+            case "보성" :
+                localVector[148].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hwasun" :
-                localVector[149].setFillColor(colorRC());
+            case "화순" :
+                localVector[149].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "biggwangju" :
-                localVector[150].setFillColor(colorRC());
+            case "광주광역시" :
+                localVector[150].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "hampyeong" :
-                localVector[151].setFillColor(colorRC());
+            case "함평" :
+                localVector[151].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "naju" :
-                localVector[152].setFillColor(colorRC());
+            case "나주" :
+                localVector[152].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "muan" :
-                localVector[153].setFillColor(colorRC());
+            case "무안" :
+                localVector[153].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "sinan1" :
-                localVector[154].setFillColor(colorRC());
-                localVector[155].setFillColor(colorRC());
+            case "신안" :
+                localVector[154].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[155].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "mokpo" :
-                localVector[156].setFillColor(colorRC());
+            case "목포" :
+                localVector[156].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongam" :
-                localVector[157].setFillColor(colorRC());
+            case "영암" :
+                localVector[157].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jangheung" :
-                localVector[158].setFillColor(colorRC());
+            case "장흥" :
+                localVector[158].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "gangjin" :
-                localVector[159].setFillColor(colorRC());
+            case "강진" :
+                localVector[159].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "haenam" :
-                localVector[160].setFillColor(colorRC());
+            case "해남" :
+                localVector[160].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "wando" :
-                localVector[161].setFillColor(colorRC());
-                localVector[162].setFillColor(colorRC());
-                localVector[163].setFillColor(colorRC());
+            case "완도" :
+                localVector[161].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[162].setFillColor(colorRC(colorcode,visitCnt));
+                localVector[163].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "jindo" :
-                localVector[164].setFillColor(colorRC());
+            case "진도" :
+                localVector[164].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
             //제주
-            case "jeju" :
-                localVector[165].setFillColor(colorRC());
+            case "제주도" :
+                localVector[165].setFillColor(colorRC(colorcode,visitCnt));
                 break;
 
-            case "incheon" :
-                localVector[166].setFillColor(colorRC());
+            case "인천" :
+                localVector[166].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "kanghwado" :
-                localVector[167].setFillColor(colorRC());
+            case "강화도" :
+                localVector[167].setFillColor(colorRC(colorcode,visitCnt));
                 break;
-            case "yeongjongdo" :
-                localVector[168].setFillColor(colorRC());
+            case "영종도" :
+                localVector[168].setFillColor(colorRC(colorcode,visitCnt));
                 break;
         }
 
         mapImg.invalidate();
-
-
         return view;
     }
-    public int colorRC(){
-        int [] colorArray = {R.color.pink, R.color.skyblue, R.color.purple, R.color.yellow};
-        Random random = new Random();
-        int randomColorIndex = random.nextInt(colorArray.length);
-        int randomColorResId = colorArray[randomColorIndex];
+
+    public int colorRC(int colorcode,int visitCount ){
+        // 색상 배열
+        int[][] colorArrays = {
+                {R.color.pink, R.color.pink2, R.color.pink3, R.color.pink4, R.color.pink5},
+                {R.color.skyblue, R.color.skyblue2, R.color.skyblue3, R.color.skyblue4, R.color.skyblue5},
+                {R.color.purple, R.color.purple2, R.color.purple3, R.color.purple4, R.color.purple5},
+                {R.color.yellow, R.color.yellow2, R.color.yellow3, R.color.yellow4, R.color.yellow5}
+        };
+
+       // Random random = new Random();
+       // int randomColorIndex = random.nextInt(4);
+
+        int randomColorResId;
+        if(visitCount == 1) {
+            randomColorResId = colorArrays[colorcode][0];
+        } else if (visitCount == 2) {
+            randomColorResId = colorArrays[colorcode][1];
+
+        } else if (visitCount == 3) {
+            randomColorResId = colorArrays[colorcode][2];
+
+        } else if (visitCount == 4) {
+            randomColorResId = colorArrays[colorcode][3];
+
+        } else {
+            randomColorResId = colorArrays[colorcode][4];
+        }
 
         int randomColor = ContextCompat.getColor(getActivity(), randomColorResId);
         return randomColor;
     }
+    // 터치된 위치가 VFullPath 객체 내부에 있는지 확인하는 함수
+    private boolean isPointInPath(VectorDrawableCompat.VFullPath path, float x, float y) {
+        Path pathObject = new Path();
+        path.toPath(pathObject);
+        RectF bounds = new RectF();
+        pathObject.computeBounds(bounds, true);
+        Region region = new Region();
+        region.setPath(pathObject, new Region((int) bounds.left, (int) bounds.top, (int) bounds.right, (int) bounds.bottom));
 
+        boolean contains = region.contains((int) x, (int) y);
+        Log.d("isPointInPath", ", X: " + x + ", Y: " + y + ", Bounds: " + bounds);
 
+        return contains;
+    }
 
+    // VFullPath 객체가 클릭되었을 때 호출되는 함수
+    private void onPathClicked(VectorDrawableCompat.VFullPath path) {
+        // 클릭 이벤트를 처리합니다.
+        // 예: 토스트 메시지 출력
+        visitTxt.setText("방문지 : " + visited + "\n방문 횟수 : "+visitCnt);
+        Log.d("onPathClicked", "Path clicked: " + visited);
+    }
 
 }

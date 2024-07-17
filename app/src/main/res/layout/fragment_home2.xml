@@ -29,7 +29,8 @@
             android:textSize="14dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TextSizeCheck" />
+            tools:ignore="TextSizeCheck"
+            android:fontFamily="@font/pyeongchang_regular" />
 
         <TextView
             android:id="@+id/textView2"
@@ -38,11 +39,12 @@
             android:layout_marginLeft="25dp"
             android:layout_marginTop="70dp"
             android:text="옆으로 스와이프"
-            android:textColor="#585858"
+            android:textColor="#ffffff"
             android:textSize="11dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="TextSizeCheck" />
+            tools:ignore="TextSizeCheck"
+            android:fontFamily="@font/pyeongchang_regular" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,13 +60,14 @@
             android:id="@+id/visitTxt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="방문지 : \n 방문 횟수 : "
+            android:text="방문지 : \n방문 횟수 : "
             android:textColor="@color/white"
-            android:textSize="14sp"
-            tools:layout_editor_absoluteX="130dp"
-            tools:layout_editor_absoluteY="633dp"
-            android:background="@drawable/circle_blue"/>
-
+            android:textSize="15sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:layout_marginTop="640dp"
+            android:fontFamily="@font/pyeongchang_regular"/>
 
 
 

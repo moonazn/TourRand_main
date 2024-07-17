@@ -17,7 +17,7 @@ import kotlin.jvm.functions.Function1;
 public class MyPageActivity extends AppCompatActivity {
 
     private TextView name, email;
-    private ImageView profileImg;
+    private ImageView profileImg,backToHomeBtn;
     private TextView logout;
 
     boolean isPopupOn = false;
@@ -39,6 +39,7 @@ public class MyPageActivity extends AppCompatActivity {
 
 
         logout = findViewById(R.id.logout);
+        backToHomeBtn = findViewById(R.id.backToHomeBtn);
 
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +59,13 @@ public class MyPageActivity extends AppCompatActivity {
                         return null;
                     }
                 });
+            }
+        });
+        backToHomeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MyPageActivity.this, HomeFragment1.class);
+                startActivity(intent);
             }
         });
     }

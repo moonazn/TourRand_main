@@ -21,7 +21,7 @@
         android:id="@+id/q1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1.\n애완동물과 함께 가는 여행인가요?"
+        android:text="1.\n\n애완동물과 함께 가는 여행인가요?"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="22sp"
@@ -29,7 +29,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="200dp"/>
+        android:layout_marginTop="220dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <com.nex3z.togglebuttongroup.SingleSelectToggleGroup
         android:id="@+id/withAnimal"
@@ -38,52 +39,51 @@
         app:layout_constraintTop_toBottomOf="@id/q1"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="100dp">
 
         <com.nex3z.togglebuttongroup.button.CircularToggle
             android:id="@+id/choice_yes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="예"
-            android:textSize="17sp"
-            android:textColor="@color/black"/>
+            android:text="Y"
+            android:textSize="24sp"
+            android:textColor="@color/black" />
 
         <com.nex3z.togglebuttongroup.button.CircularToggle
             android:id="@+id/choice_no"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="아니요"
-            android:textSize="17sp"
+            android:text="N"
+            android:textSize="24sp"
             android:textColor="@color/black"/>
 
     </com.nex3z.togglebuttongroup.SingleSelectToggleGroup>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="2.\n여행 날짜를 선택해주세요"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="390dp"/>
-
     <android.widget.Button
         android:id="@+id/nextBtn"
-        android:layout_width="70dp"
+        android:layout_width="230dp"
         android:layout_height="44dp"
-        android:background="@drawable/round_rectangle_blue"
+        android:background="@drawable/rounded_filled_square"
         app:layout_constraintTop_toTopOf="@id/back"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="570dp"
-        android:text="→"
-        android:textSize="20sp"
+        android:layout_marginTop="500dp"
+        android:text="next step"
         android:textStyle="bold"
-        android:textColor="@color/white"/>
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
+    <TextView
+        android:id="@+id/noAnswer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nextBtn"
+        android:layout_marginTop="10dp"
+        android:textColor="#F4473F"
+        android:text="위 질문에 답해주세요"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
