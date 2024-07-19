@@ -4,6 +4,80 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PlanViewActivity">
+    tools:context=".PlanViewActivity"
+    android:background="#F0F4F8">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/logo"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="30dp"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <ImageView
+        android:id="@+id/tooltipback"
+        android:layout_width="320dp"
+        android:layout_height="110dp"
+        android:src="@drawable/tooltip"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:id="@+id/themaText"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:text="이번 여행의 테마는 힐링입니다!"
+        app:layout_constraintTop_toTopOf="@id/tooltipback"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:textSize="15sp"/>
+
+    <TextView
+        android:id="@+id/themaSemiText"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:text="이번 여행은 마음을 편안하게 만들어줄 것입니다. 강릉의 푸르른 자연과 아름다운 풍경을 만끽하며 즐거운 여행을 떠나보세요!"
+        app:layout_constraintTop_toBottomOf="@id/themaText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:textSize="11sp"/>
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/idea"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        android:layout_marginTop="30dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="25dp"/>
+
+    <View
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="#C3CEE5"
+        app:layout_constraintTop_toBottomOf="@id/tooltipback"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp"
+        android:tooltipText="map"/>
+
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
