@@ -59,7 +59,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="30dp"
-        android:background="@drawable/round_rectangle"/>
+        android:background="@drawable/round_rectangle"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <TextView
         android:id="@+id/dst3"
@@ -73,7 +74,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="30dp"
-        android:background="@drawable/round_rectangle"/>
+        android:background="@drawable/round_rectangle"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <android.widget.Button
         android:id="@+id/nextBtn"
