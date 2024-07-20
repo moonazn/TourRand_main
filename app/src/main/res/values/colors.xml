@@ -32,4 +32,7 @@
     <color name="yellow4">#FFFF7D</color>
     <color name="yellow5">#FFFF43</color>
 
+    <color name="selected_day_background">#D3E4FF</color>
+
+
 </resources>

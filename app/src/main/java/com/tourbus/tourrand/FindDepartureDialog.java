@@ -31,7 +31,7 @@ public class FindDepartureDialog extends Dialog {
     private RecyclerView recyclerView;
     private EditText searchEditText;
     private DepartureAdapter adapter;
-    private List<LocalSearchDocument> documentList;
+    private List<Place> documentList;
     private Activity activity;
     private Handler handler = new Handler(Looper.getMainLooper());
 
@@ -43,7 +43,7 @@ public class FindDepartureDialog extends Dialog {
     }
 
     public interface OnItemClickListener {
-        void onItemClick(LocalSearchDocument document);
+        void onItemClick(Place document);
     }
 
     private OnItemClickListener itemClickListener;
@@ -115,7 +115,7 @@ public class FindDepartureDialog extends Dialog {
                             JSONObject document = documents.getJSONObject(i);
                             String placeName = document.getString("place_name");
                             String addressName = document.getString("address_name");
-                            documentList.add(new LocalSearchDocument(placeName, addressName));
+                            documentList.add(new Place(placeName, addressName));
                         }
                         handler.post(() -> adapter.notifyDataSetChanged());
                     } catch (Exception e) {

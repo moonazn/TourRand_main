@@ -1,10 +1,10 @@
 package com.tourbus.tourrand;
 
-public class LocalSearchDocument {
+public class Place {
     private String placeName;
     private String addressName;
 
-    public LocalSearchDocument(String placeName, String addressName) {
+    public Place(String placeName, String addressName) {
         this.placeName = placeName;
         this.addressName = addressName;
     }
@@ -13,7 +13,7 @@ public class LocalSearchDocument {
         return placeName;
     }
 
-    public String getAddressName() {
+    public String getAddress() {
         return addressName;
     }
 }

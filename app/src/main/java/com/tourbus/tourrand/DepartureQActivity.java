@@ -20,7 +20,7 @@ public class DepartureQActivity extends AppCompatActivity {
     private FindDepartureDialog findDepartureDialog;
 
     private TextView departureTextView;
-    private LocalSearchDocument departureDocument;
+    private Place departureDocument;
 
 
 
@@ -56,7 +56,7 @@ public class DepartureQActivity extends AppCompatActivity {
         // 팝업에서 선택된 장소 정보를 받아오는 리스너
         findDepartureDialog.setOnItemClickListener(new FindDepartureDialog.OnItemClickListener() {
             @Override
-            public void onItemClick(LocalSearchDocument document) {
+            public void onItemClick(Place document) {
                 if (document != null) {
                     departureDocument = document;
                     departure = new Location(departureDocument.getPlaceName(), 0, 0);
