@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                     inputText = user.getId().toString()+"^^"+user.getKakaoAccount().getEmail().toString()+"^^"+
                             user.getKakaoAccount().getProfile().getNickname()+"^^"+user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
 
+                   // Log.d("id값", "카카오ID " + user.getId().toString());
                     String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
 
                     new Thread(() -> {

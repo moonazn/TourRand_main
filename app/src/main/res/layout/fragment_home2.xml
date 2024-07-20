@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <!--        <ImageView-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="80sp"-->
@@ -31,6 +32,13 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="TextSizeCheck"
             android:fontFamily="@font/pyeongchang_regular" />
+
+        <Button
+            android:id="@+id/connectBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="connect"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/textView2"
@@ -68,6 +76,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="640dp"
             android:fontFamily="@font/pyeongchang_regular"/>
+        <TextView
+            android:id="@+id/resultTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="응답"
+            android:textSize="11sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
 
 
 
