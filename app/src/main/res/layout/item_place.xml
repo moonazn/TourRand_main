@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/placeName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:text="강릉 카페거리"
+                android:fontFamily="@font/pyeongchang_bold"/>
+
+            <TextView
+                android:id="@+id/placeAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:text="강원특별자치도 강릉시 창해로14번길 20"
+                android:textColor="#848484"
+                android:fontFamily="@font/pyeongchang_regular"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="7dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="18분 소요 예정"
+            android:textSize="13sp"
+            android:fontFamily="@font/pyeongchang_regular"
+            android:layout_marginLeft="30dp"/>
+
+
+        <ImageView
+            android:id="@+id/mapIcon"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:src="@drawable/map"
+            android:contentDescription="Map icon"
+            android:layout_marginHorizontal="8dp"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:background="#848484"
+            android:layout_marginLeft="7dp"/>
+    </LinearLayout>
+</LinearLayout>
