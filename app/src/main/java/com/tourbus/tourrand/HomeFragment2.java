@@ -1,7 +1,6 @@
 package com.tourbus.tourrand;
 
 import android.graphics.Path;
-import android.graphics.PathMeasure;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.graphics.drawable.Drawable;
@@ -20,10 +19,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.devs.vectorchildfinder.VectorChildFinder;
 import com.devs.vectorchildfinder.VectorDrawableCompat;
+
 import com.tourbus.tourrand.R;
 
 import org.w3c.dom.Text;
@@ -36,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Objects;
 import java.util.Random;
+
 
 public class HomeFragment2 extends Fragment {
     private MainActivity mainActivity;
@@ -63,7 +63,7 @@ public class HomeFragment2 extends Fragment {
 
         ImageView mapImg = view.findViewById(R.id.map);
         visitTxt = view.findViewById(R.id.visitTxt);
-        VectorChildFinder vector = new VectorChildFinder(getActivity(), R.drawable.map, mapImg);
+        VectorChildFinder vector = new VectorChildFinder(getActivity(), R.drawable.map_home, mapImg);
 
         VectorDrawableCompat.VFullPath[] localVector = new VectorDrawableCompat.VFullPath[169];
         String[] pathNames = { "seoul",

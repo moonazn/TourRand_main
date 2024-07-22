@@ -17,6 +17,9 @@
         android:theme="@style/Theme.TourRand"
         tools:targetApi="31">
         <activity
+            android:name=".PlanViewActivity"
+            android:exported="false" />
+        <activity
             android:name=".DstActivity"
             android:exported="false" />
         <activity

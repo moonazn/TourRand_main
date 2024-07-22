@@ -71,14 +71,14 @@ import java.util.List;
 
 public class DepartureAdapter extends RecyclerView.Adapter<DepartureAdapter.ViewHolder> {
 
-    private List<LocalSearchDocument> documentList;
+    private List<Place> documentList;
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(LocalSearchDocument document);
+        void onItemClick(Place document);
     }
 
-    public DepartureAdapter(List<LocalSearchDocument> documentList, OnItemClickListener listener) {
+    public DepartureAdapter(List<Place> documentList, OnItemClickListener listener) {
         this.documentList = documentList;
         this.listener = listener;
     }
@@ -93,7 +93,7 @@ public class DepartureAdapter extends RecyclerView.Adapter<DepartureAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        LocalSearchDocument document = documentList.get(position);
+        Place document = documentList.get(position);
         holder.bind(document);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,9 +120,9 @@ public class DepartureAdapter extends RecyclerView.Adapter<DepartureAdapter.View
             addressTextView = itemView.findViewById(android.R.id.text2);
         }
 
-        public void bind(LocalSearchDocument document) {
+        public void bind(Place document) {
             placeNameTextView.setText(document.getPlaceName());
-            addressTextView.setText(document.getAddressName());
+            addressTextView.setText(document.getAddress());
         }
     }
 }

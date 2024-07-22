@@ -46,6 +46,15 @@ public class HomeFragment1 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home1, container, false);
 
+        Button testBut = rootView.findViewById(R.id.testBut);
+        testBut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PlanViewActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // RecyclerView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
