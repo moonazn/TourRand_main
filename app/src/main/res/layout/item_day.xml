@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:background="@android:color/transparent">
+
+    <TextView
+        android:id="@+id/dayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:text="1일차"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_bold"/>
+</LinearLayout>
