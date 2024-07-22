@@ -122,7 +122,8 @@
             android:textColor="@color/white"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="5dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_bold"/>
 
         <android.widget.Button
             android:id="@+id/saveBut"
@@ -135,7 +136,8 @@
             android:textColor="@color/white"
             android:layout_marginRight="30dp"
             android:layout_marginLeft="5dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_bold"/>
 
     </LinearLayout>
 

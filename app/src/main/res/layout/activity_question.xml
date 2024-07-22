@@ -37,7 +37,7 @@
         android:textSize="23sp"
         android:layout_marginTop="90dp"
         android:textStyle="bold"
-        android:fontFamily="@font/pyeongchang_regular"/>
+        android:fontFamily="@font/pyeongchang_bold"/>
 
     <View
         android:id="@+id/aBtn"
@@ -60,7 +60,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="60dp"
-        android:fontFamily="@font/pyeongchang_regular"/>
+        android:fontFamily="@font/pyeongchang_bold"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,7 +73,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginTop="155dp"
-        android:fontFamily="@font/pyeongchang_regular"/>
+        android:fontFamily="@font/pyeongchang_bold"/>
 
     <View
         android:layout_width="300dp"
@@ -118,7 +118,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginTop="60dp"
-        android:fontFamily="@font/pyeongchang_regular"/>
+        android:fontFamily="@font/pyeongchang_bold"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -131,6 +131,6 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:layout_marginTop="155dp"
-        android:fontFamily="@font/pyeongchang_regular"/>
+        android:fontFamily="@font/pyeongchang_bold"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -89,7 +89,8 @@
         android:text="next step"
         android:textStyle="bold"
         android:textSize="17sp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/white"
+        android:fontFamily="@font/pyeongchang_bold"/>
 
     <TextView
         android:id="@+id/noAnswer"
@@ -101,6 +102,7 @@
         android:layout_marginTop="10dp"
         android:textColor="#F4473F"
         android:text="위 질문에 답해주세요"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
