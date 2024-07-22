@@ -4,8 +4,11 @@
     package="com.tourbus.tourrand">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:name=".GlobalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -16,9 +19,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TourRand"
         tools:targetApi="31">
+
         <activity
             android:name=".PlanViewActivity"
-            android:exported="false" />
+            android:exported="true" >
+
+
+        </activity>
         <activity
             android:name=".DstActivity"
             android:exported="false" />
@@ -83,6 +90,9 @@
                 <data
                     android:host="oauth"
                     android:scheme="kakao{d71b70e03d7f7b494a72421fb46cba46}" />
+                <data
+                    android:host="vectormap"
+                    android:scheme="d71b70e03d7f7b494a72421fb46cba46" />
             </intent-filter>
 
             <!-- <intent-filter> -->
