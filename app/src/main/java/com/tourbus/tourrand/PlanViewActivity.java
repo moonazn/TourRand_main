@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
+import com.kakao.vectormap.KakaoMapSdk;
+import com.kakao.vectormap.LatLng;
 import com.kakao.vectormap.MapLifeCycleCallback;
 import com.kakao.vectormap.MapView;
 import com.kakao.sdk.common.KakaoSdk;
@@ -25,6 +28,13 @@ import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
 import com.kakao.vectormap.MapLifeCycleCallback;
 import com.kakao.vectormap.MapView;
+import com.kakao.vectormap.camera.CameraPosition;
+import com.kakao.vectormap.label.Label;
+import com.kakao.vectormap.label.LabelLayer;
+import com.kakao.vectormap.label.LabelManager;
+import com.kakao.vectormap.label.LabelOptions;
+import com.kakao.vectormap.label.LabelStyle;
+import com.kakao.vectormap.label.LabelStyles;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -45,11 +55,14 @@ public class PlanViewActivity extends AppCompatActivity {
     private Button saveBut, rerollBut;
     KakaoMap kakaoMap;
     MapView mapView;
+    private LabelManager labelManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_view);
+
+        KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
         mapView = findViewById(R.id.map);
 
@@ -67,6 +80,18 @@ public class PlanViewActivity extends AppCompatActivity {
             @Override
             public void onMapReady(KakaoMap kakaoMap) {
                 // 인증 후 API 가 정상적으로 실행될 때 호출됨
+                LabelStyles styles = kakaoMap.getLabelManager()
+                        .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
+                LabelOptions options = LabelOptions.from(LatLng.from(37.394660,127.111182))
+                        .setStyles(styles);
+                LabelLayer layer = kakaoMap.getLabelManager().getLayer();
+                Label label = layer.addLabel(options);
+                LabelOptions options2 = LabelOptions.from(LatLng.from(37.5642135,127.0016985))
+                        .setStyles(styles);
+                Label label2 = layer.addLabel(options2);
+
+
+
             }
         });
 
@@ -141,4 +166,5 @@ public class PlanViewActivity extends AppCompatActivity {
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
     }
+
 }
