@@ -26,6 +26,7 @@ public class DstActivity extends AppCompatActivity {
     private String selectedLocation = null;
     private TextView noanswer;
     Place departureDocument;
+    boolean withAnimal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class DstActivity extends AppCompatActivity {
 
         // 이전 액티비티들에서 전달된 데이터 받기
         Intent intent = getIntent();
-        boolean withAnimal = intent.getBooleanExtra("withAnimal", false);
+        withAnimal = intent.getBooleanExtra("withAnimal", false);
         int planDate = intent.getIntExtra("planDate", 0);
         departureDocument = intent.getParcelableExtra("departureDocument");
         Place destination = intent.getParcelableExtra("destination");
@@ -171,6 +172,7 @@ public class DstActivity extends AppCompatActivity {
             }
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+            intent.putExtra("withAnimal", withAnimal);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
             startActivity(intent);

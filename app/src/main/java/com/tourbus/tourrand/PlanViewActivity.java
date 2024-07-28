@@ -3,9 +3,15 @@ package com.tourbus.tourrand;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +36,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.GET;
 
 public class PlanViewActivity extends AppCompatActivity {
 
@@ -47,6 +59,30 @@ public class PlanViewActivity extends AppCompatActivity {
     private ExcelParser excelParser;
     private GeocodingUtils geocodingUtils;
 
+    private ImageView scheduleList;
+
+    private static final int MAX_REROLL_COUNT = 3;
+    private List<Schedule> savedSchedules = new ArrayList<Schedule>();
+    private int rerollCount = 1;
+    String theme;
+    String destination;
+    boolean withAnimal;
+    private static final String[] THEMES = {"레저", "역사", "캠핑", "문화", "자연", "힐링", "생태관광", "쇼핑"};
+
+    private ApiService apiService;
+
+    public interface ApiService {
+        @GET("getRandomSchedule")
+        Call<ScheduleResponse> getRandomSchedule();
+    }
+
+    // ScheduleResponse 클래스 정의
+    public class ScheduleResponse {
+        public String destination;
+        public Map<Integer, List<Place>> placesMap;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,9 +92,18 @@ public class PlanViewActivity extends AppCompatActivity {
 
         // 이전 액티비티들에서 전달된 데이터 받기
         Intent intent = getIntent();
+        withAnimal = intent.getBooleanExtra("withAnimal", false);
         Place departureDocument = intent.getParcelableExtra("departureDocument");
-        String destination = intent.getStringExtra("selectedLocation");
+        destination = intent.getStringExtra("selectedLocation");
 
+
+        if (withAnimal) {
+            theme = "반려동물";
+        } else {
+            theme = generateRandomTheme();
+        }
+
+        scheduleList = findViewById(R.id.scheduleList);
         mapView = findViewById(R.id.map);
 
         mapView.start(new MapLifeCycleCallback() {
@@ -166,8 +211,20 @@ public class PlanViewActivity extends AppCompatActivity {
         // 처음에 1일차의 장소를 표시
         updatePlacesList(0); // 1일차 데이터를 로드
 
+        scheduleList.setOnClickListener(v -> showPopupMenu(v));
+
         rerollBut.setOnClickListener(v -> {
-            // 현재는 다음 액티비티로 전환하지 않음
+            if (rerollCount < MAX_REROLL_COUNT) {
+                rerollCount++;
+                rerollBut.setText("다시 돌리기 (" + rerollCount + "/" + MAX_REROLL_COUNT);
+                if (!withAnimal) {
+                    theme = generateRandomTheme();
+                }
+//                rerollSchedule();
+                updateThemeText(theme);
+            } else {
+                Toast.makeText(PlanViewActivity.this, "다시 돌리기 횟수를 초과했습니다.", Toast.LENGTH_SHORT).show();
+            }
         });
 
         saveBut.setOnClickListener(v -> {
@@ -182,5 +239,106 @@ public class PlanViewActivity extends AppCompatActivity {
         List<Place> placesList = placesMap.get(day);
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
+    }
+
+    private void rerollSchedule() {
+        // 서버에서 랜덤 일정 데이터 받아오기
+        apiService.getRandomSchedule().enqueue(new Callback<ScheduleResponse>() {
+            @Override
+            public void onResponse(Call<ScheduleResponse> call, Response<ScheduleResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ScheduleResponse scheduleResponse = response.body();
+
+                    // 새로운 일정 저장
+                    String newTheme = withAnimal ? "반려동물" : generateRandomTheme();
+                    Schedule newSchedule = new Schedule(newTheme, scheduleResponse.destination, scheduleResponse.placesMap);
+                    savedSchedules.add(newSchedule);
+                    rerollCount++;
+
+                    // 새로운 일정 데이터로 업데이트
+                    updatePlanView(newSchedule);
+                } else {
+                    Toast.makeText(PlanViewActivity.this, "일정을 받아오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ScheduleResponse> call, Throwable t) {
+                Toast.makeText(PlanViewActivity.this, "서버와 통신하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private String generateRandomTheme() {
+        Random random = new Random();
+        int index = random.nextInt(THEMES.length);
+        return THEMES[index];
+    }
+    private void updateThemeText(String theme) {
+        TextView themaText = findViewById(R.id.themaText);
+        themaText.setText("이번 여행의 테마는 " + theme + "입니다!");
+    }
+
+    private void updatePlanView(Schedule schedule) {
+        // 테마와 목적지를 업데이트
+        TextView themaText = findViewById(R.id.themaText);
+        themaText.setText("이번 여행의 테마는 " + schedule.theme + "입니다!");
+
+        // 목적지를 업데이트
+        this.destination = schedule.destination;
+
+        // 여행 장소를 업데이트
+        this.placesMap = new HashMap<>(schedule.placesMap);
+        updatePlacesList(0); // 첫 번째 일차 데이터를 로드
+    }
+
+    private void showPopupMenu(View view) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
+        MenuInflater inflater = popupMenu.getMenuInflater();
+        inflater.inflate(R.menu.schedule_menu, popupMenu.getMenu());
+        popupMenu.setOnMenuItemClickListener(this::onMenuItemClick);
+        popupMenu.show();
+    }
+
+    private boolean onMenuItemClick(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.schedule1) {
+            showSchedule(0); // 첫 번째 저장된 일정을 로드
+            return true;
+        } else if (id == R.id.schedule2) {
+            showSchedule(1); // 두 번째 저장된 일정을 로드
+            return true;
+        } else if (id == R.id.schedule3) {
+            showSchedule(2); // 세 번째 저장된 일정을 로드
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showSchedule(int index) {
+        if (index < savedSchedules.size()) {
+            Schedule schedule = savedSchedules.get(index);
+            displaySchedule(schedule);
+        } else {
+            Toast.makeText(this, "해당 일정이 없습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void displaySchedule(Schedule schedule) {
+        // 일정 정보를 화면에 표시하는 로직을 여기에 구현합니다.
+    }
+
+    public static class Schedule {
+        String theme;
+        String destination;
+        Map<Integer, List<Place>> placesMap;
+
+        public Schedule(String theme, String destination, Map<Integer, List<Place>> placesMap) {
+            this.theme = theme;
+            this.destination = destination;
+            this.placesMap = new HashMap<>(placesMap); // 깊은 복사
+        }
     }
 }
