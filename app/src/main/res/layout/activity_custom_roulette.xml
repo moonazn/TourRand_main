@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CustomRouletteActivity">
+    tools:context=".CustomRouletteActivity"
+    android:background="@color/background">
 
     <ImageView
         android:id="@+id/back"
@@ -26,5 +27,23 @@
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="90dp"
          />
+
+    <android.widget.Button
+        android:id="@+id/nextBtn"
+        android:layout_width="260dp"
+        android:layout_height="44dp"
+        android:background="@drawable/rounded_filled_square"
+        android:text="일정 생성"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/roulette"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="10dp"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:visibility="gone"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -106,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="44dp"
             android:background="@drawable/rounded_filled_square"
-            android:text="next step"
+            android:text="일정 생성"
             android:textStyle="bold"
             android:textSize="17sp"
             android:textColor="@color/white"

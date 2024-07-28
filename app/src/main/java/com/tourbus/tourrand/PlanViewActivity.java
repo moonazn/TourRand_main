@@ -60,9 +60,10 @@ public class PlanViewActivity extends AppCompatActivity {
     private GeocodingUtils geocodingUtils;
 
     private ImageView scheduleList;
+    private TextView navigateTextView;
 
     private static final int MAX_REROLL_COUNT = 3;
-    private List<Schedule> savedSchedules = new ArrayList<Schedule>();
+    private List<Schedule> savedSchedules = new ArrayList<>();
     private int rerollCount = 1;
     String theme;
     String destination;
@@ -82,7 +83,6 @@ public class PlanViewActivity extends AppCompatActivity {
         public Map<Integer, List<Place>> placesMap;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,17 +90,48 @@ public class PlanViewActivity extends AppCompatActivity {
 
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
-        // 이전 액티비티들에서 전달된 데이터 받기
         Intent intent = getIntent();
-        withAnimal = intent.getBooleanExtra("withAnimal", false);
-        Place departureDocument = intent.getParcelableExtra("departureDocument");
-        destination = intent.getStringExtra("selectedLocation");
-
-
-        if (withAnimal) {
-            theme = "반려동물";
+        String previousActivity = intent.getStringExtra("previousActivity");
+        Log.d("previousActivity", previousActivity);
+        if ("CustomRouletteActivity".equals(previousActivity)) {
+            destination = intent.getStringExtra("selectedLocation");
+            // NavigateTextView 숨기기
+            navigateTextView = findViewById(R.id.fromSrcToDst);
+            navigateTextView.setVisibility(View.GONE);
         } else {
-            theme = generateRandomTheme();
+            withAnimal = intent.getBooleanExtra("withAnimal", false);
+            Place departureDocument = intent.getParcelableExtra("departureDocument");
+            destination = intent.getStringExtra("selectedLocation");
+
+            if (withAnimal) {
+                theme = "반려동물";
+            } else {
+                theme = generateRandomTheme();
+            }
+
+            navigateTextView = findViewById(R.id.fromSrcToDst);
+            navigateTextView.setOnClickListener(v -> {
+                String startAddress = departureDocument.getAddress();
+                ExcelParser.Location endLocation = excelParser.getLocation(destination);
+
+                Log.d("PlanViewActivity", "Start Address: " + startAddress);
+                Log.d("PlanViewActivity", "Destination: " + destination);
+                Log.d("PlanViewActivity", "End Location: " + (endLocation != null ? endLocation.latitude + ", " + endLocation.longitude : "null"));
+
+                geocodingUtils.geocodeAsync(startAddress).thenAccept(startLocation -> {
+                    if (startLocation != null && endLocation != null) {
+                        Log.d("PlanViewActivity", "Start Location: " + startLocation.getLatitude() + ", " + startLocation.getLongitude());
+
+                        runOnUiThread(() -> {
+                            MapUtils.showRoute(PlanViewActivity.this, startLocation, endLocation);
+                        });
+                    } else {
+                        runOnUiThread(() -> {
+                            Log.e("PlanViewActivity", "Geocoding failed or end location is null.");
+                        });
+                    }
+                });
+            });
         }
 
         scheduleList = findViewById(R.id.scheduleList);
@@ -146,31 +177,6 @@ public class PlanViewActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        TextView navigateTextView = findViewById(R.id.fromSrcToDst);
-
-        navigateTextView.setOnClickListener(v -> {
-            String startAddress = departureDocument.getAddress();
-            ExcelParser.Location endLocation = excelParser.getLocation(destination);
-
-            Log.d("PlanViewActivity", "Start Address: " + startAddress);
-            Log.d("PlanViewActivity", "Destination: " + destination);
-            Log.d("PlanViewActivity", "End Location: " + (endLocation != null ? endLocation.latitude + ", " + endLocation.longitude : "null"));
-
-            geocodingUtils.geocodeAsync(startAddress).thenAccept(startLocation -> {
-                if (startLocation != null && endLocation != null) {
-                    Log.d("PlanViewActivity", "Start Location: " + startLocation.getLatitude() + ", " + startLocation.getLongitude());
-
-                    runOnUiThread(() -> {
-                        MapUtils.showRoute(PlanViewActivity.this, startLocation, endLocation);
-                    });
-                } else {
-                    runOnUiThread(() -> {
-                        Log.e("PlanViewActivity", "Geocoding failed or end location is null.");
-                    });
-                }
-            });
-        });
 
         saveBut = findViewById(R.id.saveBut);
         rerollBut = findViewById(R.id.rerollBut);
@@ -274,6 +280,7 @@ public class PlanViewActivity extends AppCompatActivity {
         int index = random.nextInt(THEMES.length);
         return THEMES[index];
     }
+
     private void updateThemeText(String theme) {
         TextView themaText = findViewById(R.id.themaText);
         themaText.setText("이번 여행의 테마는 " + theme + "입니다!");

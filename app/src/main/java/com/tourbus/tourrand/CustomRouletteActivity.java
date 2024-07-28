@@ -3,11 +3,16 @@ package com.tourbus.tourrand;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,10 +27,11 @@ import java.util.Random;
 public class CustomRouletteActivity extends AppCompatActivity {
     private ArrayList<String> elements;
     private LuckyWheel luckyWheel;
-
     private ImageView back;
-
-    private int targetIndex = -1; // 초기화
+    private Button next;
+    private String selectedLocation;
+    private int targetIndex = -1;
+    String previousActivity = "CustomRouletteActivity";
 
     private static final int[] COLOR_PALETTE = {
             R.color.random1,
@@ -43,6 +49,8 @@ public class CustomRouletteActivity extends AppCompatActivity {
         elements = getIntent().getStringArrayListExtra("elements");
 
         back = findViewById(R.id.back);
+        next = findViewById(R.id.nextBtn);
+        luckyWheel = findViewById(R.id.roulette);
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,23 +62,25 @@ public class CustomRouletteActivity extends AppCompatActivity {
             }
         });
 
-        luckyWheel = findViewById(R.id.roulette);
-
         if (elements != null && !elements.isEmpty()) {
             setupLuckyWheel();
+            spinRoulette();
         } else {
             Toast.makeText(this, "No elements found", Toast.LENGTH_SHORT).show();
         }
-        spinRoulette();
 
-
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new ServerCommunicationTask().execute();
+            }
+        });
     }
 
     private void setupLuckyWheel() {
         List<WheelItem> wheelItems = new ArrayList<>();
         int colorIndex = 0;
         for (String element : elements) {
-            // COLOR_PALETTE에서 순서대로 색상 선택
             int color = ContextCompat.getColor(this, COLOR_PALETTE[colorIndex % COLOR_PALETTE.length]);
             Bitmap bitmap = BitmapUtils.textAsBitmap(element, 30, Color.WHITE);
             wheelItems.add(new WheelItem(color, bitmap));
@@ -82,9 +92,10 @@ public class CustomRouletteActivity extends AppCompatActivity {
             @Override
             public void onReachTarget() {
                 if (targetIndex != -1 && targetIndex < elements.size()) {
-                    // 결과 표시 로직
-                    String selectedElement = elements.get(targetIndex - 1);
+                    String selectedElement = elements.get(targetIndex);
+                    selectedLocation = selectedElement;
                     Toast.makeText(CustomRouletteActivity.this, "Selected element: " + selectedElement, Toast.LENGTH_LONG).show();
+                    next.setVisibility(View.VISIBLE);
                 } else {
                     Toast.makeText(CustomRouletteActivity.this, "Invalid target index", Toast.LENGTH_LONG).show();
                 }
@@ -93,7 +104,47 @@ public class CustomRouletteActivity extends AppCompatActivity {
     }
 
     private void spinRoulette() {
+        if (elements == null || elements.isEmpty()) {
+            return;
+        }
         targetIndex = new Random().nextInt(elements.size());
-        luckyWheel.rotateWheelTo(targetIndex);
+        luckyWheel.rotateWheelTo(targetIndex + 1);
+    }
+
+    private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progressDialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(CustomRouletteActivity.this);
+            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                Thread.sleep(3000); // 실제 서버 통신 코드로 대체
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (progressDialog != null && progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+            Intent intent = new Intent(CustomRouletteActivity.this, PlanViewActivity.class);
+            intent.putExtra("selectedLocation", selectedLocation);
+            intent.putExtra("previousActivity", previousActivity);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
+            finish();
+        }
     }
 }
