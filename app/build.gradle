@@ -15,7 +15,7 @@ android {
 
     defaultConfig {
         applicationId "com.tourbus.tourrand"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -69,5 +69,9 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation 'com.kakao.maps.open:android:2.9.5' //카카오맵
+
+    implementation 'org.apache.poi:poi:5.3.0'
+    implementation 'org.apache.poi:poi-ooxml:5.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
 
 }

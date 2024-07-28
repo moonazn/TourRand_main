@@ -89,7 +89,7 @@ public class DepartureQActivity extends AppCompatActivity {
                     Intent intent = new Intent(DepartureQActivity.this, DstActivity.class);
                     intent.putExtra("withAnimal", withAnimal);
                     intent.putExtra("planDate", planDate);
-                    intent.putExtra("departure", departure);
+                    intent.putExtra("departureDocument", departureDocument);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
