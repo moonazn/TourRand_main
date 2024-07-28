@@ -32,6 +32,14 @@
     <color name="yellow4">#FFFF7D</color>
     <color name="yellow5">#FFFF43</color>
 
+    <color name="background"> #F2F2F2 </color>
+
+    <color name="random1"> #E58F65 </color>
+    <color name="random2"> #F4F1BB </color>
+    <color name="random3"> #9BC1BC </color>
+    <color name="random4"> #E6EBE0 </color>
+    <color name="random5"> #56445D </color>
+
     <color name="selected_day_background">#D3E4FF</color>
 
 
