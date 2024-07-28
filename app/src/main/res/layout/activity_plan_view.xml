@@ -147,6 +147,14 @@
             android:layout_weight="1"
             android:fontFamily="@font/pyeongchang_bold"/>
 
+        <ImageView
+            android:id="@+id/scheduleList"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/list"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"/>
+
         <android.widget.Button
             android:id="@+id/saveBut"
             android:layout_width="170dp"
