@@ -25,6 +25,7 @@ public class DstActivity extends AppCompatActivity {
     private TextView selectedTextView = null;
     private String selectedLocation = null;
     private TextView noanswer;
+    Place departureDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +44,11 @@ public class DstActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolean withAnimal = intent.getBooleanExtra("withAnimal", false);
         int planDate = intent.getIntExtra("planDate", 0);
-        Location departure = intent.getParcelableExtra("departure");
-        Location destination = intent.getParcelableExtra("destination");
+        departureDocument = intent.getParcelableExtra("departureDocument");
+        Place destination = intent.getParcelableExtra("destination");
 
         // PreTrip 객체 생성
-        PreTrip preTrip = new PreTrip(withAnimal, planDate, departure, destination);
+        PreTrip preTrip = new PreTrip(withAnimal, planDate, departureDocument, destination);
 
         // 랜덤으로 목적지 3개 선택하여 TextView에 표시
         displayRandomDestinations();
@@ -170,6 +171,8 @@ public class DstActivity extends AppCompatActivity {
             }
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+            intent.putExtra("selectedLocation", selectedLocation);
+            intent.putExtra("departureDocument", departureDocument);
             startActivity(intent);
             overridePendingTransition(0, 0);
             finish();

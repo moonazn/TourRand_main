@@ -6,11 +6,11 @@ import android.os.Parcelable;
 public class PreTrip implements Parcelable {
     private boolean withAnimal;
     private int plandate;
-    private Location departure;
-    private Location destination;
+    private Place departure;
+    private Place destination;
 
     // 기본 생성자
-    public PreTrip(boolean withAnimal, int plandate, Location departure, Location destination) {
+    public PreTrip(boolean withAnimal, int plandate, Place departure, Place destination) {
         this.withAnimal = withAnimal;
         this.plandate = plandate;
         this.departure = departure;
@@ -68,19 +68,19 @@ public class PreTrip implements Parcelable {
         this.plandate = plandate;
     }
 
-    public Location getDeparture() {
+    public Place getDeparture() {
         return departure;
     }
 
-    public void setDeparture(Location departure) {
+    public void setDeparture(Place departure) {
         this.departure = departure;
     }
 
-    public Location getDestination() {
+    public Place getDestination() {
         return destination;
     }
 
-    public void setDestination(Location destination) {
+    public void setDestination(Place destination) {
         this.destination = destination;
     }
 }
