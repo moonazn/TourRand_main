@@ -106,26 +106,26 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-//                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
-//                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
-//                        @Override
-//                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
-//                            if (oAuthToken != null) {
-//                                // 로그인 성공
-//                                updateKakaoLoginUi();
-//                            } else {
-//                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
-//                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
-//                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
-//                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                            }
-//                            return null;
-//                        }
-//                    });
-//                } else {
-//                    // 카카오톡이 설치되어 있지 않다면
-//                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                }
+                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
+                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
+                        @Override
+                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
+                            if (oAuthToken != null) {
+                                // 로그인 성공
+                                updateKakaoLoginUi();
+                            } else {
+                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
+                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
+                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
+                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                            }
+                            return null;
+                        }
+                    });
+                } else {
+                    // 카카오톡이 설치되어 있지 않다면
+                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                }
             }
         });
 
@@ -170,14 +170,20 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "invoke: profile = " + user.getKakaoAccount().getProfile().getThumbnailImageUrl());
 
-                    String url = "http://13.209.33.141:5000";
+                    String url = "http://13.209.33.141:5000/login";
 //                    //10자리 숫자/이메일/이름/프로필 사진 주소
                     inputText = user.getId().toString()+"^^"+user.getKakaoAccount().getEmail().toString()+"^^"+
                             user.getKakaoAccount().getProfile().getNickname()+"^^"+user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
 
+                    String id = user.getId().toString();
+                    String email = user.getKakaoAccount().getEmail().toString();
+                    String nickname = user.getKakaoAccount().getProfile().getNickname();
+                    String user_img = user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
                    // Log.d("id값", "카카오ID " + user.getId().toString());
-                    String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
+                    //String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
+                    String data = "{ \"id\" : \""+id+"\",\"email\" : \""+email+"\",\"nickname\":\""+nickname+"\",\"user_img\":\""+user_img+"\" }"; //json 형식 데이터
 
+                    Log.d("json 변환", data);
                     new Thread(() -> {
                         String result = httpPostBodyConnection(url, data);
                         // 처리 결과 확인

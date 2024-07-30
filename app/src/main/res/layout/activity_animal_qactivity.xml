@@ -21,7 +21,7 @@
         android:id="@+id/q1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1.\n\n애완동물과 함께 가는 여행인가요?"
+        android:text="1.\n\n반려동물과 함께 가는 여행인가요?"
         android:textColor="@color/black"
         android:textStyle="bold"
         android:textSize="22sp"
