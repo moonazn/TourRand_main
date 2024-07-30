@@ -1,0 +1,8 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/schedule1"
+        android:title="첫 번째 여행계획" />
+    <item android:id="@+id/schedule2"
+        android:title="두 번째 여행계획" />
+    <item android:id="@+id/schedule3"
+        android:title="세 번째 여행계획" />
+</menu>
