@@ -27,6 +27,7 @@ public class DstActivity extends AppCompatActivity {
     private TextView noanswer;
     Place departureDocument;
     boolean withAnimal;
+    public String fin, withAnimaltoString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +48,15 @@ public class DstActivity extends AppCompatActivity {
         int planDate = intent.getIntExtra("planDate", 0);
         departureDocument = intent.getParcelableExtra("departureDocument");
         Place destination = intent.getParcelableExtra("destination");
+
+        if(withAnimal == true){
+            withAnimaltoString = "반려동물";
+        }else{
+            withAnimaltoString = "인간만";
+        }
+
+
+
 
         // PreTrip 객체 생성
         PreTrip preTrip = new PreTrip(withAnimal, planDate, departureDocument, destination);
