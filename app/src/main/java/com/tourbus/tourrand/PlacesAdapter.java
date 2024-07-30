@@ -42,31 +42,31 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
             holder.mapIcon.setOnClickListener(v -> {
                 // 카카오맵 실행: 두 장소 사이의 경로를 표시
                 Context context = v.getContext();
-//                if (isAppInstalled(context, "net.daum.android.map")) {
-//                    // 카카오맵이 설치되어 있는 경우
-//                    Place nextPlace = placesList.get(position + 1);
-//                    String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
-//                            "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-//                    context.startActivity(intent);
-//                } else {
-//                    //                    // 카카오맵 설치 페이지로 이동
-//                    String marketUrl = "market://details?id=net.daum.android.map";
-//                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(marketUrl));
-//                    context.startActivity(intent);
-//                }
+                if (isAppInstalled(context, "net.daum.android.map")) {
+                    // 카카오맵이 설치되어 있는 경우
+                    Place nextPlace = placesList.get(position + 1);
+                    String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
+                            "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    context.startActivity(intent);
+                } else {
+                    //                    // 카카오맵 설치 페이지로 이동
+                    String marketUrl = "market://details?id=net.daum.android.map";
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(marketUrl));
+                    context.startActivity(intent);
+                }
 
 //                if(!isAppInstalled(context, "net.daum.android.map")){
 ////                     카카오맵이 설치되어 있지 않은 경우
 //                    Toast.makeText(context, "카카오맵이 설치되어 있지 않습니다.", Toast.LENGTH_LONG).show();
 //                }
 
-                //카카오맵이 설치되어있지 않으면 예외 뜸 ..‼️
-                Place nextPlace = placesList.get(position + 1);
-                String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
-                        "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                context.startActivity(intent);
+//                //카카오맵이 설치되어있지 않으면 예외 뜸 ..‼️
+//                Place nextPlace = placesList.get(position + 1);
+//                String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
+//                        "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                context.startActivity(intent);
 
             });
         } else {
