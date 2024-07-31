@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class DstActivity extends AppCompatActivity {
 
@@ -27,7 +29,7 @@ public class DstActivity extends AppCompatActivity {
     private TextView noanswer;
     Place departureDocument;
     boolean withAnimal;
-    public String fin, withAnimaltoString;
+    public String withAnimaltoString, mainTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,19 @@ public class DstActivity extends AppCompatActivity {
                     noanswer.startAnimation(shake);
 
                 } else {
+                    if(withAnimaltoString.equals("반려동물")){
+                        Log.d("반려동물 동반 여부", withAnimaltoString);
+                        //테마가 반려동물인 거고 반려동물 전용 url로 입력값 전달
+                    }
+                    else{
+                        //반려동물 미포함
+                        if (planDate==2){
+
+                            //테마추출함수에 캠핑도 추가해서 돌리기
+                        }
+
+                        Log.d("반려동물 동반 여부", withAnimaltoString);
+                    }
                     // 서버 통신을 비동기적으로 실행
                     new ServerCommunicationTask().execute();
                 }
@@ -137,6 +152,18 @@ public class DstActivity extends AppCompatActivity {
         dst1.setText(destinations.get(0));
         dst2.setText(destinations.get(1));
         dst3.setText(destinations.get(2));
+    }
+    public String chooseTheme(String Theme){
+        String [] theme = {"레저","역사","문화","자연","힐링","쇼핑"}; //캠핑, 생태관광, 반려동물 미포함
+
+        Random random = new Random();
+        int index = random.nextInt(theme.length);
+
+        mainTheme = theme[index];
+
+
+
+        return mainTheme;
     }
 
     private void handleDestinationSelection(TextView selectedView) {
