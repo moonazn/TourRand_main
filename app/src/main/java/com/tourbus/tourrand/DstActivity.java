@@ -30,6 +30,7 @@ public class DstActivity extends AppCompatActivity {
     Place departureDocument;
     boolean withAnimal;
     public String withAnimaltoString, mainTheme;
+    String previousActivity = "CustomRouletteActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,6 +213,7 @@ public class DstActivity extends AppCompatActivity {
             intent.putExtra("withAnimal", withAnimal);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
+            intent.putExtra("previousActivity", previousActivity);
             startActivity(intent);
             overridePendingTransition(0, 0);
             finish();
