@@ -41,13 +41,16 @@ public class DaysAdapter extends RecyclerView.Adapter<DaysAdapter.DaysViewHolder
                 ContextCompat.getColor(holder.itemView.getContext(), android.R.color.transparent));
 
         holder.itemView.setOnClickListener(v -> {
-            int previousPosition = selectedPosition;
-            selectedPosition = position;
-            notifyItemChanged(previousPosition);
-            notifyItemChanged(position);
-            onItemClickListener.onItemClick(position);
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition != RecyclerView.NO_POSITION) {
+                int previousPosition = selectedPosition;
+                selectedPosition = currentPosition;
+                notifyItemChanged(previousPosition);
+                notifyItemChanged(currentPosition);
+                onItemClickListener.onItemClick(currentPosition);
+            }
         });
-    }
+}
 
     @Override
     public int getItemCount() {

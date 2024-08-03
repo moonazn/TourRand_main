@@ -91,6 +91,11 @@ public class PlanViewActivity extends AppCompatActivity {
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
         Intent intent = getIntent();
+
+        String result = intent.getParcelableExtra("result");
+        TextView semiTheme = findViewById(R.id.themaSemiText);
+        //semiTheme.setText(result.toString());
+
         String previousActivity = intent.getStringExtra("previousActivity");
         Log.d("previousActivity", previousActivity);
         if ("CustomRouletteActivity".equals(previousActivity)) {
