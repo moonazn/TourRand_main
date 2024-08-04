@@ -1,5 +1,7 @@
 package com.tourbus.tourrand;
 
+
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -7,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -14,6 +18,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +41,11 @@ public class DstActivity extends AppCompatActivity {
     Place departureDocument;
     boolean withAnimal;
     public String withAnimaltoString, mainTheme;
+    private String result,data;
     String previousActivity = "CustomRouletteActivity";
+    private String url;
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,16 +119,31 @@ public class DstActivity extends AppCompatActivity {
                 } else {
                     if(withAnimaltoString.equals("반려동물")){
                         Log.d("반려동물 동반 여부", withAnimaltoString);
+                       // String url = "http://13.209.33.141:5000/login";
+                       // String data = "{ \"id\" : \""+id+"\",\"email\" : \""+email+"\",\"nickname\":\""+nickname+"\",\"user_img\":\""+user_img+"\" }"; //json 형식 데이터
+
+//                        new Thread(() -> {
+//                            String result = httpPostBodyConnection(url, data);
+//                            // 처리 결과 확인
+//                            handler.post(() -> seeNetworkResult(result));
+//                        }).start();
                         //테마가 반려동물인 거고 반려동물 전용 url로 입력값 전달
                     }
                     else{
                         //반려동물 미포함
-                        if (tripLength==2){
-
-                            //테마추출함수에 캠핑도 추가해서 돌리기
-                        }
-
+//                        if (planDate==2){
+//
+//                            //테마추출함수에 캠핑도 추가해서 돌리기
+//                        }
                         Log.d("반려동물 동반 여부", withAnimaltoString);
+                        mainTheme = chooseTheme();
+                        url = "http://13.209.33.141:5000/route";
+                        data = "{\"planDate\" : \""+planDate+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
+
+
+                        Log.d("데이터 보낸 거", data);
+                        Log.d("반려동물 동반 여부", withAnimaltoString);
+
                     }
                     // 서버 통신을 비동기적으로 실행
                     new ServerCommunicationTask().execute();
@@ -156,7 +186,7 @@ public class DstActivity extends AppCompatActivity {
         dst2.setText(destinations.get(1));
         dst3.setText(destinations.get(2));
     }
-    public String chooseTheme(String Theme){
+    public String chooseTheme(){
         String [] theme = {"레저","역사","문화","자연","힐링","쇼핑"}; //캠핑, 생태관광, 반려동물 미포함
 
         Random random = new Random();
@@ -195,12 +225,96 @@ public class DstActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
-            try {
-                Thread.sleep(3000); // 실제 서버 통신 코드로 대체
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            result = httpPostBodyConnection(url, data);
+            handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
+            Log.d("함수 내 주소", url);
+            Log.d("보낸 데이터 확인", data);
             return null;
+        }
+        public String httpPostBodyConnection(String UrlData, String ParamData) {
+            // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
+            // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
+
+            String totalUrl = "";
+            totalUrl = UrlData.trim().toString();
+
+            //http 통신을 하기위한 객체 선언 실시
+            URL url = null;
+            HttpURLConnection conn = null;
+
+            //http 통신 요청 후 응답 받은 데이터를 담기 위한 변수
+            String responseData = "";
+            BufferedReader br = null;
+            StringBuffer sb = null;
+
+            //메소드 호출 결과값을 반환하기 위한 변수
+            String returnData = "";
+
+
+            try {
+                //파라미터로 들어온 url을 사용해 connection 실시
+                url = null;
+                url = new URL(totalUrl);
+                conn = null;
+                conn = (HttpURLConnection) url.openConnection();
+
+                //http 요청에 필요한 타입 정의 실시
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; utf-8"); //post body json으로 던지기 위함
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte request_data[] = ParamData.getBytes("utf-8");
+                    Log.d("TAGGG",request_data.toString());
+                    os.write(request_data);
+                    //os.close();
+                } catch (Exception e) {
+                    Log.d("TAG3","여기다");
+                    e.printStackTrace();
+                }
+
+                //http 요청 실시
+                conn.connect();
+                System.out.println("http 요청 방식 : " + "POST BODY JSON");
+                System.out.println("http 요청 타입 : " + "application/json");
+                System.out.println("http 요청 주소 : " + UrlData);
+                System.out.println("http 요청 데이터 : " + ParamData);
+                System.out.println("");
+
+                //http 요청 후 응답 받은 데이터를 버퍼에 쌓는다
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                sb = new StringBuffer();
+                while ((responseData = br.readLine()) != null) {
+                    sb.append(responseData); //StringBuffer에 응답받은 데이터 순차적으로 저장 실시
+                }
+
+                //메소드 호출 완료 시 반환하는 변수에 버퍼 데이터 삽입 실시
+                returnData = sb.toString();
+                Log.d("TAG2", returnData);
+                //http 요청 응답 코드 확인 실시
+                String responseCode = String.valueOf(conn.getResponseCode());
+                System.out.println("http 응답 코드 : " + responseCode);
+                System.out.println("http 응답 데이터 : " + returnData);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //http 요청 및 응답 완료 후 BufferedReader를 닫아줍니다
+                try {
+                    if (br != null) {
+                        br.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d("진짜 받은 거", returnData.toString());
+
+            return returnData; // 네트워크 요청 결과를 반환
+        }
+        public void seeNetworkResult(String result) {
+            // 네트워크 작업 완료 후
+            Log.d(result, "network");
         }
 
         @Override
