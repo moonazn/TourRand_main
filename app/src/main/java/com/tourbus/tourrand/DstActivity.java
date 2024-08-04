@@ -48,9 +48,11 @@ public class DstActivity extends AppCompatActivity {
         // 이전 액티비티들에서 전달된 데이터 받기
         Intent intent = getIntent();
         withAnimal = intent.getBooleanExtra("withAnimal", false);
-        int planDate = intent.getIntExtra("planDate", 0);
+        String planDate = intent.getStringExtra("planDate");
         departureDocument = intent.getParcelableExtra("departureDocument");
         Place destination = intent.getParcelableExtra("destination");
+        int tripLength = intent.getIntExtra("tripLength", 1);
+
 
         if(withAnimal == true){
             withAnimaltoString = "반려동물";
@@ -62,7 +64,7 @@ public class DstActivity extends AppCompatActivity {
 
 
         // PreTrip 객체 생성
-        PreTrip preTrip = new PreTrip(withAnimal, planDate, departureDocument, destination);
+        PreTrip preTrip = new PreTrip(withAnimal, tripLength, departureDocument, destination);
 
         // 랜덤으로 목적지 3개 선택하여 TextView에 표시
         displayRandomDestinations();
@@ -106,7 +108,7 @@ public class DstActivity extends AppCompatActivity {
                     }
                     else{
                         //반려동물 미포함
-                        if (planDate==2){
+                        if (tripLength==2){
 
                             //테마추출함수에 캠핑도 추가해서 돌리기
                         }

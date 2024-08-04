@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class DateQActivity extends AppCompatActivity {
 
@@ -31,6 +32,8 @@ public class DateQActivity extends AppCompatActivity {
 
     private String planDate;
     private TextView tripDateTextView;
+
+    private int tripLength;
 
 
     @Override
@@ -82,6 +85,7 @@ public class DateQActivity extends AppCompatActivity {
                     Intent intent = new Intent(DateQActivity.this, DepartureQActivity.class);
                     intent.putExtra("withAnimal", withAnimal);
                     intent.putExtra("planDate", planDate);
+                    intent.putExtra("tripLength", tripLength);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
@@ -108,6 +112,14 @@ public class DateQActivity extends AppCompatActivity {
 
                 String startDateStr = sdf.format(selection.first);
                 String endDateStr = sdf.format(selection.second);
+
+                // Calculate the difference in days
+                long startDateMillis = selection.first;
+                long endDateMillis = selection.second;
+                long diffInMillis = endDateMillis - startDateMillis;
+                int numberOfDays = (int) TimeUnit.MILLISECONDS.toDays(diffInMillis) + 1;
+
+                tripLength = numberOfDays;
 
                 planDate = startDateStr + " ~ " + endDateStr;
                 tripDateTextView.setText(planDate);
