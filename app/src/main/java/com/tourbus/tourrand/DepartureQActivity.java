@@ -40,6 +40,7 @@ public class DepartureQActivity extends AppCompatActivity {
         Intent intent = getIntent();
         boolean withAnimal = intent.getBooleanExtra("withAnimal", false);
         String planDate = intent.getStringExtra("planDate");
+        int tripLength = intent.getIntExtra("tripLength", 1);
 
 
         findDepartureDialog = new FindDepartureDialog(this);
@@ -90,6 +91,8 @@ public class DepartureQActivity extends AppCompatActivity {
                     intent.putExtra("withAnimal", withAnimal);
                     intent.putExtra("planDate", planDate);
                     intent.putExtra("departureDocument", departureDocument);
+                    intent.putExtra("tripLength", tripLength);
+
                     startActivity(intent);
                     overridePendingTransition(0, 0);
                     finish();
