@@ -131,14 +131,14 @@ public class DstActivity extends AppCompatActivity {
                     }
                     else{
                         //반려동물 미포함
-//                        if (planDate==2){
+//                        if (tripLength==2){
 //
 //                            //테마추출함수에 캠핑도 추가해서 돌리기
 //                        }
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         mainTheme = chooseTheme();
                         url = "http://13.209.33.141:5000/route";
-                        data = "{\"planDate\" : \""+planDate+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
+                        data = "{\"tripLength\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
 
 
                         Log.d("데이터 보낸 거", data);
