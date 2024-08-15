@@ -225,8 +225,8 @@ public class DstActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
-            result = httpPostBodyConnection(url, data);
-            handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
+           // result = httpPostBodyConnection(url, data);
+           // handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
             return null;
