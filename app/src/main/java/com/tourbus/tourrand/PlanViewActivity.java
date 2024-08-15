@@ -1,6 +1,7 @@
 package com.tourbus.tourrand;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,9 +31,17 @@ import com.kakao.vectormap.label.LabelManager;
 import com.kakao.vectormap.label.LabelOptions;
 import com.kakao.vectormap.label.LabelStyle;
 import com.kakao.vectormap.label.LabelStyles;
+import com.kakao.vectormap.route.RouteLine;
+import com.kakao.vectormap.route.RouteLineLayer;
+import com.kakao.vectormap.route.RouteLineOptions;
+import com.kakao.vectormap.route.RouteLineSegment;
+import com.kakao.vectormap.route.RouteLineStyle;
+import com.kakao.vectormap.route.RouteLineStyles;
+import com.kakao.vectormap.route.RouteLineStylesSet;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +53,7 @@ import retrofit2.Response;
 import retrofit2.http.GET;
 
 public class PlanViewActivity extends AppCompatActivity {
+    private LabelLayer labelLayer;
 
     private RecyclerView daysRecyclerView;
     private RecyclerView placesRecyclerView;
@@ -162,9 +172,47 @@ public class PlanViewActivity extends AppCompatActivity {
                         .setStyles(styles);
                 LabelLayer layer = kakaoMap.getLabelManager().getLayer();
                 Label label = layer.addLabel(options);
+                Label centerLabel = layer.addLabel(options);
                 LabelOptions options2 = LabelOptions.from(LatLng.from(37.5642135, 127.0016985))
                         .setStyles(styles);
                 Label label2 = layer.addLabel(options2);
+
+                ImageView logo = findViewById(R.id.logo);
+                logo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        centerLabel.changeStyles(LabelStyles.from(LabelStyle.from(R.drawable.choonsik)));
+                        centerLabel.moveTo(LatLng.from(37.5642135,
+                                127.0016985), 8000);
+                    }
+                });
+
+//                //춘식이 돌아댕기는 거
+//                LatLng pos = kakaoMap.getCameraPosition().getPosition();
+//                Label centerLabel = labelLayer.addLabel(LabelOptions.from("dotLabel", pos)
+//                        .setStyles(LabelStyle.from(R.drawable.choonsik).setAnchorPoint(0.5f, 0.5f))
+//                        .setRank(1));
+//                LatLng currentPos = centerLabel.getPosition();
+//                centerLabel.moveTo(LatLng.from(currentPos.getLatitude() + 0.0006,
+//                        currentPos.getLongitude() + 0.0006), 800);
+
+
+
+                //핀 사이 선으로 표시
+                kakaoMap.getRouteLineManager();
+                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
+
+                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
+                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
+                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
+                                LatLng.from(37.394660, 127.111182),
+                                LatLng.from(37.5642135, 127.0016985)))
+                        .setStyles(stylesSet.getStyles(0));
+                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
+                        .setStylesSet(stylesSet);
+                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
+
+
             }
         });
 
