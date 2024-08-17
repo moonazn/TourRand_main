@@ -19,6 +19,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -137,8 +141,8 @@ public class DstActivity extends AppCompatActivity {
 //                        }
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         mainTheme = chooseTheme();
-                        url = "http://13.209.33.141:5000/route";
-                        data = "{\"tripLength\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
+                        url = "http://13.209.33.141:4000/route";
+                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
 
 
                         Log.d("데이터 보낸 거", data);
@@ -225,8 +229,8 @@ public class DstActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
-           // result = httpPostBodyConnection(url, data);
-           // handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
+            result = httpPostBodyConnection(url, data);
+            handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
             return null;
@@ -324,8 +328,37 @@ public class DstActivity extends AppCompatActivity {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
+            //서버에서 받아온 값을 배열에 저장하는 거
+//            JsonParser parser = new JsonParser();
+//            JsonObject jsonObject = parser.parse(result.toString()).getAsJsonObject();
+//
+//            JsonArray days = jsonObject.getAsJsonArray("day");
+//            JsonArray locations = jsonObject.getAsJsonArray("location");
+//            JsonArray addresses = jsonObject.getAsJsonArray("address");
+//            JsonArray latitudes = jsonObject.getAsJsonArray("latitude");
+//            JsonArray longitudes = jsonObject.getAsJsonArray("longitude");
+//
+//            int[] dayArray = new int[days.size()];
+//            String[] locationArray = new String[locations.size()];
+//            String[] addressArray = new String[addresses.size()];
+//            int[] latitudeArray = new int[latitudes.size()];
+//            int[] longitudeArray = new int[longitudes.size()];
+//
+//            for (int i = 0; i < days.size(); i++) {
+//                dayArray[i] = days.get(i).getAsInt();
+//                locationArray[i] = locations.get(i).getAsString();
+//                addressArray[i] = addresses.get(i).getAsString();
+//                latitudeArray[i] = latitudes.get(i).getAsInt();
+//                longitudeArray[i] = longitudes.get(i).getAsInt();
+//            }
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+//            intent.putExtra("days", dayArray);
+//            intent.putExtra("locations", locationArray);
+//            intent.putExtra("addresses", addressArray);
+//            intent.putExtra("latitudes", latitudeArray);
+//            intent.putExtra("longitudes", longitudeArray);
+
             intent.putExtra("withAnimal", withAnimal);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
