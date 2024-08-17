@@ -102,6 +102,12 @@ public class PlanViewActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        int[] dayArray = intent.getIntArrayExtra("days");
+        String[] locationArray = intent.getStringArrayExtra("locations");
+        String[] addressArray = intent.getStringArrayExtra("addresses");
+        int[] latitudeArray = intent.getIntArrayExtra("latitudes");
+        int[] longitudeArray = intent.getIntArrayExtra("longitudes");
+
         String result = intent.getParcelableExtra("result");
         TextView semiTheme = findViewById(R.id.themaSemiText);
         //semiTheme.setText(result.toString());
