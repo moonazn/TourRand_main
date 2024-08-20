@@ -20,6 +20,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".PlanEditActivity"
+            android:exported="false" />
+        <activity
             android:name=".CustomRouletteActivity"
             android:exported="false" />
         <activity
