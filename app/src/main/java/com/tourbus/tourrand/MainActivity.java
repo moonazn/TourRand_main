@@ -38,17 +38,12 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
-
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private ImageView kakaoLoginButton;
     private Handler handler;
-
     private  String inputText;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
         handler = new Handler(Looper.getMainLooper());
-
 
         Function2<OAuthToken,Throwable, Unit> callback =new Function2<OAuthToken, Throwable, Unit>() {
             @Override
