@@ -23,12 +23,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import org.apache.poi.hpsf.Decimal;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -49,6 +55,7 @@ public class DstActivity extends AppCompatActivity {
     String previousActivity = "CustomRouletteActivity";
     private String url;
     private Handler handler = new Handler(Looper.getMainLooper());
+    public ArrayList<TripPlanDetail> TripPlanDetailList ;
 
 
     @Override
@@ -138,15 +145,17 @@ public class DstActivity extends AppCompatActivity {
 //                        if (tripLength==2){
 //
 //                            //테마추출함수에 캠핑도 추가해서 돌리기
+                        //캠핑일 때 위도, 경도도 같이 보내기
+                        //생태 당일치기 or 1박2일일 떄만 나오게
 //                        }
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         mainTheme = chooseTheme();
                         url = "http://13.209.33.141:4000/route";
-                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destniation\":\""+selectedLocation+"\" }";
-
+                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                        //data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \"문화\",\"destination\":\""+selectedLocation+"\" }";
 
                         Log.d("데이터 보낸 거", data);
-                        Log.d("반려동물 동반 여부", withAnimaltoString);
+
 
                     }
                     // 서버 통신을 비동기적으로 실행
@@ -191,7 +200,7 @@ public class DstActivity extends AppCompatActivity {
         dst3.setText(destinations.get(2));
     }
     public String chooseTheme(){
-        String [] theme = {"레저","역사","문화","자연","힐링","쇼핑"}; //캠핑, 생태관광, 반려동물 미포함
+        String [] theme = {"레저","역사","문화","자연","힐링"}; //캠핑, 생태관광, 반려동물 미포함
 
         Random random = new Random();
         int index = random.nextInt(theme.length);
@@ -230,7 +239,10 @@ public class DstActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
             result = httpPostBodyConnection(url, data);
-            handler.post(() -> seeNetworkResult(result));// 실제 서버 통신 코드로 대체
+            handler.post(() -> {seeNetworkResult(result);
+                if(result != null && !result.isEmpty())
+                    TripPlanDetailList = parseTripPlanDetail(result);
+            });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
             return null;
@@ -328,38 +340,14 @@ public class DstActivity extends AppCompatActivity {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-            //서버에서 받아온 값을 배열에 저장하는 거
-//            JsonParser parser = new JsonParser();
-//            JsonObject jsonObject = parser.parse(result.toString()).getAsJsonObject();
-//
-//            JsonArray days = jsonObject.getAsJsonArray("day");
-//            JsonArray locations = jsonObject.getAsJsonArray("location");
-//            JsonArray addresses = jsonObject.getAsJsonArray("address");
-//            JsonArray latitudes = jsonObject.getAsJsonArray("latitude");
-//            JsonArray longitudes = jsonObject.getAsJsonArray("longitude");
-//
-//            int[] dayArray = new int[days.size()];
-//            String[] locationArray = new String[locations.size()];
-//            String[] addressArray = new String[addresses.size()];
-//            int[] latitudeArray = new int[latitudes.size()];
-//            int[] longitudeArray = new int[longitudes.size()];
-//
-//            for (int i = 0; i < days.size(); i++) {
-//                dayArray[i] = days.get(i).getAsInt();
-//                locationArray[i] = locations.get(i).getAsString();
-//                addressArray[i] = addresses.get(i).getAsString();
-//                latitudeArray[i] = latitudes.get(i).getAsInt();
-//                longitudeArray[i] = longitudes.get(i).getAsInt();
-//            }
+
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-//            intent.putExtra("days", dayArray);
-//            intent.putExtra("locations", locationArray);
-//            intent.putExtra("addresses", addressArray);
-//            intent.putExtra("latitudes", latitudeArray);
-//            intent.putExtra("longitudes", longitudeArray);
+
+            //intent.putExtra("TripPlanDetailList", TripPlanDetailList);
 
             intent.putExtra("withAnimal", withAnimal);
+            intent.putExtra("mainTheme", mainTheme);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
             intent.putExtra("previousActivity", previousActivity);
@@ -367,5 +355,61 @@ public class DstActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
             finish();
         }
+    }
+    public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
+        ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
+
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                int day = 0;
+                String location = null;
+                String address = null;
+                double latitude = 0.0;
+                double longitude = 0.0;
+
+                if (jsonObject.has("day")) {
+                    day = jsonObject.getInt("day");
+                }
+
+                if (jsonObject.has("location")) {
+                    location = jsonObject.getString("location").toString();
+                    Log.d("장소", location);
+                }
+
+                if (jsonObject.has("address")) {
+                    address = jsonObject.getString("address").toString();
+                    Log.d("주소", address);
+                }
+                if (jsonObject.has("latitude")) {
+                    latitude = jsonObject.getDouble("latitude");
+                    Log.d("위도", String.valueOf(latitude));
+                }
+                if (jsonObject.has("longitude")) {
+                    longitude = jsonObject.getDouble("longitude");
+                    Log.d("경도", String.valueOf(longitude));
+                }
+
+                if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
+                    TripPlanDetail TripPlanDetail = new TripPlanDetail(day, location, address,latitude,longitude);
+                    TripPlanDetailList.add(TripPlanDetail);
+
+                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+                    intent.putParcelableArrayListExtra("tripPlanDetailList", TripPlanDetailList);
+
+                    //Log.d("맞나?", TripPlanDetailList.toString());
+                } else {
+                    Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return TripPlanDetailList;
     }
 }
