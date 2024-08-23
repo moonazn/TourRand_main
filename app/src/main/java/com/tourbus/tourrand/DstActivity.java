@@ -130,8 +130,9 @@ public class DstActivity extends AppCompatActivity {
                 } else {
                     if(withAnimaltoString.equals("반려동물")){
                         Log.d("반려동물 동반 여부", withAnimaltoString);
-                       // String url = "http://13.209.33.141:5000/login";
-                       // String data = "{ \"id\" : \""+id+"\",\"email\" : \""+email+"\",\"nickname\":\""+nickname+"\",\"user_img\":\""+user_img+"\" }"; //json 형식 데이터
+                        url = "http://13.209.33.141:4000/pet";
+                       // String data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";; //json 형식 데이터
+                        data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"울산\" }";; //json 형식 데이터
 
 //                        new Thread(() -> {
 //                            String result = httpPostBodyConnection(url, data);
@@ -373,6 +374,7 @@ public class DstActivity extends AppCompatActivity {
 
                 if (jsonObject.has("day")) {
                     day = jsonObject.getInt("day");
+                    Log.d("몇일차", String.valueOf(day));
                 }
 
                 if (jsonObject.has("location")) {
