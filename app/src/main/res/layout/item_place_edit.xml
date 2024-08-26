@@ -40,6 +40,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/more_vertical"
+            android:visibility="gone"
             android:layout_gravity="center"/>
 
         <ImageView
@@ -48,6 +49,7 @@
             android:layout_height="20dp"
             android:src="@drawable/drag"
             android:layout_gravity="center"
+            android:visibility="gone"
             android:layout_marginLeft="10dp"/>
 
     </LinearLayout>

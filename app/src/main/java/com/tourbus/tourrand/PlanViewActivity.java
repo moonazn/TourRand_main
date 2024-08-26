@@ -104,7 +104,7 @@ public class PlanViewActivity extends AppCompatActivity {
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
         Intent intent = getIntent();
-        ArrayList<TripPlanDetail> tripPlanDetailList = getIntent().getParcelableArrayListExtra("TripPlanDetailList");
+        tripPlanDetailList = getIntent().getParcelableArrayListExtra("TripPlanDetailList");
         getTheme = getIntent().getStringExtra("mainTheme");
         updateThemeText(getTheme);
 
