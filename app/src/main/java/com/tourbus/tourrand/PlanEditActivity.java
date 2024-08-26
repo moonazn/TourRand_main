@@ -72,6 +72,10 @@ public class PlanEditActivity extends AppCompatActivity {
         public Map<Integer, List<Place>> placesMap;
     }
 
+    private ImageView edit;
+    private boolean isEditing = false;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -196,7 +200,41 @@ public class PlanEditActivity extends AppCompatActivity {
         // 처음에 1일차의 장소를 표시
         updatePlacesList(0); // 1일차 데이터를 로드
 
+
+        edit = findViewById(R.id.edit);
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isEditing = !isEditing;  // 상태를 반전시킴
+
+// 현재 보이는 첫 번째 항목의 위치를 가져옴
+                int currentDayPosition = ((LinearLayoutManager) daysRecyclerView.getLayoutManager())
+                        .findFirstVisibleItemPosition();
+
+                // 어댑터에 isEditing 상태 전달
+                placesEditAdapter.setEditing(isEditing);
+
+                if (isEditing) {
+                    // Edit 모드로 전환
+                    edit.setImageResource(R.drawable.save); // 완료 버튼 이미지로 변경
+                } else {
+                    // 수정 완료 후 원래 상태로 복귀
+                    edit.setImageResource(R.drawable.edit); // 원래 edit 버튼 이미지로 변경
+                    saveChanges();
+                }
+
+                // 현재 상태에 따라 아이템들을 다시 표시
+                placesEditAdapter.notifyDataSetChanged();
+            }
+        });
+
     }
+
+    private void saveChanges() {
+        Log.d("PlanEditActivity", "saveChanges executed");
+    }
+
     private void updatePlacesList(int day) {
         List<Place> placesList = placesMap.get(day);
         placesEditAdapter = new PlacesEditAdapter(placesList);
@@ -205,6 +243,10 @@ public class PlanEditActivity extends AppCompatActivity {
         ItemMoveCallback callback = new ItemMoveCallback(placesEditAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(placesRecyclerView);
+
+        // 어댑터에 현재 editing 상태 전달
+        placesEditAdapter.setEditing(isEditing);
+        placesEditAdapter.notifyDataSetChanged();
     }
 
 }
