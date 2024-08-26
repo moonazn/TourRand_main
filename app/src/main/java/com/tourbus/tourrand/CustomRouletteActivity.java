@@ -72,7 +72,14 @@ public class CustomRouletteActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new ServerCommunicationTask().execute();
+//                new ServerCommunicationTask().execute();
+
+                Intent intent = new Intent(CustomRouletteActivity.this, CustomQuestionActivity.class);
+                intent.putExtra("selectedLocation", selectedLocation);
+                intent.putExtra("previousActivity", previousActivity);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
             }
         });
     }
@@ -111,40 +118,40 @@ public class CustomRouletteActivity extends AppCompatActivity {
         luckyWheel.rotateWheelTo(targetIndex + 1);
     }
 
-    private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
-        ProgressDialog progressDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(CustomRouletteActivity.this);
-            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                Thread.sleep(3000); // 실제 서버 통신 코드로 대체
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            Intent intent = new Intent(CustomRouletteActivity.this, PlanViewActivity.class);
-            intent.putExtra("selectedLocation", selectedLocation);
-            intent.putExtra("previousActivity", previousActivity);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-            finish();
-        }
-    }
+//    private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
+//        ProgressDialog progressDialog;
+//
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//            progressDialog = new ProgressDialog(CustomRouletteActivity.this);
+//            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            try {
+//                Thread.sleep(3000); // 실제 서버 통신 코드로 대체
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//            if (progressDialog != null && progressDialog.isShowing()) {
+//                progressDialog.dismiss();
+//            }
+//            Intent intent = new Intent(CustomRouletteActivity.this, PlanViewActivity.class);
+//            intent.putExtra("selectedLocation", selectedLocation);
+//            intent.putExtra("previousActivity", previousActivity);
+//            startActivity(intent);
+//            overridePendingTransition(0, 0);
+//            finish();
+//        }
+//    }
 }
