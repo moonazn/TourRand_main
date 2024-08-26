@@ -42,5 +42,9 @@
 
     <color name="selected_day_background">#D3E4FF</color>
 
+    <color name="red"> #F4473F </color>
+    <color name="blue"> #5858FA </color>
+
+
 
 </resources>

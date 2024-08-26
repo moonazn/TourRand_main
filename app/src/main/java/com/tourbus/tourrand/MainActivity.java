@@ -16,7 +16,10 @@ import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +47,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView kakaoLoginButton;
     private Handler handler;
     private  String inputText;
+
+    private EditText idEditText, pwEditText;
+    private Button loginBtn;
+    private TextView join;
+
+    boolean isLoginFinish = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +134,63 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        idEditText = findViewById(R.id.idEditText);
+        pwEditText = findViewById(R.id.pwEditText);
+        loginBtn = findViewById(R.id.loginBtn);
+        join = findViewById(R.id.join);
+
+        TextView loginInfoText = findViewById(R.id.loginCheckInfo);
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String id = idEditText.getText().toString();
+                String pw = pwEditText.getText().toString();
+
+                if(isLoginValid(id, pw)) {
+
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+
+                } else {
+                    loginInfoText.setVisibility(View.VISIBLE);
+                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                    loginInfoText.startAnimation(shake);
+                }
+            }
+        });
+
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, JoinActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+
+
+
+
+            }
+        });
+
+    }
+
+    private boolean isLoginValid(String id, String pw){
+
+        //url 자체로그인 버전으로 바꾸기⭐️⭐️⭐️
+        String url = "http://13.209.33.141:5000/login";
+        String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
+        new Thread(() -> {
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            handler.post(() -> appLoginNetworkResult(result));
+        }).start();
+
+        return isLoginFinish;
     }
 
     private void showLoginFailedDialog(String message) {
@@ -283,6 +349,15 @@ public class MainActivity extends AppCompatActivity {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
+    }
+
+    public void appLoginNetworkResult(String result) {
+
+        UserManager currentUser = UserManager.getInstance();
+        currentUser.setUserNickname("realuser");
+        currentUser.setUserId("realuserid");
+
+        isLoginFinish = true;
     }
 
 }

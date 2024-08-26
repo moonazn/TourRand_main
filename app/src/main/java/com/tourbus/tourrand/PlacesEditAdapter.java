@@ -22,11 +22,16 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
         implements ItemMoveCallback.ItemTouchHelperAdapter {
 
     private List<Place> placesList;
+    private boolean isEditing = false;
+
 
     public PlacesEditAdapter(List<Place> placesList) {
         this.placesList = placesList;
     }
 
+    public void setEditing(boolean isEditing) {
+        this.isEditing = isEditing;
+    }
     @NonNull
     @Override
     public PlacesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,6 +44,15 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
         Place place = placesList.get(position);
         holder.placeName.setText(place.getPlaceName());
         holder.placeAddress.setText(place.getAddress());
+
+        // isEditing 상태에 따라 아이콘의 가시성을 설정
+        if (isEditing) {
+            holder.menu.setVisibility(View.VISIBLE);
+            holder.drag.setVisibility(View.VISIBLE);
+        } else {
+            holder.menu.setVisibility(View.GONE);
+            holder.drag.setVisibility(View.GONE);
+        }
 
         if (position < placesList.size() - 1) {
             holder.mapIcon.setVisibility(View.VISIBLE);
@@ -95,7 +109,7 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
         TextView placeName;
         TextView placeAddress;
         ImageView mapIcon;
-        ImageView menu;
+        ImageView menu, drag;
 
 
         PlacesViewHolder(@NonNull View itemView) {
@@ -104,6 +118,7 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
             placeAddress = itemView.findViewById(R.id.placeAddress);
             mapIcon = itemView.findViewById(R.id.mapIcon);
             menu = itemView.findViewById(R.id.menu);
+            drag = itemView.findViewById(R.id.drag);
         }
     }
 }
