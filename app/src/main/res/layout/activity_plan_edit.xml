@@ -17,6 +17,16 @@
         android:layout_marginTop="30dp"
         android:src="@drawable/logo"/>
 
+    <ImageView
+        android:id="@+id/edit"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/edit"/>
+
     <EditText
         android:id="@+id/tripTitleEditText"
         android:layout_width="250dp"
