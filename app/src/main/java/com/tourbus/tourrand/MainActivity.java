@@ -16,7 +16,10 @@ import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -44,6 +47,10 @@ public class MainActivity extends AppCompatActivity {
     private ImageView kakaoLoginButton;
     private Handler handler;
     private  String inputText;
+
+    private EditText idEditText, pwEditText;
+    private Button loginBtn;
+    private TextView join;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -125,6 +132,44 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        idEditText = findViewById(R.id.idEditText);
+        pwEditText = findViewById(R.id.pwEditText);
+        loginBtn = findViewById(R.id.loginBtn);
+        join = findViewById(R.id.join);
+
+        TextView loginInfoText = findViewById(R.id.loginCheckInfo);
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isLoginValid(idEditText.getText().toString(), pwEditText.getText().toString())) {
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+                } else {
+                    loginInfoText.setVisibility(View.VISIBLE);
+                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                    loginInfoText.startAnimation(shake);
+                }
+            }
+        });
+
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, JoinActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+            }
+        });
+
+    }
+
+    private boolean isLoginValid(String id, String pw){
+        return true;
     }
 
     private void showLoginFailedDialog(String message) {
