@@ -408,6 +408,24 @@ public class PlanViewActivity extends AppCompatActivity {
         // 처음에 1일차의 장소를 표시
         updatePlacesList(0); // 1일차 데이터를 로드
 
+        placesAdapter.setOnItemClickListener(place -> {
+
+            Log.d("placesdapter", "place touched : " + place.getPlaceName());
+            for (int i=0; i<tripPlanDetailList.size(); i++) {
+                if (place.getPlaceName() != tripPlanDetailList.get(i).getLocation()) {
+                    Log.d("placesdapter", "not equal : " + tripPlanDetailList.get(i).getLocation());
+
+                    continue;
+                } else {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(tripPlanDetailList.get(i).getLongitude(), tripPlanDetailList.get(i).getLatitude()));
+                    map.moveCamera(cameraUpdate);
+
+                    Log.d("placesdapter", "camera moved to " + tripPlanDetailList.get(i).getLocation());
+                    break;
+                }
+            }
+        });
+
         scheduleList.setOnClickListener(v -> showPopupMenu(v));
 
         rerollBut.setOnClickListener(v -> {
@@ -437,17 +455,7 @@ public class PlanViewActivity extends AppCompatActivity {
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
 
-        placesAdapter.setOnItemClickListener(place -> {
 
-            for (int i=0; i<locationArrayList.size(); i++) {
-                if (place.getPlaceName() != tripPlanDetailList.get(i).getLocation()) {
-                    continue;
-                } else {
-                    CameraUpdate cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(tripPlanDetailList.get(i).getLatitude(), tripPlanDetailList.get(i).getLongitude()));
-                    map.moveCamera(cameraUpdate);
-                }
-            }
-        });
     }
 
 //    private void setMapPlaces(ArrayList<Location> locationArrayList, KakaoMap kakaoMap) {
