@@ -28,7 +28,7 @@ public class ExcelParser {
                 double latitude = getNumericCellValue(latitudeCell);
 
                 locationMap.put(city, new Location(longitude, latitude));
-                Log.d("ExcelParser", "Parsed city: " + city + ", latitude: " + latitude + ", longitude: " + longitude); // 로그 추가
+//                Log.d("ExcelParser", "Parsed city: " + city + ", latitude: " + latitude + ", longitude: " + longitude); // 로그 추가
             }
             workbook.close();
         } catch (Exception e) {

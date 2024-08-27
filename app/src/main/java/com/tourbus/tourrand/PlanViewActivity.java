@@ -25,6 +25,8 @@ import com.kakao.vectormap.KakaoMapSdk;
 import com.kakao.vectormap.LatLng;
 import com.kakao.vectormap.MapLifeCycleCallback;
 import com.kakao.vectormap.MapView;
+import com.kakao.vectormap.camera.CameraUpdate;
+import com.kakao.vectormap.camera.CameraUpdateFactory;
 import com.kakao.vectormap.label.Label;
 import com.kakao.vectormap.label.LabelLayer;
 import com.kakao.vectormap.label.LabelManager;
@@ -64,7 +66,7 @@ public class PlanViewActivity extends AppCompatActivity {
     private List<String> daysList;
     private Map<Integer, List<Place>> placesMap;
     private Button saveBut, rerollBut;
-    private KakaoMap kakaoMap;
+    private KakaoMap map;
     private MapView mapView;
     private LabelManager labelManager;
 
@@ -95,7 +97,9 @@ public class PlanViewActivity extends AppCompatActivity {
         public Map<Integer, List<Place>> placesMap;
     }
     private ArrayList<TripPlanDetail> tripPlanDetailList;
+    private ArrayList<Location> locationArrayList = new ArrayList<>();;
 
+    int day;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,82 +112,190 @@ public class PlanViewActivity extends AppCompatActivity {
         getTheme = getIntent().getStringExtra("mainTheme");
         updateThemeText(getTheme);
 
+        mapView = findViewById(R.id.map);
+        mapView.start(new MapLifeCycleCallback() {
+            @Override
+            public void onMapDestroy() {
+                // 지도 API가 정상적으로 종료될 때 호출됨
+            }
+            @Override
+            public void onMapError(Exception error) {
+                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
+                Log.e("개같이 멸망", "다시");
+            }
+        }, new KakaoMapReadyCallback() {
+            @Override
+            public void onMapReady(KakaoMap kakaoMap) {
+
+                map = kakaoMap;
+                labelLayer = kakaoMap.getLabelManager().getLayer();
+
+                // 인증 후 API가 정상적으로 실행될 때 호출됨
+                LabelStyles styles = kakaoMap.getLabelManager()
+                        .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
+                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
+                        .setStyles(styles);
+                LabelLayer layer = kakaoMap.getLabelManager().getLayer();
+                Label label = layer.addLabel(options);
+
+
+                //핀 사이 선으로 표시
+                kakaoMap.getRouteLineManager();
+                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
+
+                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
+                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
+                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
+                                LatLng.from(37.394660, 127.111182),
+                                LatLng.from(37.5642135, 127.0016985)))
+                        .setStyles(stylesSet.getStyles(0));
+                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
+                        .setStylesSet(stylesSet);
+                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
+
+//                setMapPlaces(locationArrayList, kakaoMap);
+
+                if (locationArrayList.isEmpty()) {
+                    Log.d("locationArrayList", "locationArrayList is null when kakaomap is ready");
+                } else {
+                    Log.d("locationArrayList", "locationArrayList is not null when kakaomap is ready");
+
+                }
+
+                for (int i=0; i<locationArrayList.size(); i++) {
+
+                    Log.d("locationArrayList", "locationArrayList (i) - " + locationArrayList.get(i).getName());
+
+                    options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude()))
+                            .setStyles(styles);
+//                    labelLayer.addLabel(options);
+//
+//                    Log.d("setMapPlaces", "label added : " + locationArrayList.get(i).getName());
+//                    if (labelLayer != null) {
+//                        Log.d("setMapPlaces", "LabelLayer is not null.");
+//                    } else {
+//                        Log.e("setMapPlaces", "LabelLayer is null.");
+//                    }
+
+                    if (labelLayer != null) {
+                        Log.d("locationArrayList", "check : " + locationArrayList.get(i).getLatitude());
+
+                        labelLayer.addLabel(options);
+                        Log.d("setMapPlaces", "label added : " + locationArrayList.get(i).getName());
+                    } else {
+                        Log.e("setMapPlaces", "LabelLayer is null.");
+                    }
+
+                    if (i > 0) {
+                        kakaoMap.getRouteLineManager();
+
+                        stylesSet = RouteLineStylesSet.from("blueStyles",
+                                RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
+
+
+                        segment = RouteLineSegment.from(Arrays.asList(
+                                        LatLng.from(locationArrayList.get(i-1).getLatitude(), locationArrayList.get(i-1).getLongitude()),
+                                        LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude())))
+                                .setStyles(stylesSet.getStyles(0));
+                        routeoptions = RouteLineOptions.from(segment)
+                                .setStylesSet(stylesSet);
+                        routelayer.addRouteLine(routeoptions);
+                    }
+                }
+
+//                if (locationArrayList.size() > 0) {
+//                    CameraUpdate cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(locationArrayList.get(0).getLatitude(), locationArrayList.get(0).getLongitude()));
+//                    kakaoMap.moveCamera(cameraUpdate);
+//
+//                    Log.d("locationArrayList", "camera moved");
+//                }
+            }@Override
+            public LatLng getPosition() {
+                return LatLng.from(locationArrayList.get(0).getLatitude(), locationArrayList.get(0).getLongitude());
+            }
+
+            @Override
+            public int getZoomLevel() {
+                return 11;
+            }
+        });
+
+        int idx = 0;
+        placesMap = new HashMap<>();
 
         if (tripPlanDetailList != null) {
             for (TripPlanDetail detail : tripPlanDetailList) {
-                int day = detail.getDay();
+
+                day = detail.getDay();
                 String location = detail.getLocation();
                 String address = detail.getAddress();
-                double latitude = detail.getLatitude();
-                double longitude = detail.getLongitude();
+                double longitude = detail.getLatitude();
+                double latitude = detail.getLongitude();
+
                 Log.d("day", String.valueOf(day));
                 Log.d("location", location);
                 Log.d("address", address);
                 Log.d("latitude", String.valueOf(latitude));
                 Log.d("longitude", String.valueOf(latitude));
 
-                TextView placeName = findViewById(R.id.placeName);
-                placeName.setText(location);
-                Log.d("변경해라", location);
+                locationArrayList.add(idx, new Location(location, latitude, longitude));
+//                locationList.add(idx, new Location(location, latitude, longitude));
 
-                mapView = findViewById(R.id.map);
-                mapView.start(new MapLifeCycleCallback() {
-                    @Override
-                    public void onMapDestroy() {
-                        // 지도 API가 정상적으로 종료될 때 호출됨
-                    }
-                    @Override
-                    public void onMapError(Exception error) {
-                        // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
-                        Log.e("개같이 멸망", "다시");
-                    }
-                }, new KakaoMapReadyCallback() {
-                    @Override
-                    public void onMapReady(KakaoMap kakaoMap) {
-                        // 인증 후 API가 정상적으로 실행될 때 호출됨
-                        LabelStyles styles = kakaoMap.getLabelManager()
-                                .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-                        LabelOptions options = LabelOptions.from(LatLng.from(latitude, longitude))
-                                .setStyles(styles);
-                        LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-                        Label label = layer.addLabel(options);
-                        Label centerLabel = layer.addLabel(options);
-                        LabelOptions options2 = LabelOptions.from(LatLng.from(latitude, longitude))
-                                .setStyles(styles);
-                        Label label2 = layer.addLabel(options2);
-
-                        ImageView logo = findViewById(R.id.logo);
-//                        logo.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                centerLabel.changeStyles(LabelStyles.from(LabelStyle.from(R.drawable.choonsik)));
-//                                centerLabel.moveTo(LatLng.from(latitude,
-//                                        longitude), 8000);
-//                            }
-//                        });
-//
-//                        //핀 사이 선으로 표시
-//                        kakaoMap.getRouteLineManager();
-//                        RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
-//
-//                        RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
-//                                RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-//                        RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-//                                        LatLng.from(latitude, longitude),
-//                                        LatLng.from(latitude, longitude)))
-//                                .setStyles(stylesSet.getStyles(0));
-//                        RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-//                                .setStylesSet(stylesSet);
-//                        RouteLine routeLine = routelayer.addRouteLine(routeoptions);
-
-
-                    }
-                });
-
-                // 데이터를 사용하여 작업 수행
-                // 예: 로그 출력
-                System.out.println("Day: " + day + ", Location: " + location + ", Address: " + address + ", Latitude: " + latitude + ", Longitude: " + longitude);
+//                TextView placeName = findViewById(R.id.placeName);
+//                placeName.setText(location);
+                idx++;
             }
+
+//            int lastIdx = 0;
+//            for (int i = 1; i <= day; i++) {
+//                List<Place> placesList = new ArrayList<>();
+//                for(int index = lastIdx; index < tripPlanDetailList.size(); index++) {
+//                    Log.d("PlanViewActivity", "index=" + index);
+//                    Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getDay()) + " : " + index);
+//                    if (tripPlanDetailList.get(index).getDay() == i) {
+//                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress()));
+//                        Log.d("PlanViewActivity", placesList.get(index).getPlaceName());
+//                    } else {
+//                        lastIdx = index-1;
+//                        break;
+//                    }
+//                }
+//                placesMap.put(i-1, placesList);
+//            }
+
+            int lastIdx = 0;
+            for (int i = 1; i <= day; i++) {
+                List<Place> placesList = new ArrayList<>();
+                for (int index = lastIdx; index < tripPlanDetailList.size(); index++) {
+                    Log.d("PlanViewActivity", "index=" + index);
+                    Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getDay()) + " : " + index);
+                    if (tripPlanDetailList.get(index).getDay() == i) {
+                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress()));
+                        Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
+                    } else {
+                        lastIdx = index;
+                        break;
+                    }
+                }
+                placesMap.put(i-1, placesList); // i-1이 아니라 i를 사용하여 키를 맞추세요.
+            }
+
+// 만약 마지막 날에 남아 있는 장소가 있을 수 있으니, 마지막으로 `lastIdx`가 끝난 후 확인합니다.
+            if (lastIdx < tripPlanDetailList.size()) {
+                List<Place> remainingPlacesList = new ArrayList<>();
+                for (int index = lastIdx; index < tripPlanDetailList.size(); index++) {
+                    if (tripPlanDetailList.get(index).getDay() == day) {
+                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress()));
+                        Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
+                    }
+                }
+                if (!remainingPlacesList.isEmpty()) {
+                    placesMap.put(day, remainingPlacesList);
+                }
+            }
+
+        } else {
+            Log.d("PlanViewActivity", "tripPlanDetailList null");
         }
 
         String result = intent.getParcelableExtra("result");
@@ -234,59 +346,6 @@ public class PlanViewActivity extends AppCompatActivity {
         }
 
         scheduleList = findViewById(R.id.scheduleList);
-//        mapView = findViewById(R.id.map);
-//        mapView.start(new MapLifeCycleCallback() {
-//            @Override
-//            public void onMapDestroy() {
-//                // 지도 API가 정상적으로 종료될 때 호출됨
-//            }
-//            @Override
-//            public void onMapError(Exception error) {
-//                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
-//                Log.e("개같이 멸망", "다시");
-//            }
-//        }, new KakaoMapReadyCallback() {
-//            @Override
-//            public void onMapReady(KakaoMap kakaoMap) {
-//                // 인증 후 API가 정상적으로 실행될 때 호출됨
-//                LabelStyles styles = kakaoMap.getLabelManager()
-//                        .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-//                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
-//                        .setStyles(styles);
-//                LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-//                Label label = layer.addLabel(options);
-//                Label centerLabel = layer.addLabel(options);
-//                LabelOptions options2 = LabelOptions.from(LatLng.from(37.5642135, 127.0016985))
-//                        .setStyles(styles);
-//                Label label2 = layer.addLabel(options2);
-//
-//                ImageView logo = findViewById(R.id.logo);
-//                logo.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        centerLabel.changeStyles(LabelStyles.from(LabelStyle.from(R.drawable.choonsik)));
-//                        centerLabel.moveTo(LatLng.from(37.5642135,
-//                                127.0016985), 8000);
-//                    }
-//                });
-//
-//                //핀 사이 선으로 표시
-//                kakaoMap.getRouteLineManager();
-//                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
-//
-//                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
-//                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-//                                LatLng.from(37.394660, 127.111182),
-//                                LatLng.from(37.5642135, 127.0016985)))
-//                        .setStyles(stylesSet.getStyles(0));
-//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-//                        .setStylesSet(stylesSet);
-//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
-//
-//
-//            }
-//        });
 
         excelParser = new ExcelParser();
         geocodingUtils = new GeocodingUtils();
@@ -309,8 +368,9 @@ public class PlanViewActivity extends AppCompatActivity {
         // 여행 일수 RecyclerView 설정
         daysRecyclerView = findViewById(R.id.daysRecyclerView);
         daysList = new ArrayList<>();
+
         // 예시로 7일치 데이터를 추가합니다.
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 1; i <= day; i++) {
             daysList.add(i + "일차");
         }
 
@@ -330,17 +390,41 @@ public class PlanViewActivity extends AppCompatActivity {
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // 예시로 각 일차별 장소 데이터를 추가합니다.
-        placesMap = new HashMap<>();
-        for (int i = 1; i <= 7; i++) {
-            List<Place> placesList = new ArrayList<>();
-            placesList.add(new Place("장소 " + i + "-1", "주소 " + i + "-1"));
-            placesList.add(new Place("장소 " + i + "-2", "주소 " + i + "-2"));
-            placesList.add(new Place("장소 " + i + "-3", "주소 " + i + "-3"));
-            placesMap.put(i - 1, placesList);
-        }
+//        placesMap = new HashMap<>();
+//        for(int index = 0; index < tripPlanDetailList.size(); index++) {
+//            if (tripPlanDetailList.get(index).getDay() == index+1) {
+//
+//            }
+//
+//        }
+//        for (int i = 1; i <= 7; i++) {
+//            List<Place> placesList = new ArrayList<>();
+//            placesList.add(new Place("장소 " + i + "-1", "주소 " + i + "-1"));
+//            placesList.add(new Place("장소 " + i + "-2", "주소 " + i + "-2"));
+//            placesList.add(new Place("장소 " + i + "-3", "주소 " + i + "-3"));
+//            placesMap.put(i - 1, placesList);
+//        }
 
         // 처음에 1일차의 장소를 표시
         updatePlacesList(0); // 1일차 데이터를 로드
+
+        placesAdapter.setOnItemClickListener(place -> {
+
+            Log.d("placesdapter", "place touched : " + place.getPlaceName());
+            for (int i=0; i<tripPlanDetailList.size(); i++) {
+                if (place.getPlaceName() != tripPlanDetailList.get(i).getLocation()) {
+                    Log.d("placesdapter", "not equal : " + tripPlanDetailList.get(i).getLocation());
+
+                    continue;
+                } else {
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(tripPlanDetailList.get(i).getLongitude(), tripPlanDetailList.get(i).getLatitude()));
+                    map.moveCamera(cameraUpdate);
+
+                    Log.d("placesdapter", "camera moved to " + tripPlanDetailList.get(i).getLocation());
+                    break;
+                }
+            }
+        });
 
         scheduleList.setOnClickListener(v -> showPopupMenu(v));
 
@@ -370,7 +454,46 @@ public class PlanViewActivity extends AppCompatActivity {
         List<Place> placesList = placesMap.get(day);
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
+
+
     }
+
+//    private void setMapPlaces(ArrayList<Location> locationArrayList, KakaoMap kakaoMap) {
+//
+//
+//        LabelStyles styles = kakaoMap.getLabelManager()
+//                .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
+//
+//        for (int i=0; i<locationArrayList.size(); i++) {
+//
+//            LabelOptions options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude()))
+//                    .setStyles(styles);
+//            labelLayer = kakaoMap.getLabelManager().getLayer();
+//            labelLayer.addLabel(options);
+//
+//            Log.d("setMapPlaces", "label added : " + locationArrayList.get(i).getName());
+//            if (labelLayer != null) {
+//                Log.d("setMapPlaces", "LabelLayer is not null.");
+//            } else {
+//                Log.e("setMapPlaces", "LabelLayer is null.");
+//            }
+//
+//            if (i > 0) {
+//                kakaoMap.getRouteLineManager();
+//                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
+//
+//                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
+//                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
+//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
+//                                LatLng.from(locationArrayList.get(i-1).getLatitude(), locationArrayList.get(i-1).getLongitude()),
+//                                LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude())))
+//                        .setStyles(stylesSet.getStyles(0));
+//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
+//                        .setStylesSet(stylesSet);
+//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
+//            }
+//        }
+//    }
 
     private void rerollSchedule() {
         // 서버에서 랜덤 일정 데이터 받아오기

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private Button loginBtn;
     private TextView join;
 
-    boolean isLoginFinish = false;
+    boolean isLoginFinish = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -170,10 +170,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
-
-
-
-
             }
         });
 

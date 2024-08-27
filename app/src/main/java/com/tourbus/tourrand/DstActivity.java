@@ -56,6 +56,7 @@ public class DstActivity extends AppCompatActivity {
     private String url;
     private Handler handler = new Handler(Looper.getMainLooper());
     public ArrayList<TripPlanDetail> TripPlanDetailList ;
+    String planDate;
 
 
     @Override
@@ -74,9 +75,9 @@ public class DstActivity extends AppCompatActivity {
         // 이전 액티비티들에서 전달된 데이터 받기
         Intent intent = getIntent();
         withAnimal = intent.getBooleanExtra("withAnimal", false);
-        String planDate = intent.getStringExtra("planDate");
+        planDate = intent.getStringExtra("planDate");
         departureDocument = intent.getParcelableExtra("departureDocument");
-        Place destination = intent.getParcelableExtra("destination");
+//        destination = intent.getParcelableExtra("destination");
         int tripLength = intent.getIntExtra("tripLength", 1);
 
 
@@ -89,8 +90,8 @@ public class DstActivity extends AppCompatActivity {
 
 
 
-        // PreTrip 객체 생성
-        PreTrip preTrip = new PreTrip(withAnimal, tripLength, departureDocument, destination);
+//        // PreTrip 객체 생성
+//        PreTrip preTrip = new PreTrip(withAnimal, tripLength, departureDocument, selectedLocation);
 
         // 랜덤으로 목적지 3개 선택하여 TextView에 표시
         displayRandomDestinations();
@@ -132,7 +133,7 @@ public class DstActivity extends AppCompatActivity {
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         url = "http://13.209.33.141:4000/pet";
                        // String data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";; //json 형식 데이터
-                        data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"울산\" }";; //json 형식 데이터
+                        data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
 //                        new Thread(() -> {
 //                            String result = httpPostBodyConnection(url, data);
@@ -345,7 +346,7 @@ public class DstActivity extends AppCompatActivity {
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
 
-            //intent.putExtra("TripPlanDetailList", TripPlanDetailList);
+            intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
 
             intent.putExtra("withAnimal", withAnimal);
             intent.putExtra("mainTheme", mainTheme);
@@ -396,11 +397,11 @@ public class DstActivity extends AppCompatActivity {
                 }
 
                 if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
-                    TripPlanDetail TripPlanDetail = new TripPlanDetail(day, location, address,latitude,longitude);
+                    TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, departureDocument.getPlaceName(), day, planDate, location, address,latitude,longitude);
                     TripPlanDetailList.add(TripPlanDetail);
 
-                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-                    intent.putParcelableArrayListExtra("tripPlanDetailList", TripPlanDetailList);
+//                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+//                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
 
                     //Log.d("맞나?", TripPlanDetailList.toString());
                 } else {

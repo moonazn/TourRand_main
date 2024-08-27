@@ -20,6 +20,16 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
 
     private List<Place> placesList;
 
+    private OnItemClickListener onItemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Place place);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
+
     public PlacesAdapter(List<Place> placesList) {
         this.placesList = placesList;
     }
@@ -36,6 +46,12 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
         Place place = placesList.get(position);
         holder.placeName.setText(place.getPlaceName());
         holder.placeAddress.setText(place.getAddress());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(place);
+            }
+        });
 
         if (position < placesList.size() - 1) {
             holder.mapIcon.setVisibility(View.VISIBLE);
