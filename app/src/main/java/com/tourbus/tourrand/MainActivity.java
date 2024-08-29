@@ -22,11 +22,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -141,25 +144,66 @@ public class MainActivity extends AppCompatActivity {
 
         TextView loginInfoText = findViewById(R.id.loginCheckInfo);
 
+//        loginBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                String id = idEditText.getText().toString();
+//                String pw = pwEditText.getText().toString();
+//
+//                if(isLoginValid(id, pw)) {
+//
+//                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                    finish();
+//
+//                } else {
+//                    loginInfoText.setVisibility(View.VISIBLE);
+//                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+//                    loginInfoText.startAnimation(shake);
+//                }
+//            }
+//        });
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String id = idEditText.getText().toString().trim();
+                String pw = pwEditText.getText().toString().trim();
 
-                String id = idEditText.getText().toString();
-                String pw = pwEditText.getText().toString();
+                String url = "http://13.209.33.141:4000/login";
+                String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
 
-                if(isLoginValid(id, pw)) {
 
-                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    finish();
+                new Thread(() -> {
+                    String result = httpPostBodyConnection(url, data);
+                    // 처리 결과 확인
+                    handler.post(() -> {
+                        seeNetworkResult(result);
+                        try {
+                            // JSON 문자열을 JSONObject로 변환
+                            JSONObject jsonObject = new JSONObject(result);
 
-                } else {
-                    loginInfoText.setVisibility(View.VISIBLE);
-                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
-                    loginInfoText.startAnimation(shake);
-                }
+                            // "userId" 키에 해당하는 값 추출
+                            String userId = jsonObject.getString("id");
+
+                            if(userId.equals("로그인 실패")){
+                                Toast.makeText(MainActivity.this, userId, Toast.LENGTH_SHORT).show();
+                            }else {
+                                Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            }
+
+                            // 추출한 userId 출력
+                            System.out.println("User ID: " + userId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }).start();
             }
         });
 

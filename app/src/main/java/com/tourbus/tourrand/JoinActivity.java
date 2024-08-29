@@ -3,6 +3,7 @@ package com.tourbus.tourrand;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -35,6 +36,7 @@ public class JoinActivity extends AppCompatActivity {
     private Button joinBtn;
 
     private boolean isIdDuplicated = false;
+    private boolean idChecked = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,19 +52,56 @@ public class JoinActivity extends AppCompatActivity {
         joinBtn = findViewById(R.id.joinBtn);
 
         // 아이디 중복 확인 버튼 클릭 리스너
+//        idCheckBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String enteredId = idEditText.getText().toString().trim();
+//                if (isIdDuplicated(enteredId)) {
+//                    idCheckInfo.setText("중복된 아이디입니다.");
+//                    idCheckInfo.setTextColor(getResources().getColor(R.color.red)); // red 컬러를 정의하세요
+//                    idCheckInfo.setVisibility(View.VISIBLE);
+//                } else {
+//                    idCheckInfo.setText("사용 가능한 아이디입니다.");
+//                    idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
+//                    idCheckInfo.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
+        handler = new Handler(Looper.getMainLooper());
+
         idCheckBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String enteredId = idEditText.getText().toString().trim();
-                if (isIdDuplicated(enteredId)) {
-                    idCheckInfo.setText("중복된 아이디입니다.");
-                    idCheckInfo.setTextColor(getResources().getColor(R.color.red)); // red 컬러를 정의하세요
-                    idCheckInfo.setVisibility(View.VISIBLE);
-                } else {
-                    idCheckInfo.setText("사용 가능한 아이디입니다.");
-                    idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
-                    idCheckInfo.setVisibility(View.VISIBLE);
-                }
+                String id = idEditText.getText().toString();
+                String url = "http://13.209.33.141:4000/check_id";
+                String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
+
+                new Thread(() -> {
+                    String result = httpPostBodyConnection(url, data);
+
+                    if (handler != null) {
+                        handler.post(() -> {
+                            seeNetworkResult(result);
+                            Log.d("Result", result);
+
+                            // 서버에서 받은 결과에 따라 idChecked 값 설정
+                            idChecked = Boolean.parseBoolean(result);
+
+                            // UI 업데이트는 UI 스레드에서 수행
+                            if(idChecked = true) {
+                                idCheckInfo.setText("사용 가능한 아이디입니다.");
+                                idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
+                            } else {
+                                idCheckInfo.setText("중복된 아이디입니다.");
+                                idCheckInfo.setTextColor(getResources().getColor(R.color.red)); // red 컬러를 정의하세요
+                            }
+                            idCheckInfo.setVisibility(View.VISIBLE);
+                        });
+                    } else {
+                        // handler가 null일 경우의 예외 처리
+                        Log.e("JoinActivity", "Handler is null and cannot post Runnable.");
+                    }
+                }).start();
             }
         });
 
@@ -92,6 +131,48 @@ public class JoinActivity extends AppCompatActivity {
         });
 
         // 가입 완료 버튼 클릭 리스너
+//        joinBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String id = idEditText.getText().toString().trim();
+//                String pw = pwEditText.getText().toString().trim();
+//                String nickname = nicknameEditText.getText().toString().trim();
+//
+//                if (id.isEmpty() || pw.isEmpty() || nickname.isEmpty()) {
+//                    Toast.makeText(JoinActivity.this, "모든 필드를 입력하세요.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                if (isIdDuplicated(id)) {
+//                    Toast.makeText(JoinActivity.this, "아이디가 중복되었습니다.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                if (!isNicknameValid(nickname)) {
+//                    Toast.makeText(JoinActivity.this, "닉네임이 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                // 여기서 회원가입 요청을 서버에 보낼 수 있습니다.
+//
+//                //url 회원가입 버전으로 바꾸기⭐️⭐️⭐️
+//                String url = "http://13.209.33.141:5000/login";
+//                String data = "{ \"id\" : \""+id+"\",\"pw\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
+//                new Thread(() -> {
+//                    String result = httpPostBodyConnection(url, data);
+//                    // 처리 결과 확인
+//                    handler.post(() -> seeNetworkResult(result));
+//                }).start();
+//
+//                Toast.makeText(JoinActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+//
+//                Intent intent = new Intent(JoinActivity.this, MainActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//
+//                finish(); // 액티비티 종료
+//            }
+//        });
         joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,33 +180,18 @@ public class JoinActivity extends AppCompatActivity {
                 String pw = pwEditText.getText().toString().trim();
                 String nickname = nicknameEditText.getText().toString().trim();
 
-                if (id.isEmpty() || pw.isEmpty() || nickname.isEmpty()) {
-                    Toast.makeText(JoinActivity.this, "모든 필드를 입력하세요.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+                String url = "http://13.209.33.141:4000/join";
+                String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 
-                if (isIdDuplicated(id)) {
-                    Toast.makeText(JoinActivity.this, "아이디가 중복되었습니다.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
-                if (!isNicknameValid(nickname)) {
-                    Toast.makeText(JoinActivity.this, "닉네임이 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // 여기서 회원가입 요청을 서버에 보낼 수 있습니다.
-
-                //url 회원가입 버전으로 바꾸기⭐️⭐️⭐️
-                String url = "http://13.209.33.141:5000/login";
-                String data = "{ \"id\" : \""+id+"\",\"pw\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
                 new Thread(() -> {
                     String result = httpPostBodyConnection(url, data);
                     // 처리 결과 확인
-                    handler.post(() -> seeNetworkResult(result));
+                    handler.post(() -> {
+                        seeNetworkResult(result);
+                        Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
+                    });
                 }).start();
-
-                Toast.makeText(JoinActivity.this, "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(JoinActivity.this, MainActivity.class);
                 startActivity(intent);
