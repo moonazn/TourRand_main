@@ -2,6 +2,7 @@ package com.tourbus.tourrand;
 
 import static android.util.Base64.encodeToString;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -61,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageView icon = findViewById(R.id.icon);
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
@@ -171,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 String id = idEditText.getText().toString().trim();
                 String pw = pwEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:4000/login";
+                String url = "http://13.209.33.141:5000/login";
                 String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
 
 
@@ -190,7 +200,14 @@ public class MainActivity extends AppCompatActivity {
                             if(userId.equals("로그인 실패")){
                                 Toast.makeText(MainActivity.this, userId, Toast.LENGTH_SHORT).show();
                             }else {
+                                // 싱글톤 인스턴스 가져오기
+                                UserManager userManager = UserManager.getInstance();
+
                                 Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
+                                // 값 저장하기
+                                userManager.setUserNickname(userId);
+                                Log.d("userId",userId);
+
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);

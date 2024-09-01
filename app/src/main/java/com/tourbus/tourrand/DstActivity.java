@@ -131,7 +131,7 @@ public class DstActivity extends AppCompatActivity {
                 } else {
                     if(withAnimaltoString.equals("반려동물")){
                         Log.d("반려동물 동반 여부", withAnimaltoString);
-                        url = "http://13.209.33.141:4000/pet";
+                        url = "http://13.209.33.141:5000/pet";
                        // String data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";; //json 형식 데이터
                         data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
@@ -152,7 +152,7 @@ public class DstActivity extends AppCompatActivity {
 //                        }
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         mainTheme = chooseTheme();
-                        url = "http://13.209.33.141:4000/route";
+                        url = "http://13.209.33.141:5000/route";
                         data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                         //data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \"문화\",\"destination\":\""+selectedLocation+"\" }";
 

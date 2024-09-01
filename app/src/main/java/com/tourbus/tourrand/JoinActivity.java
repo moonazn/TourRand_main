@@ -73,7 +73,7 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String id = idEditText.getText().toString();
-                String url = "http://13.209.33.141:4000/check_id";
+                String url = "http://13.209.33.141:5000/check_id";
                 String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
 
                 new Thread(() -> {
@@ -88,7 +88,7 @@ public class JoinActivity extends AppCompatActivity {
                             idChecked = Boolean.parseBoolean(result);
 
                             // UI 업데이트는 UI 스레드에서 수행
-                            if(idChecked = true) {
+                            if(idChecked == true) {
                                 idCheckInfo.setText("사용 가능한 아이디입니다.");
                                 idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
                             } else {
@@ -180,7 +180,7 @@ public class JoinActivity extends AppCompatActivity {
                 String pw = pwEditText.getText().toString().trim();
                 String nickname = nicknameEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:4000/join";
+                String url = "http://13.209.33.141:5000/join";
                 String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 
 
