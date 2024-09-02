@@ -123,6 +123,36 @@ public class PlanViewActivity extends AppCompatActivity {
         String selectedLocation = getIntent().getStringExtra("selectedLocation");
         String tour_name = selectedLocation + getTheme + "여행";
 
+        TextView semiTheme = findViewById(R.id.themaSemiText);
+
+        switch (getTheme){
+            case "힐링":
+                semiTheme.setText("이번 여행은 마음을 편안하게 만들어줄 것입니다. "+selectedLocation+"의 푸르른 자연과 아름다운 풍경을 만끽하며 즐거운 여행을 떠나보세요!");
+                break;
+            case "레저":
+                semiTheme.setText("굳어있던 몸을 움직일 시간입니다😄 다양한 액티비티를 즐기며, 몸과 마음을 재충전해보세요!");
+                break;
+            case "역사":
+                semiTheme.setText("역사를 잊은 민족에게 미래란 없다! 과거의 이야기가 숨 쉬는 이곳에서, 역사의 발자취를 따라 여행하며 시간을 거슬러 올라가 보세요.");
+                break;
+            case "문화":
+                semiTheme.setText("다채로운 문화가 어우러진 "+selectedLocation+"에서, 지역 특유의 전통과 예술을 깊이 있게 체험해보세요.");
+                break;
+            case "자연":
+                semiTheme.setText("일상의 번잡함을 내려놓고 마음껏 자연의 품에 안겨보세요. 맑은 공기와 푸른 경관이 선사하는 평온함을 만끽할 수 있습니다.");
+                break;
+            case "생태관광":
+                semiTheme.setText("청정 자연을 보호하며 즐길수 있는 생태관광! \n환경을 생각하는 여행으로 지구와 함께 숨 쉬어보세요");
+                break;
+            case "캠핑":
+                semiTheme.setText("별빛 가득한 하늘 아래 캠핑을 즐기며, 자연 속에서 소박한 행복을 만끽해보세요.");
+                break;
+            default:
+                //디폴트 나올 경우가 반려동물밖에 없나 기억이 안 남 생태랑 캠핑 어케 하기로 했드라? 사용자가 선택하는 지역에 따라서 메인테마로 넣든가 말든가 결정하기로 했던 거 같음
+                semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함꼐 색다른 여행을 떠나보세요!");
+                break;
+        }
+
         mapView = findViewById(R.id.map);
         mapView.start(new MapLifeCycleCallback() {
             @Override
@@ -310,7 +340,7 @@ public class PlanViewActivity extends AppCompatActivity {
         }
 
         String result = intent.getParcelableExtra("result");
-        TextView semiTheme = findViewById(R.id.themaSemiText);
+
         //semiTheme.setText(result.toString());
 
         String previousActivity = intent.getStringExtra("previousActivity");
