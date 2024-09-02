@@ -31,11 +31,14 @@ public class MyPageActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         profileImg = findViewById(R.id.profileImg);
 
-        name.setText(SplashActivity.currentUser.getName() + "님, 환영합니다!");
-        email.setText("이메일 : " + SplashActivity.currentUser.getEmail());
+//        name.setText(SplashActivity.currentUser.getName() + "님, 환영합니다!");
+//        email.setText("이메일 : " + SplashActivity.currentUser.getEmail());
 
-        Glide.with(profileImg).load(SplashActivity.currentUser.getProfileImage())
-                .circleCrop().into(profileImg);
+        name.setText(UserManager.getInstance().getUserNickname() + "님, 환영합니다!");
+        email.setText("");
+
+//        Glide.with(profileImg).load(SplashActivity.currentUser.getProfileImage())
+//                .circleCrop().into(profileImg);
 
 
         logout = findViewById(R.id.logout);
@@ -44,21 +47,23 @@ public class MyPageActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserApiClient.getInstance().logout(new Function1<Throwable, Unit>() {
-                    @Override
-                    public Unit invoke(Throwable throwable) {
-                        SplashActivity.currentUser.deleteUser();
-                        System.out.println("currentUser deleted");
-
-
-                        Intent intent = new Intent(MyPageActivity.this, HomeActivity.class);
+//                UserApiClient.getInstance().logout(new Function1<Throwable, Unit>() {
+//                    @Override
+//                    public Unit invoke(Throwable throwable) {
+//                        SplashActivity.currentUser.deleteUser();
+//                        System.out.println("currentUser deleted");
+//
+//
+//                        Intent intent = new Intent(MyPageActivity.this, HomeActivity.class);
+//                        startActivity(intent);
+////                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+////                        finish();
+//
+//                        return null;
+//                    }
+//                });
+                        Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                         startActivity(intent);
-//                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                        finish();
-
-                        return null;
-                    }
-                });
             }
         });
         backToHomeBtn.setOnClickListener(new View.OnClickListener() {

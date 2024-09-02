@@ -459,7 +459,7 @@ public class PlanViewActivity extends AppCompatActivity {
             String userId = userManager.getUserNickname();
 
             String url = "http://13.209.33.141:5000/confirmed";
-            String data = "{ \"id\" : \""+userId+"\", \"tour_name\" : \""+tour_name+"\" , \"planDate\" : \"2024.08.27~2024.08.31\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";;
+            String data = "{ \"id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
             Log.d("data", data);
             new Thread(() -> {
                 getData = httpPostBodyConnection(url, data);
