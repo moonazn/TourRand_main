@@ -73,7 +73,7 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String id = idEditText.getText().toString();
-                String url = "http://13.209.33.141:4000/check_id";
+                String url = "http://13.209.33.141:5000/check_id";
                 String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
 
                 new Thread(() -> {
@@ -86,9 +86,9 @@ public class JoinActivity extends AppCompatActivity {
 
                             // 서버에서 받은 결과에 따라 idChecked 값 설정
                             idChecked = Boolean.parseBoolean(result);
-
+                            Log.d("JoinActivity", String.valueOf(idChecked));
                             // UI 업데이트는 UI 스레드에서 수행
-                            if(idChecked = true) {
+                            if(idChecked == true) {
                                 idCheckInfo.setText("사용 가능한 아이디입니다.");
                                 idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
                             } else {
@@ -180,7 +180,7 @@ public class JoinActivity extends AppCompatActivity {
                 String pw = pwEditText.getText().toString().trim();
                 String nickname = nicknameEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:4000/join";
+                String url = "http://13.209.33.141:5000/join";
                 String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 
 
@@ -205,18 +205,28 @@ public class JoinActivity extends AppCompatActivity {
     // 아이디 중복 확인
     private boolean isIdDuplicated(String id) {
 
-        //url 아이디 중복확인 버전으로 바꾸기⭐️⭐️⭐️
+        String url = "http://13.209.33.141:5000/check_id";
+        String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
 
-        String url = "http://13.209.33.141:5000/login";
-        String data = "{ \"id\" : \""+id+"\" }"; //json 형식 데이터
         new Thread(() -> {
             String result = httpPostBodyConnection(url, data);
-            // 처리 결과 확인
-            handler.post(() -> checkIdDuplicateResult(result));
-        }).start();
 
-//        return isIdDuplicated;
-        return false;
+            if (handler != null) {
+                handler.post(() -> {
+                    seeNetworkResult(result);
+                    Log.d("Result", result);
+
+                    // 서버에서 받은 결과에 따라 idChecked 값 설정
+                    isIdDuplicated = Boolean.parseBoolean(result);
+                    Log.d("JoinActivity", String.valueOf(idChecked));
+                    // UI 업데이트는 UI 스레드에서 수행
+                });
+            } else {
+                // handler가 null일 경우의 예외 처리
+                Log.e("JoinActivity", "Handler is null and cannot post Runnable.");
+            }
+        }).start();
+        return !isIdDuplicated;
     }
 
     // 닉네임 유효성 검사 (간단한 예시)
