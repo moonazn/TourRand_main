@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
                 String id = idEditText.getText().toString().trim();
                 String pw = pwEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:4000/login";
+                String url = "http://13.209.33.141:5000/login";
                 String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
 
 
@@ -188,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
                             String userId = jsonObject.getString("id");
 
                             if(userId.equals("로그인 실패")){
-                                Toast.makeText(MainActivity.this, userId, Toast.LENGTH_SHORT).show();
+                                loginInfoText.setVisibility(View.VISIBLE);
+                                Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                                loginInfoText.startAnimation(shake);
                             }else {
                                 Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
@@ -219,19 +221,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean isLoginValid(String id, String pw){
-
-        //url 자체로그인 버전으로 바꾸기⭐️⭐️⭐️
-        String url = "http://13.209.33.141:5000/login";
-        String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
-        new Thread(() -> {
-            String result = httpPostBodyConnection(url, data);
-            // 처리 결과 확인
-            handler.post(() -> appLoginNetworkResult(result));
-        }).start();
-
-        return isLoginFinish;
-    }
+//    private boolean isLoginValid(String id, String pw){
+//
+//        //url 자체로그인 버전으로 바꾸기⭐️⭐️⭐️
+//        String url = "http://13.209.33.141:4000/login";
+//        String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
+//        new Thread(() -> {
+//            String result = httpPostBodyConnection(url, data);
+//            // 처리 결과 확인
+//            handler.post(() -> appLoginNetworkResult(result));
+//            try {
+//                // JSON 문자열을 JSONObject로 변환
+//                JSONObject jsonObject = new JSONObject(result);
+//
+//                // "userId" 키에 해당하는 값 추출
+//                String userId = jsonObject.getString("id");
+//
+//                if (userId.equals("로그인 실패")) {
+//                    return false;
+//                } else {
+//                    return true;
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//
+//    }
 
     private void showLoginFailedDialog(String message) {
         new AlertDialog.Builder(this)
