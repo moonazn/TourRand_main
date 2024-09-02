@@ -2,6 +2,7 @@ package com.tourbus.tourrand;
 
 import static android.util.Base64.encodeToString;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -61,6 +62,15 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ImageView icon = findViewById(R.id.icon);
+        icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
@@ -192,7 +202,14 @@ public class MainActivity extends AppCompatActivity {
                                 Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
                                 loginInfoText.startAnimation(shake);
                             }else {
+                                // 싱글톤 인스턴스 가져오기
+                                UserManager userManager = UserManager.getInstance();
+
                                 Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
+                                // 값 저장하기
+                                userManager.setUserNickname(userId);
+                                Log.d("userId",userId);
+
                                 Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                                 startActivity(intent);
                                 overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
