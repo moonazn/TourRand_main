@@ -40,6 +40,8 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
                 Intent intent = new Intent(context, PlanEditActivity.class);
                 context.startActivity(intent);
 
+
+
             }
         });
 
