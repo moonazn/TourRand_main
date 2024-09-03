@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,6 +57,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
                 onItemClickListener.onItemClick(place);
             }
         });
+        String apiKey = "856b60d15352dfaae39da72e011fc9c3";
 
         if (position < placesList.size() - 1) {
             holder.mapIcon.setVisibility(View.VISIBLE);
@@ -82,28 +84,33 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
 //                    Toast.makeText(context, "카카오맵이 설치되어 있지 않습니다.", Toast.LENGTH_LONG).show();
 //                }
 
-                //카카오맵이 설치되어있지 않으면 예외 뜸 ..‼️
                 Place nextPlace = placesList.get(position + 1);
 
-                String apiKey = "856b60d15352dfaae39da72e011fc9c3";  // YOUR_API_KEY를 실제 키로 대체하세요.
-                String origin = place.getLatitude() + "," + place.getLongitude();
-                String destination = nextPlace.getLatitude() + "," + nextPlace.getLongitude();
+                String origin = place.getLongitude() + "," + place.getLatitude();
+                String destination = nextPlace.getLongitude() + "," + nextPlace.getLatitude();
+                Log.d("PlacesAdapter", "origin: " + origin + ", dest: " + destination);
 
                 KakaoApiService service = ApiClient.createService();
                 service.getDrivingTime(apiKey, origin, destination).enqueue(new Callback<KakaoResponse>() {
                     @Override
                     public void onResponse(Call<KakaoResponse> call, Response<KakaoResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
+                            Log.d("PlacesAdapter", response.body().toString()); // 응답 내용을 로그로 출력
+
                             int duration = response.body().getRoutes().get(0).getSummary().getDuration();
                             int minutes = duration / 60;
                             holder.time.setText(minutes + "분 소요 예정");
                         } else {
+                            Log.e("PlacesAdapter", "Response not successful or body is null");
+
                             holder.time.setText("시간 계산 불가");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<KakaoResponse> call, Throwable t) {
+                        Log.e("PlacesAdapter", "api failure: "+ t.getMessage(), t);
+
                         holder.time.setText("오류 발생");
                     }
                 });
