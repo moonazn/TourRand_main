@@ -77,4 +77,8 @@ dependencies {
     implementation 'com.github.mmoamenn:LuckyWheel_Android:0.3.0'
     implementation 'com.github.mmoamenn:LuckyWheel_Android:0.3.0'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+
+
 }

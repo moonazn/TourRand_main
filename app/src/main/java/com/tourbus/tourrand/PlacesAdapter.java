@@ -10,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,6 +62,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
             holder.mapIcon.setOnClickListener(v -> {
                 // 카카오맵 실행: 두 장소 사이의 경로를 표시
                 Context context = v.getContext();
+
 //                if (isAppInstalled(context, "net.daum.android.map")) {
 //                    // 카카오맵이 설치되어 있는 경우
 //                    Place nextPlace = placesList.get(position + 1);
@@ -79,8 +84,32 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
 
                 //카카오맵이 설치되어있지 않으면 예외 뜸 ..‼️
                 Place nextPlace = placesList.get(position + 1);
-                String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
-                        "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
+
+                String apiKey = "856b60d15352dfaae39da72e011fc9c3";  // YOUR_API_KEY를 실제 키로 대체하세요.
+                String origin = place.getLatitude() + "," + place.getLongitude();
+                String destination = nextPlace.getLatitude() + "," + nextPlace.getLongitude();
+
+                KakaoApiService service = ApiClient.createService();
+                service.getDrivingTime(apiKey, origin, destination).enqueue(new Callback<KakaoResponse>() {
+                    @Override
+                    public void onResponse(Call<KakaoResponse> call, Response<KakaoResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            int duration = response.body().getRoutes().get(0).getSummary().getDuration();
+                            int minutes = duration / 60;
+                            holder.time.setText(minutes + "분 소요 예정");
+                        } else {
+                            holder.time.setText("시간 계산 불가");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<KakaoResponse> call, Throwable t) {
+                        holder.time.setText("오류 발생");
+                    }
+                });
+
+                String url = "kakaomap://route?sp=" + origin +
+                        "&ep=" + destination + "&by=CAR";
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 context.startActivity(intent);
 
@@ -109,12 +138,14 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
         TextView placeName;
         TextView placeAddress;
         ImageView mapIcon;
+        TextView time;
 
         PlacesViewHolder(@NonNull View itemView) {
             super(itemView);
             placeName = itemView.findViewById(R.id.placeName);
             placeAddress = itemView.findViewById(R.id.placeAddress);
             mapIcon = itemView.findViewById(R.id.mapIcon);
+            time = itemView.findViewById(R.id.time);
         }
     }
 }
