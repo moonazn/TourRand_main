@@ -57,7 +57,7 @@ public class DstActivity extends AppCompatActivity {
     private Handler handler = new Handler(Looper.getMainLooper());
     public ArrayList<TripPlanDetail> TripPlanDetailList ;
     String planDate;
-
+    int tripLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class DstActivity extends AppCompatActivity {
         planDate = intent.getStringExtra("planDate");
         departureDocument = intent.getParcelableExtra("departureDocument");
 //        destination = intent.getParcelableExtra("destination");
-        int tripLength = intent.getIntExtra("tripLength", 1);
+        tripLength = intent.getIntExtra("tripLength", 1);
 
 
         if(withAnimal == true){
@@ -392,6 +392,7 @@ public class DstActivity extends AppCompatActivity {
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
             intent.putExtra("previousActivity", previousActivity);
+            intent.putExtra("tripLength", tripLength);
             startActivity(intent);
             overridePendingTransition(0, 0);
             finish();
