@@ -326,7 +326,7 @@ public class PlanViewActivity extends AppCompatActivity {
                 List<Place> remainingPlacesList = new ArrayList<>();
                 for (int index = lastIdx; index < tripPlanDetailList.size(); index++) {
                     if (tripPlanDetailList.get(index).getDay() == day) {
-                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress()));
+                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLatitude(), tripPlanDetailList.get(index).getLongitude()));
                         Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
                     }
                 }

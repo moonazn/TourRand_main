@@ -18,6 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Collections;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.PlacesViewHolder>
         implements ItemMoveCallback.ItemTouchHelperAdapter {
 
@@ -59,10 +63,39 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
             holder.mapIcon.setOnClickListener(v -> {
                 Context context = v.getContext();
                 Place nextPlace = placesList.get(position + 1);
-                String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
-                        "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
+
+                String apiKey = "856b60d15352dfaae39da72e011fc9c3";  // YOUR_API_KEY를 실제 키로 대체하세요.
+                String origin = place.getLatitude() + "," + place.getLongitude();
+                String destination = nextPlace.getLatitude() + "," + nextPlace.getLongitude();
+
+                KakaoApiService service = ApiClient.createService();
+                service.getDrivingTime(apiKey, origin, destination).enqueue(new Callback<KakaoResponse>() {
+                    @Override
+                    public void onResponse(Call<KakaoResponse> call, Response<KakaoResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            int duration = response.body().getRoutes().get(0).getSummary().getDuration();
+                            int minutes = duration / 60;
+                            holder.time.setText(minutes + "분 소요 예정");
+                        } else {
+                            holder.time.setText("시간 계산 불가");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<KakaoResponse> call, Throwable t) {
+                        holder.time.setText("오류 발생");
+                    }
+                });
+
+                String url = "kakaomap://route?sp=" + origin +
+                        "&ep=" + destination + "&by=CAR";
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                 context.startActivity(intent);
+
+//                String url = "kakaomap://route?sp=" + "37.53723,127.00551" +
+//                        "&ep=" + "37.49795,127.027637&by=CAR";  //PUBLICTRANSIT
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                context.startActivity(intent);
             });
         } else {
             holder.mapIcon.setVisibility(View.GONE);
@@ -108,6 +141,7 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
     class PlacesViewHolder extends RecyclerView.ViewHolder {
         TextView placeName;
         TextView placeAddress;
+        TextView time;
         ImageView mapIcon;
         ImageView menu, drag;
 
@@ -116,6 +150,7 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
             super(itemView);
             placeName = itemView.findViewById(R.id.placeName);
             placeAddress = itemView.findViewById(R.id.placeAddress);
+            time = itemView.findViewById(R.id.time);
             mapIcon = itemView.findViewById(R.id.mapIcon);
             menu = itemView.findViewById(R.id.menu);
             drag = itemView.findViewById(R.id.drag);

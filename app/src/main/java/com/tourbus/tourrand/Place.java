@@ -8,15 +8,28 @@ import androidx.annotation.NonNull;
 public class Place implements Parcelable {
     private String placeName;
     private String addressName;
+    private double latitude;
+    private double longitude;
+
+    public Place(String placeName, String addressName, double latitude, double longitude) {
+        this.placeName = placeName;
+        this.addressName = addressName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public Place(String placeName, String addressName) {
         this.placeName = placeName;
         this.addressName = addressName;
+        this.latitude = 0.0;
+        this.longitude = 0.0;
     }
 
     protected Place(Parcel in) {
         placeName = in.readString();
         addressName = in.readString();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
     }
 
     public static final Creator<Place> CREATOR = new Creator<Place>() {
@@ -39,6 +52,21 @@ public class Place implements Parcelable {
         return addressName;
     }
 
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -48,5 +76,7 @@ public class Place implements Parcelable {
     public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(placeName);
         dest.writeString(addressName);
+        dest.writeDouble(latitude);
+        dest.writeDouble(longitude);
     }
 }
