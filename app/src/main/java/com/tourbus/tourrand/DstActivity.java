@@ -129,28 +129,72 @@ public class DstActivity extends AppCompatActivity {
                     noanswer.startAnimation(shake);
 
                 } else {
+                    //반려동물이랑 같이 갈 때
                     if(withAnimaltoString.equals("반려동물")){
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         url = "http://13.209.33.141:5000/pet";
-                       // String data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";; //json 형식 데이터
                         data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
-//                        new Thread(() -> {
-//                            String result = httpPostBodyConnection(url, data);
-//                            // 처리 결과 확인
-//                            handler.post(() -> seeNetworkResult(result));
-//                        }).start();
-                        //테마가 반려동물인 거고 반려동물 전용 url로 입력값 전달
+                    } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
+                            selectedLocation.equals("시흥") || selectedLocation.equals("가평") || selectedLocation.equals("남양주") || selectedLocation.equals("연천") || selectedLocation.equals("평창") ||
+                            selectedLocation.equals("속초") || selectedLocation.equals("태백") || selectedLocation.equals("원주") || selectedLocation.equals("양구") || selectedLocation.equals("포천") ||
+                            selectedLocation.equals("강릉") || selectedLocation.equals("홍천") || selectedLocation.equals("정선") || selectedLocation.equals("삼척") || selectedLocation.equals("울산") ||
+                            selectedLocation.equals("부산") || selectedLocation.equals("대전") || selectedLocation.equals("인천") ||selectedLocation.equals("강원도 고성")|| selectedLocation.equals("서울")  ) {
+                        String [] theme = {"레저","역사","문화","자연","힐링","생태관광"}; //생태포함
+
+                        Random random = new Random();
+                        int index = random.nextInt(theme.length);
+                        mainTheme = theme[index];
+
+                        if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
+                            selectedLocation ="강_고성";
+                            url = "http://13.209.33.141:5000/ecotourism";
+                            data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+                        } else if(mainTheme.equals("생태관광")){
+                            url = "http://13.209.33.141:5000/ecotourism";
+                            data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+                        } else {
+                            //위 지역임에도 불구하고 생태관광이 안 나왔을 때
+                            url = "http://13.209.33.141:5000/route";
+                            data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                        }
+                    } else if(selectedLocation.equals("경상남도 고성")){
+                        selectedLocation = "경_고성";
+                        mainTheme = chooseTheme();
+                        url = "http://13.209.33.141:5000/route";
+                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                     }
                     else{
                         //반려동물 미포함
-//                        if (tripLength==2){
-//
-//                            //테마추출함수에 캠핑도 추가해서 돌리기
-                        //캠핑일 때 위도, 경도도 같이 보내기
-                        //생태 당일치기 or 1박2일일 떄만 나오게
-//                        }
-                        Log.d("반려동물 동반 여부", withAnimaltoString);
+                        if (tripLength==2){
+                            String [] theme = {"레저","역사","문화","자연","힐링","캠핑"}; //캠핑 포함
+
+                            Random random = new Random();
+                            int index = random.nextInt(theme.length);
+                            mainTheme = theme[index];
+
+                            if(mainTheme.equals("캠핑")){
+                                if(selectedLocation.equals("강원도 고성")){
+                                    selectedLocation = "강_고성";
+                                    url = "http://13.209.33.141:5000/camping";
+                                    data = "{\"destination\":\""+selectedLocation+"\" }";
+                                } else if (selectedLocation.equals("경상남도 고성")) {
+                                    selectedLocation = "경_고성";
+                                    url = "http://13.209.33.141:5000/camping";
+                                    data = "{\"destination\":\""+selectedLocation+"\" }";
+                                } else {
+                                    //고성 아닌데 캠핑인 것들
+                                    url = "http://13.209.33.141:5000/camping";
+                                    data = "{\"destination\":\""+selectedLocation+"\" }";
+                                }
+                            } else{
+                                //여행 이틀만 가는데 캠핑 안 나왔을 때
+                                mainTheme = chooseTheme();
+                                url = "http://13.209.33.141:5000/route";
+                                data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                            }
+                        }
+                        //반려동물 + 캠핑 미포함
                         mainTheme = chooseTheme();
                         url = "http://13.209.33.141:5000/route";
                         data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
@@ -176,7 +220,7 @@ public class DstActivity extends AppCompatActivity {
 
     private void displayRandomDestinations() {
         List<String> destinations = Arrays.asList(
-                "서울", "고성", "속초", "양양", "인제", "양구", "강릉", "동해", "삼척", "태백",
+                "서울", "강원도 고성", "속초", "양양", "인제", "양구", "강릉", "동해", "삼척", "태백",
                 "정선", "평창", "홍천", "횡성", "원주", "영월", "화천", "철원", "춘천", "연천",
                 "포천", "가평", "양평", "여주", "이천", "광주", "남양주", "하남", "구리", "의정부",
                 "양주", "동두천", "파주", "고양", "김포", "부천", "광명", "시흥", "안산", "군포",
@@ -187,7 +231,7 @@ public class DstActivity extends AppCompatActivity {
                 "영주", "예천", "문경", "상주", "안동", "영양", "영덕", "청송", "포항", "경주",
                 "영천", "군위", "의성", "구미", "김천", "칠곡", "성주", "고령", "대구", "경산",
                 "청도", "거창", "함양", "산청", "합천", "창녕", "밀양", "울산", "의령", "함안",
-                "김해", "부산", "창원", "하동", "진주", "사천", "고성", "거제", "남해", "통영",
+                "김해", "부산", "창원", "하동", "진주", "사천", "경상남도 고성", "거제", "남해", "통영",
                 "양산", "군산", "익산", "완주", "진안", "무주", "장수", "전주", "김제", "임실",
                 "남원", "순창", "정읍", "부안", "고창", "영광", "장성", "담양", "곡성", "구례",
                 "광양", "순천", "여수", "고흥", "보성", "화순", "광주광역시", "함평", "나주",
@@ -267,7 +311,6 @@ public class DstActivity extends AppCompatActivity {
 
             //메소드 호출 결과값을 반환하기 위한 변수
             String returnData = "";
-
 
             try {
                 //파라미터로 들어온 url을 사용해 connection 실시
