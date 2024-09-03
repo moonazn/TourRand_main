@@ -6,10 +6,16 @@ import retrofit2.http.Header;
 import retrofit2.http.Query;
 
 public interface KakaoApiService {
-    @GET("/v2/local/search/keyword.json")
+    @GET("v1/directions")
     Call<KakaoResponse> getDrivingTime(
-            @Header("Authorization") String apiKey,
+            @Header("Authorization") String authHeader,
             @Query("origin") String origin,
-            @Query("destination") String destination
+            @Query("destination") String destination,
+            @Query("waypoints") String waypoints,
+            @Query("priority") String priority,
+            @Query("car_fuel") String carFuel,
+            @Query("car_hipass") boolean carHipass,
+            @Query("alternatives") boolean alternatives,
+            @Query("road_details") boolean roadDetails
     );
 }
