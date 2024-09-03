@@ -1,8 +1,9 @@
 package com.tourbus.tourrand;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class TripPlan {
+public class TripPlan implements Serializable {
 
     private String tripName;
     private String travelDate;

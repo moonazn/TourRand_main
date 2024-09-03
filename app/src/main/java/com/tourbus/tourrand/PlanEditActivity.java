@@ -2,6 +2,8 @@ package com.tourbus.tourrand;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,7 +36,17 @@ import com.kakao.vectormap.route.RouteLineStyle;
 import com.kakao.vectormap.route.RouteLineStyles;
 import com.kakao.vectormap.route.RouteLineStylesSet;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -74,12 +86,18 @@ public class PlanEditActivity extends AppCompatActivity {
 
     private ImageView edit;
     private boolean isEditing = false;
+    private Handler handler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_plan_edit);
+
+        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        String user_id = UserManager.getInstance().getUserNickname();
+        String planDate = tripPlan.getTravelDate();
+        String tour_name = tripPlan.getTripName();
 
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
@@ -248,5 +266,6 @@ public class PlanEditActivity extends AppCompatActivity {
         placesEditAdapter.setEditing(isEditing);
         placesEditAdapter.notifyDataSetChanged();
     }
+
 
 }

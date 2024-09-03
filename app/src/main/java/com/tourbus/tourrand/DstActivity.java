@@ -87,9 +87,6 @@ public class DstActivity extends AppCompatActivity {
             withAnimaltoString = "인간만";
         }
 
-
-
-
 //        // PreTrip 객체 생성
 //        PreTrip preTrip = new PreTrip(withAnimal, tripLength, departureDocument, selectedLocation);
 
@@ -131,6 +128,7 @@ public class DstActivity extends AppCompatActivity {
                 } else {
                     //반려동물이랑 같이 갈 때
                     if(withAnimaltoString.equals("반려동물")){
+                        //플랜뷰액티비티에서 반려동물일 때 테마 수정해야함
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         url = "http://13.209.33.141:5000/pet";
                         data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
@@ -193,16 +191,14 @@ public class DstActivity extends AppCompatActivity {
                                 url = "http://13.209.33.141:5000/route";
                                 data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                             }
+                        } else{
+                            //반려동물 + 캠핑 미포함
+                            mainTheme = chooseTheme();
+                            url = "http://13.209.33.141:5000/route";
+                            data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+
+                            Log.d("데이터 보낸 거", data);
                         }
-                        //반려동물 + 캠핑 미포함
-                        mainTheme = chooseTheme();
-                        url = "http://13.209.33.141:5000/route";
-                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                        //data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \"문화\",\"destination\":\""+selectedLocation+"\" }";
-
-                        Log.d("데이터 보낸 거", data);
-
-
                     }
                     // 서버 통신을 비동기적으로 실행
                     new ServerCommunicationTask().execute();

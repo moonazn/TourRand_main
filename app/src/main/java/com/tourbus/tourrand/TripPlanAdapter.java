@@ -34,12 +34,13 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TripPlanViewHolder holder, int position) {
+        TripPlan tripPlan = tripPlanList.get(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, PlanEditActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
                 context.startActivity(intent);
-
             }
         });
 
@@ -47,7 +48,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_in_row);
             ((TripPlanViewHolder) holder).itemView.startAnimation(animation);
 
-            TripPlan tripPlan = tripPlanList.get(position);
+            tripPlanList.get(position);
             holder.bind(tripPlan);
         }
     }
