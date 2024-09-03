@@ -311,8 +311,10 @@ public class PlanViewActivity extends AppCompatActivity {
                     Log.d("PlanViewActivity", "index=" + index);
                     Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getDay()) + " : " + index);
                     if (tripPlanDetailList.get(index).getDay() == i) {
-                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress()));
+                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLongitude(), tripPlanDetailList.get(index).getLatitude()));
                         Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
+                        Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLatitude()));
+                        Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLongitude()));
                     } else {
                         lastIdx = index;
                         break;
@@ -326,8 +328,10 @@ public class PlanViewActivity extends AppCompatActivity {
                 List<Place> remainingPlacesList = new ArrayList<>();
                 for (int index = lastIdx; index < tripPlanDetailList.size(); index++) {
                     if (tripPlanDetailList.get(index).getDay() == day) {
-                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLatitude(), tripPlanDetailList.get(index).getLongitude()));
+                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLongitude(), tripPlanDetailList.get(index).getLatitude()));
                         Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
+                        Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLatitude()));
+                        Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLongitude()));
                     }
                 }
                 if (!remainingPlacesList.isEmpty()) {
