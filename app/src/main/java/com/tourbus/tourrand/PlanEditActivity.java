@@ -94,6 +94,7 @@ public class PlanEditActivity extends AppCompatActivity {
     String tour_name;
     String getData;
     TextView tripTitleEditText;
+    int tourId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +103,7 @@ public class PlanEditActivity extends AppCompatActivity {
         TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         planDate = tripPlan.getTravelDate();
         tour_name = tripPlan.getTripName();
+        tourId = tripPlan.getTourId();
 
         tripTitleEditText = findViewById(R.id.tripTitleEditText);
 
@@ -117,8 +119,7 @@ public class PlanEditActivity extends AppCompatActivity {
 
         data.append("{");
         data.append("\"user_id\":\"").append(userId).append("\",");
-        data.append("\"planDate\":\"").append(planDate).append("\",");
-        data.append("\"tour_name\":\"").append(tour_name).append("\"");
+        data.append("\"tour_id\":\"").append(tourId).append("\"");
         data.append("}");
 
 // 최종적으로 생성된 JSON 문자열

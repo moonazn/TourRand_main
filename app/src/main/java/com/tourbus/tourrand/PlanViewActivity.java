@@ -495,7 +495,8 @@ public class PlanViewActivity extends AppCompatActivity {
 
             data.append("{");
             data.append("\"user_id\":\"").append(userId).append("\",");
-            data.append("\"tour_name\":\"").append(tripPlanDetailList.get(0).getTripName()).append("\",");
+            data.append("\"destination\":\"").append(tripPlanDetailList.get(0).getTripName()).append("\",");
+            data.append("\"tour_name\":\"").append(tripPlanDetailList.get(0).getTripName() + "여행").append("\",");
             data.append("\"planDate\":\"").append(tripPlanDetailList.get(0).getPlanDate()).append("\",");
             data.append("\"schedules\":[");
 
@@ -643,19 +644,19 @@ public class PlanViewActivity extends AppCompatActivity {
         setThemeText(theme, semiTheme);
     }
 
-    private void updatePlanView(Schedule schedule) {
-        // 테마와 목적지를 업데이트
-        TextView themaText = findViewById(R.id.themaText);
-        themaText.setText("이번 여행의 테마는 " + schedule.theme + "입니다!");
-
-
-        // 목적지를 업데이트
-        this.destination = schedule.destination;
-
-        // 여행 장소를 업데이트
-        this.placesMap = new HashMap<>(schedule.placesMap);
-        updatePlacesList(0); // 첫 번째 일차 데이터를 로드
-    }
+//    private void updatePlanView(Schedule schedule) {
+//        // 테마와 목적지를 업데이트
+//        TextView themaText = findViewById(R.id.themaText);
+//        themaText.setText("이번 여행의 테마는 " + schedule.theme + "입니다!");
+//
+//
+//        // 목적지를 업데이트
+//        this.destination = schedule.destination;
+//
+//        // 여행 장소를 업데이트
+//        this.placesMap = new HashMap<>(schedule.placesMap);
+//        updatePlacesList(0); // 첫 번째 일차 데이터를 로드
+//    }
 
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
@@ -1242,7 +1243,6 @@ public class PlanViewActivity extends AppCompatActivity {
                 semiTheme.setText("별빛 가득한 하늘 아래 캠핑을 즐기며, 자연 속에서 소박한 행복을 만끽해보세요.");
                 break;
             default:
-                //디폴트 나올 경우가 반려동물밖에 없나 기억이 안 남 생태랑 캠핑 어케 하기로 했드라? 사용자가 선택하는 지역에 따라서 메인테마로 넣든가 말든가 결정하기로 했던 거 같음
                 semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함꼐 색다른 여행을 떠나보세요!");
                 break;
         }

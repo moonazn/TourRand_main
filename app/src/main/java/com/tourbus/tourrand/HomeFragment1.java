@@ -318,7 +318,7 @@ public class HomeFragment1 extends Fragment {
                 }
 
                 if (tripName != null && travelDate != null) {
-                    TripPlan tripPlan = new TripPlan(tripName, travelDate, "3");
+                    TripPlan tripPlan = new TripPlan(tripName, travelDate, "3", tourId);
                     TripPlanList.add(tripPlan);
                 } else {
                     Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
