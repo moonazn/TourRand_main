@@ -31,7 +31,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="60dp"
         android:fontFamily="@font/pyeongchang_bold"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="50dp"/>
 
     <LinearLayout
         android:id="@+id/idLinear"
@@ -89,7 +89,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="60dp"
         android:fontFamily="@font/pyeongchang_bold"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="50dp"/>
 
     <EditText
         android:id="@+id/pwEditText"
@@ -115,7 +115,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="60dp"
         android:fontFamily="@font/pyeongchang_bold"
-        android:layout_marginTop="60dp"/>
+        android:layout_marginTop="50dp"/>
 
     <EditText
         android:id="@+id/nicknameEditText"
@@ -142,20 +142,118 @@
         android:layout_marginTop="10dp"
         android:textColor="#5858FA"
         android:visibility="gone"/>
+    <LinearLayout
+        android:id="@+id/service"
+        android:layout_marginTop="45dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/nicknameCheckInfo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:gravity="center"
+        android:paddingHorizontal="20dp"
+        android:weightSum="3"
+        app:layout_constraintRight_toRightOf="parent">
+        <Switch
+            android:id="@+id/serviceSwitch"
+            android:layout_width="50dp"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:theme="@style/CustomSwitch"/>
+        <TextView
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:text="서비스 이용 약관에 동의합니다."
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_regular"/>
+        <android.widget.Button
+            android:id="@+id/serviceDetailBtn"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:text="자세히보기"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/underlinethin"
+            android:fontFamily="@font/pyeongchang_regular"
+            android:textColor="#808080"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/agree"
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/service"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:paddingHorizontal="20dp"
+        android:gravity="center"
+        android:weightSum="3"
+        app:layout_constraintRight_toRightOf="parent">
+        <Switch
+            android:id="@+id/personalSwitch"
+            android:layout_width="50dp"
+            android:layout_weight="1"
+            android:layout_height="30dp"
+            android:theme="@style/CustomSwitch"/>
+        <TextView
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:text="개인정보처리방침에 동의합니다."
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:layout_weight="1"
+
+            android:fontFamily="@font/pyeongchang_regular"/>
+        <android.widget.Button
+            android:id="@+id/personalDetailBtn"
+            android:layout_width="65dp"
+            android:layout_height="40dp"
+            android:text="자세히보기"
+            android:gravity="center"
+            android:layout_weight="1"
+
+            android:background="@drawable/underlinethin"
+            android:fontFamily="@font/pyeongchang_regular"
+            android:textColor="#808080"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:text="약관에 동의해주세요!"
+        android:textColor="@color/red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/joinBtn"
+        android:layout_marginBottom="5dp"
+        android:visibility="gone"/>
+
+
 
     <android.widget.Button
         android:id="@+id/joinBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="완료"
-        app:layout_constraintTop_toBottomOf="@id/nicknameEditText"
+        app:layout_constraintTop_toBottomOf="@id/agree"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:fontFamily="@font/pyeongchang_bold"
         android:background="@drawable/rounded_filled_square"/>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

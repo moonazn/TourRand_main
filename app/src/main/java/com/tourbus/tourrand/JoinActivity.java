@@ -1,5 +1,7 @@
 package com.tourbus.tourrand;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -7,14 +9,21 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,6 +33,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class JoinActivity extends AppCompatActivity {
+    private Switch serviceSwitch;
+    private Switch personalSwitch;
 
     private Handler handler;
 
@@ -34,9 +45,14 @@ public class JoinActivity extends AppCompatActivity {
     private TextView nicknameCheckInfo;
     private Button idCheckBtn;
     private Button joinBtn;
+    private Button serviceDetailBtn;
+    private Button personalDetailBtn;
 
     private boolean isIdDuplicated = false;
     private boolean idChecked = false;
+    private boolean isServiceChecked = false;
+    private boolean isPersonalChecked = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +66,79 @@ public class JoinActivity extends AppCompatActivity {
         nicknameCheckInfo = findViewById(R.id.nicknameCheckInfo);
         idCheckBtn = findViewById(R.id.idCheckBtn);
         joinBtn = findViewById(R.id.joinBtn);
+        serviceSwitch = findViewById(R.id.serviceSwitch);
+        personalSwitch = findViewById(R.id.personalSwitch);
+        serviceDetailBtn = findViewById(R.id.serviceDetailBtn);
+        personalDetailBtn = findViewById(R.id.personalDetailBtn);
+
+        serviceSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    isServiceChecked = true;
+                }else{
+                    isServiceChecked = false;
+                }
+
+            }
+        });
+        personalSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    isPersonalChecked = true;
+                }else{
+                    isPersonalChecked = false;
+                }
+
+            }
+        });
+
+
+        serviceDetailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context mContext = getApplicationContext();
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                //R.layout.dialog는 xml 파일명이고  R.id.popup은 보여줄 레이아웃 아이디
+                View layout = inflater.inflate(R.layout.service, (ViewGroup) findViewById(R.id.servicepopup));
+                AlertDialog.Builder aDialog = new AlertDialog.Builder(JoinActivity.this);
+
+                aDialog.setView(layout); //dialog.xml 파일을 뷰로 셋팅
+
+                //그냥 닫기버튼을 위한 부분
+                aDialog.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                //팝업창 생성
+                AlertDialog ad = aDialog.create();
+                ad.show();//보여줌!
+            }
+        });
+        personalDetailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Context mContext = getApplicationContext();
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+                //R.layout.dialog는 xml 파일명이고  R.id.popup은 보여줄 레이아웃 아이디
+                View layout = inflater.inflate(R.layout.personal, (ViewGroup) findViewById(R.id.personalpopup));
+                AlertDialog.Builder aDialog = new AlertDialog.Builder(JoinActivity.this);
+
+                aDialog.setView(layout); //dialog.xml 파일을 뷰로 셋팅
+
+                //그냥 닫기버튼을 위한 부분
+                aDialog.setNegativeButton("닫기", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+                //팝업창 생성
+                AlertDialog ad = aDialog.create();
+                ad.show();//보여줌!
+            }
+        });
 
         // 아이디 중복 확인 버튼 클릭 리스너
 //        idCheckBtn.setOnClickListener(new View.OnClickListener() {
@@ -176,28 +265,35 @@ public class JoinActivity extends AppCompatActivity {
         joinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String id = idEditText.getText().toString().trim();
-                String pw = pwEditText.getText().toString().trim();
-                String nickname = nicknameEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:5000/join";
-                String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
+                if(isServiceChecked ==true && isPersonalChecked == true){
+                    String id = idEditText.getText().toString().trim();
+                    String pw = pwEditText.getText().toString().trim();
+                    String nickname = nicknameEditText.getText().toString().trim();
 
+                    String url = "http://13.209.33.141:5000/join";
+                    String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 
-                new Thread(() -> {
-                    String result = httpPostBodyConnection(url, data);
-                    // 처리 결과 확인
-                    handler.post(() -> {
-                        seeNetworkResult(result);
-                        Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
-                    });
-                }).start();
+                    new Thread(() -> {
+                        String result = httpPostBodyConnection(url, data);
+                        // 처리 결과 확인
+                        handler.post(() -> {
+                            seeNetworkResult(result);
+                            Toast.makeText(JoinActivity.this, result, Toast.LENGTH_SHORT).show();
+                        });
+                    }).start();
 
-                Intent intent = new Intent(JoinActivity.this, MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    Intent intent = new Intent(JoinActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
 
-                finish(); // 액티비티 종료
+                    finish(); // 액티비티 종료
+                } else {
+                    TextView warning = findViewById(R.id.warning);
+                    warning.setVisibility(View.VISIBLE);
+
+                }
+
             }
         });
     }

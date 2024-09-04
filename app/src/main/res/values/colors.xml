@@ -45,6 +45,9 @@
     <color name="red"> #F4473F </color>
     <color name="blue"> #5858FA </color>
 
+    <color name="switch_on_color">#5858FA</color> <!-- Switch 켜졌을 때 색상 -->
+    <color name="switch_off_color">#cdc9c3</color> <!-- Switch 꺼졌을 때 색상 -->
+
 
 
 </resources>
