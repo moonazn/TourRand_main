@@ -21,12 +21,15 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
 
     private Context context;
     private List<TripPlan> tripPlanList;
+    private HomeFragment1 activity;
+
 
     int lastPosition = -1;
 
-    public TripPlanAdapter(Context context, List<TripPlan> tripPlanList) {
+    public TripPlanAdapter(Context context, List<TripPlan> tripPlanList, HomeFragment1 activity) {
         this.context = context;
         this.tripPlanList = tripPlanList;
+        this.activity = activity;
     }
 
     @NonNull
@@ -67,6 +70,11 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
                             .setTitle("삭제 확인")
                             .setMessage("정말 삭제하시겠습니까?")
                             .setPositiveButton("확인", (dialog, which) -> {
+
+                                // 서버에 삭제 요청 메서드를 호출
+                                int tripId = tripPlanList.get(position).getTourId();  // TripPlan의 ID를 가져오기
+                                activity.deleteTripOnServer(tripId, position);
+
                                 // 삭제 확인 시 해당 아이템 삭제
                                 tripPlanList.remove(position);
                                 notifyItemRemoved(position);
@@ -80,7 +88,11 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
             popupMenu.show();
         });
     }
-
+    public void removeItem(int position) {
+        tripPlanList.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, tripPlanList.size());
+    }
     @Override
     public int getItemCount() {
         return tripPlanList.size();

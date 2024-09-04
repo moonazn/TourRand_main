@@ -55,8 +55,8 @@ public class HomeFragment1 extends Fragment {
 
     private TextView tripzero;
     private Handler handler;
-
     private int tourId;
+    String getData;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,7 +88,7 @@ public class HomeFragment1 extends Fragment {
 //        tripPlans.add(new TripPlan("여행 이름 5", "2024-06-20 ~ 2024-07-01", "120"));
 
         // 어댑터 초기화
-        adapter = new TripPlanAdapter(getActivity(), tripPlans);
+        adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
         recyclerView.setAdapter(adapter);
 
         tripzero = rootView.findViewById(R.id.tripzero);
@@ -102,7 +102,7 @@ public class HomeFragment1 extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
 
             // Adapter 설정
-            adapter = new TripPlanAdapter(getActivity(), tripPlans);
+            adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
 
             // GridLayoutManager 설정
             LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -330,7 +330,37 @@ public class HomeFragment1 extends Fragment {
 
         return TripPlanList;
     }
+    public void deleteTripOnServer(int tripId, int position) {
+        adapter.removeItem(position);
 
+        // 싱글톤 인스턴스 가져오기
+        UserManager userManager = UserManager.getInstance();
+        String userId = userManager.getUserId();
+
+        String url = "http://13.209.33.141:5000/update_itinerary";
+//            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
+
+        // JSON 문자열을 구성하기 위한 StringBuilder 사용
+        StringBuilder data = new StringBuilder();
+
+        data.append("{");
+        data.append("\"user_id\":\"").append(userId).append("\",");
+        data.append("\"tour_id\":\"").append(tripId).append("\"");
+        data.append("}");
+
+        // 최종적으로 생성된 JSON 문자열
+        String jsonData = data.toString();
+
+        // jsonData를 서버에 전송
+        Log.d("data", jsonData);
+        new Thread(() -> {
+            getData = httpPostBodyConnection(url, jsonData);
+            // 처리 결과 확인
+            handler.post(() -> {
+                seeNetworkResult(getData);
+            });
+        }).start();
+    }
 
 //    public ArrayList<TripPlan> parseTripPlan(String json) {
 //        ArrayList<TripPlan> TripPlanList = new ArrayList<>();
