@@ -19,6 +19,7 @@ public class TripPlanViewHolder extends RecyclerView.ViewHolder {
     private ImageView member3ImageView;
     private ImageView member4ImageView;
     private ImageView defaultImageView;
+    ImageView more;
 
     public TripPlanViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -30,6 +31,7 @@ public class TripPlanViewHolder extends RecyclerView.ViewHolder {
         member3ImageView = itemView.findViewById(R.id.member3_image_view);
         member4ImageView = itemView.findViewById(R.id.member4_image_view);
         defaultImageView = itemView.findViewById(R.id.default_image_view);
+        more = itemView.findViewById(R.id.more);
     }
 
     public void bind(TripPlan tripPlan) {

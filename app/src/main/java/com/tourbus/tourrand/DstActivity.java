@@ -131,7 +131,7 @@ public class DstActivity extends AppCompatActivity {
                         //플랜뷰액티비티에서 반려동물일 때 테마 수정해야함
                         Log.d("반려동물 동반 여부", withAnimaltoString);
                         url = "http://13.209.33.141:5000/pet";
-                        data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
+                        data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
                     } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
                             selectedLocation.equals("시흥") || selectedLocation.equals("가평") || selectedLocation.equals("남양주") || selectedLocation.equals("연천") || selectedLocation.equals("평창") ||
@@ -147,20 +147,20 @@ public class DstActivity extends AppCompatActivity {
                         if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
                             selectedLocation ="강_고성";
                             url = "http://13.209.33.141:5000/ecotourism";
-                            data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+                            data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                         } else if(mainTheme.equals("생태관광")){
                             url = "http://13.209.33.141:5000/ecotourism";
-                            data = "{\"planDate\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+                            data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                         } else {
                             //위 지역임에도 불구하고 생태관광이 안 나왔을 때
                             url = "http://13.209.33.141:5000/route";
-                            data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                         }
                     } else if(selectedLocation.equals("경상남도 고성")){
                         selectedLocation = "경_고성";
                         mainTheme = chooseTheme();
                         url = "http://13.209.33.141:5000/route";
-                        data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                        data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                     }
                     else{
                         //반려동물 미포함
@@ -189,13 +189,13 @@ public class DstActivity extends AppCompatActivity {
                                 //여행 이틀만 가는데 캠핑 안 나왔을 때
                                 mainTheme = chooseTheme();
                                 url = "http://13.209.33.141:5000/route";
-                                data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                                data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                             }
                         } else{
                             //반려동물 + 캠핑 미포함
                             mainTheme = chooseTheme();
                             url = "http://13.209.33.141:5000/route";
-                            data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
 
                             Log.d("데이터 보낸 거", data);
                         }
