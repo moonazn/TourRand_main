@@ -1,5 +1,6 @@
 package com.tourbus.tourrand;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -484,23 +485,64 @@ public class PlanViewActivity extends AppCompatActivity {
         saveBut.setOnClickListener(v -> {
             // 싱글톤 인스턴스 가져오기
             UserManager userManager = UserManager.getInstance();
-            String userId = userManager.getUserNickname();
+            String userId = userManager.getUserId();
 
             String url = "http://13.209.33.141:5000/confirmed";
-            String data = "{ \"id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
-            Log.d("data", data);
+//            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
+
+            // JSON 문자열을 구성하기 위한 StringBuilder 사용
+            StringBuilder data = new StringBuilder();
+
+            data.append("{");
+            data.append("\"user_id\":\"").append(userId).append("\",");
+            data.append("\"tour_name\":\"").append(tripPlanDetailList.get(0).getTripName()).append("\",");
+            data.append("\"planDate\":\"").append(tripPlanDetailList.get(0).getPlanDate()).append("\",");
+            data.append("\"schedules\":[");
+
+// 각 TripPlanDetail 객체를 순회하며 JSON 형식으로 추가
+            for (int i = 0; i < tripPlanDetailList.size(); i++) {
+                TripPlanDetail detail = tripPlanDetailList.get(i);
+
+                data.append("{");
+                data.append("\"address\":\"").append(detail.getAddress()).append("\",");
+                data.append("\"day\":\"").append(detail.getDay()).append("\",");
+                data.append("\"latitude\":").append(detail.getLatitude()).append(",");
+                data.append("\"location\":\"").append(detail.getLocation()).append("\",");
+                data.append("\"longitude\":").append(detail.getLongitude());
+                data.append("}");
+
+                // 마지막 객체가 아닌 경우 쉼표 추가
+                if (i < tripPlanDetailList.size() - 1) {
+                    data.append(",");
+                }
+            }
+
+            data.append("]}");
+
+            // 최종적으로 생성된 JSON 문자열
+            String jsonData = data.toString();
+
+            // jsonData를 서버에 전송
+            Log.d("data", jsonData);
             new Thread(() -> {
-                getData = httpPostBodyConnection(url, data);
+                getData = httpPostBodyConnection(url, jsonData);
                 // 처리 결과 확인
                 handler.post(() -> {
                     seeNetworkResult(getData);
                 });
             }).start();
 
-            Intent homeIntent = new Intent(PlanViewActivity.this, HomeFragment1.class);
+//            Intent homeIntent = new Intent(PlanViewActivity.this, HomeFragment1.class);
+//            startActivity(homeIntent);
+//            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//            finish();
+
+            Intent homeIntent = new Intent(PlanViewActivity.this, HomeActivity.class);
+            homeIntent.putExtra("fragmentToLoad", "homeFragment1");
             startActivity(homeIntent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
             finish();
+
         });
     }
 
@@ -508,7 +550,6 @@ public class PlanViewActivity extends AppCompatActivity {
         List<Place> placesList = placesMap.get(day);
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
-
 
     }
 
@@ -985,6 +1026,7 @@ public class PlanViewActivity extends AppCompatActivity {
             progressDialog.show();
         }
 
+        @SuppressLint("SuspiciousIndentation")
         @Override
         protected Void doInBackground(Void... voids) {
             // 서버와 통신
@@ -1168,6 +1210,14 @@ public class PlanViewActivity extends AppCompatActivity {
     private void setThemeText(String getTheme, TextView semiTheme) {
 
         semiTheme = findViewById(R.id.themaSemiText);
+
+        if(getTheme == null) {
+            Log.d("setThemeText", "getTheme is null");
+            semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함꼐 색다른 여행을 떠나보세요!");
+            return;
+        } else if (semiTheme == null) {
+            Log.d("setThemeText", "semiTheme is null");
+        }
 
         switch (getTheme){
             case "힐링":

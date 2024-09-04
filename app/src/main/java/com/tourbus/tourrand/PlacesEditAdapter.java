@@ -28,8 +28,16 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
 
     private List<Place> placesList;
     private boolean isEditing = false;
+    private DataChangeListener dataChangeListener;
 
-
+    // DataChangeListener 인터페이스 정의
+    public interface DataChangeListener {
+        void onDataChanged(List<Place> updatedPlacesList);
+    }
+    public PlacesEditAdapter(List<Place> placesList, DataChangeListener dataChangeListener) {
+        this.placesList = placesList;
+        this.dataChangeListener = dataChangeListener;
+    }
     public PlacesEditAdapter(List<Place> placesList) {
         this.placesList = placesList;
     }
@@ -159,6 +167,10 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
                     notifyItemRemoved(position);
                     notifyItemRangeChanged(position, placesList.size());
                     Toast.makeText(v.getContext(), "일정이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
+
+                    if (dataChangeListener != null) {
+                        dataChangeListener.onDataChanged(placesList);
+                    }
                     return true;
                 } else {
                     return false;
@@ -177,6 +189,9 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
     public boolean onItemMove(int fromPosition, int toPosition) {
         Collections.swap(placesList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
+        if (dataChangeListener != null) {
+            dataChangeListener.onDataChanged(placesList);
+        }
         return true;
     }
 

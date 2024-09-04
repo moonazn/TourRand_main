@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
                                 // 값 저장하기
+                                userManager.setUserId(userId);
                                 userManager.setUserNickname(userId);
                                 Log.d("userId",userId);
 
