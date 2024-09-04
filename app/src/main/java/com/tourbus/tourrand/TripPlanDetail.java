@@ -21,6 +21,38 @@ public class TripPlanDetail implements Parcelable {
         this.longitude = longitude;
     }
 
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setDeparture(String departure) {
+        this.departure = departure;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setPlanDate(String planDate) {
+        this.planDate = planDate;
+    }
+
+    public void setTripName(String tripName) {
+        this.tripName = tripName;
+    }
+
     public String getTripName() {return tripName;}
 
     public String getDeparture() {

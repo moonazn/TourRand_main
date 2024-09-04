@@ -92,6 +92,8 @@ public class PlanEditActivity extends AppCompatActivity {
     private ArrayList<Location> locationArrayList = new ArrayList<>();
     Place departureDocument;
     String tour_name;
+    String getData;
+    TextView tripTitleEditText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +102,8 @@ public class PlanEditActivity extends AppCompatActivity {
         TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         planDate = tripPlan.getTravelDate();
         tour_name = tripPlan.getTripName();
+
+        tripTitleEditText = findViewById(R.id.tripTitleEditText);
 
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
@@ -275,7 +279,7 @@ public class PlanEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 isEditing = !isEditing;  // 상태를 반전시킴
 
-// 현재 보이는 첫 번째 항목의 위치를 가져옴
+                // 현재 보이는 첫 번째 항목의 위치를 가져옴
                 int currentDayPosition = ((LinearLayoutManager) daysRecyclerView.getLayoutManager())
                         .findFirstVisibleItemPosition();
 
@@ -299,12 +303,66 @@ public class PlanEditActivity extends AppCompatActivity {
     }
 
     private void saveChanges() {
+
+        // 싱글톤 인스턴스 가져오기
+        UserManager userManager = UserManager.getInstance();
+        String userId = userManager.getUserId();
+
+        String url = "http://13.209.33.141:5000/update_itinerary";
+//            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
+
+        // JSON 문자열을 구성하기 위한 StringBuilder 사용
+        StringBuilder data = new StringBuilder();
+
+        data.append("{");
+        data.append("\"user_id\":\"").append(userId).append("\",");
+        data.append("\"tour_name\":\"").append(tripTitleEditText.getText()).append("\",");
+        data.append("\"planDate\":\"").append(tripPlanDetailList.get(0).getPlanDate()).append("\",");
+        data.append("\"schedules\":[");
+
+// 각 TripPlanDetail 객체를 순회하며 JSON 형식으로 추가
+        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+            TripPlanDetail detail = tripPlanDetailList.get(i);
+
+            data.append("{");
+            data.append("\"address\":\"").append(detail.getAddress()).append("\",");
+            data.append("\"day\":\"").append(detail.getDay()).append("\",");
+            data.append("\"latitude\":").append(detail.getLatitude()).append(",");
+            data.append("\"location\":\"").append(detail.getLocation()).append("\",");
+            data.append("\"longitude\":").append(detail.getLongitude());
+            data.append("}");
+
+            // 마지막 객체가 아닌 경우 쉼표 추가
+            if (i < tripPlanDetailList.size() - 1) {
+                data.append(",");
+            }
+        }
+
+        data.append("]}");
+
+        // 최종적으로 생성된 JSON 문자열
+        String jsonData = data.toString();
+
+        // jsonData를 서버에 전송
+        Log.d("data", jsonData);
+        new Thread(() -> {
+            getData = httpPostBodyConnection(url, jsonData);
+            // 처리 결과 확인
+            handler.post(() -> {
+                seeNetworkResult(getData);
+            });
+        }).start();
+
         Log.d("PlanEditActivity", "saveChanges executed");
     }
 
     private void updatePlacesList(int day) {
         List<Place> placesList = placesMap.get(day);
         placesEditAdapter = new PlacesEditAdapter(placesList);
+        placesEditAdapter = new PlacesEditAdapter(placesList, updatedPlacesList -> {
+            // 데이터 변경 리스너 호출
+            updateTripPlanDetailList(day, updatedPlacesList);
+        });
         placesRecyclerView.setAdapter(placesEditAdapter);
 
         ItemMoveCallback callback = new ItemMoveCallback(placesEditAdapter);
@@ -315,10 +373,31 @@ public class PlanEditActivity extends AppCompatActivity {
         placesEditAdapter.setEditing(isEditing);
         placesEditAdapter.notifyDataSetChanged();
     }
+    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
+        // tripPlanDetailList를 업데이트합니다.
+
+        Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
+        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+            TripPlanDetail detail = tripPlanDetailList.get(i);
+            if (detail.getDay() == day) {
+                // 해당 일차의 장소를 업데이트합니다.
+                Place place = updatedPlacesList.get(i); // 어댑터의 리스트와 인덱스를 맞추세요.
+                detail.setLocation(place.getPlaceName());
+                detail.setAddress(place.getAddress());
+                detail.setLatitude(place.getLatitude());
+                detail.setLongitude(place.getLongitude());
+            }
+        }
+
+        Log.d("updateTripPlanDetailList", String.valueOf(updatedPlacesList));
+    }
 
     private void displaySchedule(ArrayList<TripPlanDetail> tripPlanDetailList) {
         // 일정 정보를 화면에 표시하는 로직을 여기에 구현합니다.
         setDataWithTripDetailList(tripPlanDetailList);
+
+        tripTitleEditText.setText(tripPlanDetailList.get(0).getTripName());
+
         daysList = new ArrayList<>();
 
         for (int i = 1; i <= day; i++) {
@@ -457,6 +536,91 @@ public class PlanEditActivity extends AppCompatActivity {
                 return 11;
             }
         });
+    }
+
+    public String httpPostBodyConnection(String UrlData, String ParamData) {
+        // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
+        // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
+
+        String totalUrl = "";
+        totalUrl = UrlData.trim().toString();
+
+        //http 통신을 하기위한 객체 선언 실시
+        URL url = null;
+        HttpURLConnection conn = null;
+
+        //http 통신 요청 후 응답 받은 데이터를 담기 위한 변수
+        String responseData = "";
+        BufferedReader br = null;
+        StringBuffer sb = null;
+
+        //메소드 호출 결과값을 반환하기 위한 변수
+        String returnData = "";
+
+
+        try {
+            //파라미터로 들어온 url을 사용해 connection 실시
+            url = null;
+            url = new URL(totalUrl);
+            conn = null;
+            conn = (HttpURLConnection) url.openConnection();
+
+            //http 요청에 필요한 타입 정의 실시
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json; utf-8"); //post body json으로 던지기 위함
+            conn.setRequestProperty("Accept", "application/json");
+            conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
+            try (OutputStream os = conn.getOutputStream()) {
+                byte request_data[] = ParamData.getBytes("utf-8");
+                Log.d("TAGGG",request_data.toString());
+                os.write(request_data);
+                //os.close();
+            } catch (Exception e) {
+                Log.d("TAG3","여기다");
+                e.printStackTrace();
+            }
+
+            //http 요청 실시
+            conn.connect();
+            System.out.println("http 요청 방식 : " + "POST BODY JSON");
+            System.out.println("http 요청 타입 : " + "application/json");
+            System.out.println("http 요청 주소 : " + UrlData);
+            System.out.println("http 요청 데이터 : " + ParamData);
+            System.out.println("");
+
+            //http 요청 후 응답 받은 데이터를 버퍼에 쌓는다
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            sb = new StringBuffer();
+            while ((responseData = br.readLine()) != null) {
+                sb.append(responseData); //StringBuffer에 응답받은 데이터 순차적으로 저장 실시
+            }
+
+            //메소드 호출 완료 시 반환하는 변수에 버퍼 데이터 삽입 실시
+            returnData = sb.toString();
+            Log.d("TAG2", returnData);
+            //http 요청 응답 코드 확인 실시
+            String responseCode = String.valueOf(conn.getResponseCode());
+            System.out.println("http 응답 코드 : " + responseCode);
+            System.out.println("http 응답 데이터 : " + returnData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //http 요청 및 응답 완료 후 BufferedReader를 닫아줍니다
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return returnData; // 네트워크 요청 결과를 반환
+    }
+    public void seeNetworkResult(String result) {
+        // 네트워크 작업 완료 후
+        Log.d(result, "network");
     }
 
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {

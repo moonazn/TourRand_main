@@ -164,7 +164,9 @@ public class HomeFragment2 extends Fragment {
 //        visitCnt = "3";
 
 
-        String user_id = SplashActivity.currentUser.getId().toString();
+//        String user_id = SplashActivity.currentUser.getId().toString();
+
+        String user_id = UserManager.getInstance().getUserId();
 
         String url = "http://13.209.33.141:5000/map";
         String inputText = "map_userInfo";
