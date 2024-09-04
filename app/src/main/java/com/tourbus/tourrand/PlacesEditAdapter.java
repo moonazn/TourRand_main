@@ -187,6 +187,10 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
 
     @Override
     public boolean onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < 0 || fromPosition >= placesList.size() || toPosition < 0 || toPosition >= placesList.size()) {
+            return false;
+        }
+
         Collections.swap(placesList, fromPosition, toPosition);
         notifyItemMoved(fromPosition, toPosition);
         if (dataChangeListener != null) {

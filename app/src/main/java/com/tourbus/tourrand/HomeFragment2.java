@@ -171,7 +171,7 @@ public class HomeFragment2 extends Fragment {
         String url = "http://13.209.33.141:5000/map";
         String inputText = "map_userInfo";
         String data = "{ \"user_id\" : \""+user_id+"\" }";
-        Log.d("inputText", user_id);
+//        Log.d("inputText", user_id);
 
         new Thread(() -> {
             String result = httpPostBodyConnection(url, data);

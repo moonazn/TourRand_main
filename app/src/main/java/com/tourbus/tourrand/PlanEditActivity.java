@@ -1,6 +1,7 @@
 package com.tourbus.tourrand;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -52,6 +53,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +108,64 @@ public class PlanEditActivity extends AppCompatActivity {
         tour_name = tripPlan.getTripName();
         tourId = tripPlan.getTourId();
 
+// bottom.xml에서 ImageView 찾기
+        ImageView editPageIcon = findViewById(R.id.editPage);
+        ImageView weatherPageIcon = findViewById(R.id.weatherPage);
+        ImageView randomPageIcon = findViewById(R.id.randomPage);
+        ImageView groupPageIcon = findViewById(R.id.groupPage);
+
+        // 현재 화면에 해당하는 아이콘의 이미지 변경
+        editPageIcon.setImageResource(R.drawable.edit_home_on);
+        weatherPageIcon.setImageResource(R.drawable.weather_off);
+        randomPageIcon.setImageResource(R.drawable.random_off);
+        groupPageIcon.setImageResource(R.drawable.group_off);
+
+        TextView toHome = findViewById(R.id.toHome);
+
+        toHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlanEditActivity.this, HomeActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+
+        weatherPageIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlanEditActivity.this, WeatherActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+        randomPageIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlanEditActivity.this, RandomActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+        groupPageIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlanEditActivity.this, TeamActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+
+
         tripTitleEditText = findViewById(R.id.tripTitleEditText);
+        tripTitleEditText.setEnabled(false);
 
         KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
 
@@ -289,9 +349,12 @@ public class PlanEditActivity extends AppCompatActivity {
 
                 if (isEditing) {
                     // Edit 모드로 전환
+                    tripTitleEditText.setEnabled(true); // EditText를 수정 가능 상태로 변경
                     edit.setImageResource(R.drawable.save); // 완료 버튼 이미지로 변경
                 } else {
                     // 수정 완료 후 원래 상태로 복귀
+                    tripTitleEditText.setEnabled(false);
+
                     edit.setImageResource(R.drawable.edit); // 원래 edit 버튼 이미지로 변경
                     saveChanges();
                 }
@@ -318,7 +381,7 @@ public class PlanEditActivity extends AppCompatActivity {
         data.append("{");
         data.append("\"user_id\":\"").append(userId).append("\",");
         data.append("\"tour_name\":\"").append(tripTitleEditText.getText()).append("\",");
-        data.append("\"planDate\":\"").append(tripPlanDetailList.get(0).getPlanDate()).append("\",");
+        data.append("\"planDate\":\"").append(planDate).append("\",");
         data.append("\"schedules\":[");
 
 // 각 TripPlanDetail 객체를 순회하며 JSON 형식으로 추가
@@ -363,6 +426,7 @@ public class PlanEditActivity extends AppCompatActivity {
         placesEditAdapter = new PlacesEditAdapter(placesList, updatedPlacesList -> {
             // 데이터 변경 리스너 호출
             updateTripPlanDetailList(day, updatedPlacesList);
+            placesEditAdapter.notifyDataSetChanged();
         });
         placesRecyclerView.setAdapter(placesEditAdapter);
 
@@ -393,15 +457,61 @@ public class PlanEditActivity extends AppCompatActivity {
 //        Log.d("updateTripPlanDetailList", String.valueOf(updatedPlacesList));
 //    }
 
+//    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
+//        Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
+//
+//        // 입력된 데이터 상태 로그
+//        Log.d("updateTripPlanDetailList", "Day: " + day);
+//        Log.d("updateTripPlanDetailList", "Updated Places List Size: " + updatedPlacesList.size());
+//        for (int j = 0; j < updatedPlacesList.size(); j++) {
+//            Place place = updatedPlacesList.get(j);
+//            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude());
+//        }
+//
+//        // 기존 tripPlanDetailList 상태 로그
+//        Log.d("updateTripPlanDetailList", "Original TripPlanDetailList Size: " + tripPlanDetailList.size());
+//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+//            TripPlanDetail detail = tripPlanDetailList.get(i);
+//            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//        }
+//
+//        // 업데이트 과정: day가 일치하는 곳만 업데이트
+//        int updateIndex = 0;
+//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+//            TripPlanDetail detail = tripPlanDetailList.get(i);
+//            if (detail.getDay() == day && updateIndex < updatedPlacesList.size()) {
+//                Place place = updatedPlacesList.get(updateIndex);
+//                Log.d("updateTripPlanDetailList", "Updating TripPlanDetail for Day: " + day + ", Index: " + i);
+//                Log.d("updateTripPlanDetailList", "Before Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//
+//                detail.setLocation(place.getPlaceName());
+//                detail.setAddress(place.getAddress());
+//                detail.setLatitude(place.getLatitude());
+//                detail.setLongitude(place.getLongitude());
+//
+//                Log.d("updateTripPlanDetailList", "After Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//
+//                updateIndex++;  // 다음 updatedPlacesList의 항목으로 이동
+//            }
+//        }
+//
+//        // 최종 결과 로그
+//        Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
+//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+//            TripPlanDetail detail = tripPlanDetailList.get(i);
+//            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//        }
+//    }
+
     private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
         Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
 
         // 입력된 데이터 상태 로그
-        Log.d("updateTripPlanDetailList", "Day: " + day);
+//        Log.d("updateTripPlanDetailList", "Day: " + day);
         Log.d("updateTripPlanDetailList", "Updated Places List Size: " + updatedPlacesList.size());
         for (int j = 0; j < updatedPlacesList.size(); j++) {
             Place place = updatedPlacesList.get(j);
-            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude());
+            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude() + ", Day: " + place.getDay());
         }
 
         // 기존 tripPlanDetailList 상태 로그
@@ -411,25 +521,32 @@ public class PlanEditActivity extends AppCompatActivity {
             Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
         }
 
-        // 업데이트 과정: day가 일치하는 곳만 업데이트
-        int updateIndex = 0;
-        for (int i = 0; i < tripPlanDetailList.size(); i++) {
-            TripPlanDetail detail = tripPlanDetailList.get(i);
-            if (detail.getDay() == day && updateIndex < updatedPlacesList.size()) {
-                Place place = updatedPlacesList.get(updateIndex);
-                Log.d("updateTripPlanDetailList", "Updating TripPlanDetail for Day: " + day + ", Index: " + i);
-                Log.d("updateTripPlanDetailList", "Before Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+        // 기존 항목 삭제
+        tripPlanDetailList.removeIf(detail -> detail.getDay() == day+1);
+        Log.d("updateTripPlanDetailList", "day: " + String.valueOf(day));
 
-                detail.setLocation(place.getPlaceName());
-                detail.setAddress(place.getAddress());
-                detail.setLatitude(place.getLatitude());
-                detail.setLongitude(place.getLongitude());
 
-                Log.d("updateTripPlanDetailList", "After Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+        // 새로운 항목 추가
+        for (Place place : updatedPlacesList) {
+            place.setDay(day+1);
 
-                updateIndex++;  // 다음 updatedPlacesList의 항목으로 이동
-            }
+            Log.d("updateTripPlanDetailList", "place.getDay(): " + place.getDay());
+            TripPlanDetail newDetail = new TripPlanDetail();
+            newDetail.setDay(day+1);
+            newDetail.setLocation(place.getPlaceName());
+            newDetail.setAddress(place.getAddress());
+            newDetail.setLatitude(place.getLatitude());
+            newDetail.setLongitude(place.getLongitude());
+            tripPlanDetailList.add(newDetail);
         }
+
+        // day 기준으로 TripPlanDetailList를 정렬 (오름차순)
+        Collections.sort(tripPlanDetailList, new Comparator<TripPlanDetail>() {
+            @Override
+            public int compare(TripPlanDetail o1, TripPlanDetail o2) {
+                return Integer.compare(o1.getDay(), o2.getDay());
+            }
+        });
 
         // 최종 결과 로그
         Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
@@ -437,6 +554,7 @@ public class PlanEditActivity extends AppCompatActivity {
             TripPlanDetail detail = tripPlanDetailList.get(i);
             Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
         }
+
     }
 
 
