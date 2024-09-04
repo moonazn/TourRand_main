@@ -82,8 +82,12 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
                                 int tripId = tripPlanList.get(position).getTourId();  // TripPlan의 ID를 가져오기
 
                                 Log.d("remove", String.valueOf(tripId));
+                                Log.d("position", String.valueOf(position));
+
+
                                 activity.deleteTripOnServer(tripId, position);
 
+                                Log.d("연결 완", "삭제");
                                 // 삭제 확인 시 해당 아이템 삭제
                                 tripPlanList.remove(position);
                                 notifyItemRemoved(position);
@@ -98,7 +102,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
         });
     }
     public void removeItem(int position) {
-        if (position < 0 || position >= tripPlanList.size()) {
+        if (position <= 0 || position >= tripPlanList.size()) {
             // 방어적인 프로그래밍: 잘못된 인덱스에 접근할 경우
             Log.e("TripPlanAdapter", "Attempted to remove item at invalid index: " + position + ", Size: " + tripPlanList.size());
             return;
