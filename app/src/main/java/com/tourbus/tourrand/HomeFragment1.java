@@ -56,6 +56,7 @@ public class HomeFragment1 extends Fragment {
     private TextView tripzero;
     private Handler handler;
 
+    private int tourId;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -304,6 +305,11 @@ public class HomeFragment1 extends Fragment {
                 if (jsonObject.has("tour_name")) {
                     tripName = jsonObject.getString("tour_name");
                     Log.d("여행이름", tripName);
+                }
+
+                if (jsonObject.has("tour_id")) {
+                    tourId = jsonObject.getInt("tour_id");
+                    Log.d("여행아이디", String.valueOf(tourId));
                 }
 
                 if (jsonObject.has("planDate")) {

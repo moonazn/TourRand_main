@@ -373,24 +373,72 @@ public class PlanEditActivity extends AppCompatActivity {
         placesEditAdapter.setEditing(isEditing);
         placesEditAdapter.notifyDataSetChanged();
     }
-    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
-        // tripPlanDetailList를 업데이트합니다.
+//    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
+//        // tripPlanDetailList를 업데이트합니다.
+//
+//        Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
+//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+//            TripPlanDetail detail = tripPlanDetailList.get(i);
+//            if (detail.getDay() == day) {
+//                // 해당 일차의 장소를 업데이트합니다.
+//                Place place = updatedPlacesList.get(i); // 어댑터의 리스트와 인덱스를 맞추세요.
+//                detail.setLocation(place.getPlaceName());
+//                detail.setAddress(place.getAddress());
+//                detail.setLatitude(place.getLatitude());
+//                detail.setLongitude(place.getLongitude());
+//            }
+//        }
+//
+//        Log.d("updateTripPlanDetailList", String.valueOf(updatedPlacesList));
+//    }
 
+    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
         Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
+
+        // 입력된 데이터 상태 로그
+        Log.d("updateTripPlanDetailList", "Day: " + day);
+        Log.d("updateTripPlanDetailList", "Updated Places List Size: " + updatedPlacesList.size());
+        for (int j = 0; j < updatedPlacesList.size(); j++) {
+            Place place = updatedPlacesList.get(j);
+            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude());
+        }
+
+        // 기존 tripPlanDetailList 상태 로그
+        Log.d("updateTripPlanDetailList", "Original TripPlanDetailList Size: " + tripPlanDetailList.size());
         for (int i = 0; i < tripPlanDetailList.size(); i++) {
             TripPlanDetail detail = tripPlanDetailList.get(i);
-            if (detail.getDay() == day) {
-                // 해당 일차의 장소를 업데이트합니다.
-                Place place = updatedPlacesList.get(i); // 어댑터의 리스트와 인덱스를 맞추세요.
+            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+        }
+
+        // 업데이트 과정: day가 일치하는 곳만 업데이트
+        int updateIndex = 0;
+        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+            TripPlanDetail detail = tripPlanDetailList.get(i);
+            if (detail.getDay() == day && updateIndex < updatedPlacesList.size()) {
+                Place place = updatedPlacesList.get(updateIndex);
+                Log.d("updateTripPlanDetailList", "Updating TripPlanDetail for Day: " + day + ", Index: " + i);
+                Log.d("updateTripPlanDetailList", "Before Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+
                 detail.setLocation(place.getPlaceName());
                 detail.setAddress(place.getAddress());
                 detail.setLatitude(place.getLatitude());
                 detail.setLongitude(place.getLongitude());
+
+                Log.d("updateTripPlanDetailList", "After Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+
+                updateIndex++;  // 다음 updatedPlacesList의 항목으로 이동
             }
         }
 
-        Log.d("updateTripPlanDetailList", String.valueOf(updatedPlacesList));
+        // 최종 결과 로그
+        Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
+        for (int i = 0; i < tripPlanDetailList.size(); i++) {
+            TripPlanDetail detail = tripPlanDetailList.get(i);
+            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+        }
     }
+
+
 
     private void displaySchedule(ArrayList<TripPlanDetail> tripPlanDetailList) {
         // 일정 정보를 화면에 표시하는 로직을 여기에 구현합니다.
