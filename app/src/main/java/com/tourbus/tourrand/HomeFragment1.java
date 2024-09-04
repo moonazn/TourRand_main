@@ -168,8 +168,6 @@ public class HomeFragment1 extends Fragment {
                             Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
                         }
 
-                        // UI 갱신
-                        updateUI();
                     } else {
                         Log.e("Error", "Result is null or empty");
                     }
@@ -312,6 +310,12 @@ public class HomeFragment1 extends Fragment {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
+
+
+
+        // UI 갱신
+        updateUI();
+        Log.d("updateUI","실행완");
     }
     public ArrayList<TripPlan> parseTripPlan(String json) {
         ArrayList<TripPlan> TripPlanList = new ArrayList<>();

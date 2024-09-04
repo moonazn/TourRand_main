@@ -137,6 +137,9 @@ public class PlanViewActivity extends AppCompatActivity {
         String tour_name = selectedLocation + getTheme + "여행";
         tripLength = getIntent().getIntExtra("tripLength", 1);
 
+        withAnimal = getIntent().getBooleanExtra("withAnimal",withAnimal);
+
+        Log.d("반려동물동반여부", String.valueOf(withAnimal));
         semiTheme = findViewById(R.id.themaSemiText);
 
         setThemeText(getTheme, semiTheme);
@@ -639,6 +642,13 @@ public class PlanViewActivity extends AppCompatActivity {
     }
 
     private void updateThemeText(String theme) {
+
+        if(withAnimal ==true)
+            theme = "반려동물";
+
+        if(theme == null) {
+            theme = "반려동물";
+        }
         TextView themaText = findViewById(R.id.themaText);
         themaText.setText("이번 여행의 테마는 " + theme + "입니다!");
         setThemeText(theme, semiTheme);
@@ -1241,6 +1251,9 @@ public class PlanViewActivity extends AppCompatActivity {
                 break;
             case "캠핑":
                 semiTheme.setText("별빛 가득한 하늘 아래 캠핑을 즐기며, 자연 속에서 소박한 행복을 만끽해보세요.");
+                break;
+            case "반려동물":
+                semiTheme.setText("인생의 동반자인 반려동물과 즐거운 여행을 떠나보세요. 몸과 마음을 리프레쉬 할 수 있는 즐거운 경험이 될 것 입니다.");
                 break;
             default:
                 semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함꼐 색다른 여행을 떠나보세요!");

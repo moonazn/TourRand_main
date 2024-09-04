@@ -388,6 +388,7 @@ public class DstActivity extends AppCompatActivity {
             intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
 
             intent.putExtra("withAnimal", withAnimal);
+            Log.d("withAnimal", String.valueOf(withAnimal));
             intent.putExtra("mainTheme", mainTheme);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
