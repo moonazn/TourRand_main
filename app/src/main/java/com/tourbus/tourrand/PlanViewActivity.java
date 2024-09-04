@@ -551,7 +551,6 @@ public class PlanViewActivity extends AppCompatActivity {
         placesAdapter = new PlacesAdapter(placesList);
         placesRecyclerView.setAdapter(placesAdapter);
 
-
     }
 
 //    private void setMapPlaces(ArrayList<Location> locationArrayList, KakaoMap kakaoMap) {
