@@ -21,6 +21,8 @@ public class TripPlanDetail implements Parcelable {
         this.longitude = longitude;
     }
 
+    public TripPlanDetail() {};
+
     public void setAddress(String address) {
         this.address = address;
     }

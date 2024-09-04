@@ -10,12 +10,20 @@ public class Place implements Parcelable {
     private String addressName;
     private double latitude;
     private double longitude;
+    private int day;
 
     public Place(String placeName, String addressName, double latitude, double longitude) {
         this.placeName = placeName;
         this.addressName = addressName;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+    public Place(String placeName, String addressName, double latitude, double longitude, int day) {
+        this.placeName = placeName;
+        this.addressName = addressName;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.day = day;
     }
 
     public Place(String placeName, String addressName) {
@@ -43,6 +51,14 @@ public class Place implements Parcelable {
             return new Place[size];
         }
     };
+
+    public void setDay(int day) {
+        this.day = day;
+    }
+
+    public int getDay() {
+        return day;
+    }
 
     public String getPlaceName() {
         return placeName;

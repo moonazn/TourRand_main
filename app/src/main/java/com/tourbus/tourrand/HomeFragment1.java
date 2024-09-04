@@ -62,15 +62,6 @@ public class HomeFragment1 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home1, container, false);
 
-        Button testBut = rootView.findViewById(R.id.testBut);
-        testBut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), PlanEditActivity.class);
-                startActivity(intent);
-            }
-        });
-
         // RecyclerView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -154,43 +145,75 @@ public class HomeFragment1 extends Fragment {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserNickname();
         logo = rootView.findViewById(R.id.logo);
-        logo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "http://13.209.33.141:5000/tour_list";
-                String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
 
-                new Thread(() -> {
-                    String result = httpPostBodyConnection(url, data);
-                    // 처리 결과 확인
-                    handler = new Handler(Looper.getMainLooper());
-                    if (handler != null) {
-                        handler.post(() -> {
-                            if(result != null && !result.isEmpty()) {
-                                // tripPlans 초기화 및 데이터 파싱
-                                tripPlans.clear();
-                                tripPlans.addAll(parseTripPlan(result));
+        String url = "http://13.209.33.141:5000/tour_list";
+        String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
+
+        new Thread(() -> {
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            handler = new Handler(Looper.getMainLooper());
+            if (handler != null) {
+                handler.post(() -> {
+                    if(result != null && !result.isEmpty()) {
+                        // tripPlans 초기화 및 데이터 파싱
+                        tripPlans.clear();
+                        tripPlans.addAll(parseTripPlan(result));
 //                                tripPlans = parseTripPlan(result);
 //                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
 
-                                // 데이터 확인 로그
-                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
-                                for (TripPlan plan : tripPlans) {
-                                    Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
-                                }
+                        // 데이터 확인 로그
+                        Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+                        for (TripPlan plan : tripPlans) {
+                            Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
+                        }
 
-                                // UI 갱신
-                                updateUI();
-                            } else {
-                                Log.e("Error", "Result is null or empty");
-                            }
-                            seeNetworkResult(result);
-                        });
+                        // UI 갱신
+                        updateUI();
+                    } else {
+                        Log.e("Error", "Result is null or empty");
                     }
-                }).start();
-
+                    seeNetworkResult(result);
+                });
             }
-        });
+        }).start();
+//        logo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String url = "http://13.209.33.141:5000/tour_list";
+//                String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
+//
+//                new Thread(() -> {
+//                    String result = httpPostBodyConnection(url, data);
+//                    // 처리 결과 확인
+//                    handler = new Handler(Looper.getMainLooper());
+//                    if (handler != null) {
+//                        handler.post(() -> {
+//                            if(result != null && !result.isEmpty()) {
+//                                // tripPlans 초기화 및 데이터 파싱
+//                                tripPlans.clear();
+//                                tripPlans.addAll(parseTripPlan(result));
+////                                tripPlans = parseTripPlan(result);
+////                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+//
+//                                // 데이터 확인 로그
+//                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+//                                for (TripPlan plan : tripPlans) {
+//                                    Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
+//                                }
+//
+//                                // UI 갱신
+//                                updateUI();
+//                            } else {
+//                                Log.e("Error", "Result is null or empty");
+//                            }
+//                            seeNetworkResult(result);
+//                        });
+//                    }
+//                }).start();
+//
+//            }
+//        });
 
         return rootView;
     }
@@ -337,7 +360,7 @@ public class HomeFragment1 extends Fragment {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
 
-        String url = "http://13.209.33.141:5000/update_itinerary";
+        String url = "http://13.209.33.141:5000/delete";
 //            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
         // JSON 문자열을 구성하기 위한 StringBuilder 사용

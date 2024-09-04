@@ -2,6 +2,7 @@ package com.tourbus.tourrand;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,12 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TripPlanViewHolder holder, int position) {
+
+        if (position >= tripPlanList.size()) {
+            Log.e("TripPlanAdapter", "Invalid position during onBindViewHolder: " + position + ", Size: " + tripPlanList.size());
+            return;
+        }
+
         TripPlan tripPlan = tripPlanList.get(position);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +80,8 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
 
                                 // 서버에 삭제 요청 메서드를 호출
                                 int tripId = tripPlanList.get(position).getTourId();  // TripPlan의 ID를 가져오기
+
+                                Log.d("remove", String.valueOf(tripId));
                                 activity.deleteTripOnServer(tripId, position);
 
                                 // 삭제 확인 시 해당 아이템 삭제
@@ -89,6 +98,11 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
         });
     }
     public void removeItem(int position) {
+        if (position < 0 || position >= tripPlanList.size()) {
+            // 방어적인 프로그래밍: 잘못된 인덱스에 접근할 경우
+            Log.e("TripPlanAdapter", "Attempted to remove item at invalid index: " + position + ", Size: " + tripPlanList.size());
+            return;
+        }
         tripPlanList.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position, tripPlanList.size());
