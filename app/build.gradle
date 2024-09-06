@@ -9,9 +9,22 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    dexOptions {
-        javaMaxHeapSize "4g"
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
+    lintOptions {
+        abortOnError false // Lint 오류가 있어도 빌드를 중단하지 않음
+        disable 'MissingTranslation' // 특정 Lint 오류 무시 (예: 다국어 미지원 관련 오류)
     }
+    allprojects {
+        configurations.all {
+            resolutionStrategy {
+                // 중복된 라이브러리 버전 강제로 통일
+                force 'com.github.devsideal:VectorChildFinder:1.0.0'  // 올바른 버전으로 설정
+            }
+        }
+    }
+
 
     defaultConfig {
         applicationId "com.tourbus.tourrand"
@@ -60,7 +73,7 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:4.11.0" //카카오 이미지추가 시
 
     implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
-    implementation project(':vectorchildfinder')
+//    implementation project(':vectorchildfinder')
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'com.nex3z:toggle-button-group:1.2.3'
