@@ -130,7 +130,7 @@ public class DstActivity extends AppCompatActivity {
                     if(withAnimaltoString.equals("반려동물")){
                         //플랜뷰액티비티에서 반려동물일 때 테마 수정해야함
                         Log.d("반려동물 동반 여부", withAnimaltoString);
-                        url = "http://13.209.33.141:5000/pet";
+                        url = "https://api.tourrand.com/pet";
                         data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
                     } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
@@ -146,20 +146,20 @@ public class DstActivity extends AppCompatActivity {
 
                         if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
                             selectedLocation ="강_고성";
-                            url = "http://13.209.33.141:5000/ecotourism";
+                            url = "https://api.tourrand.com/ecotourism";
                             data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                         } else if(mainTheme.equals("생태관광")){
-                            url = "http://13.209.33.141:5000/ecotourism";
+                            url = "https://api.tourrand.com/ecotourism";
                             data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                         } else {
                             //위 지역임에도 불구하고 생태관광이 안 나왔을 때
-                            url = "http://13.209.33.141:5000/route";
+                            url = "https://api.tourrand.com/route";
                             data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                         }
                     } else if(selectedLocation.equals("경상남도 고성")){
                         selectedLocation = "경_고성";
                         mainTheme = chooseTheme();
-                        url = "http://13.209.33.141:5000/route";
+                        url = "https://api.tourrand.com/route";
                         data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                     }
                     else{
@@ -174,27 +174,27 @@ public class DstActivity extends AppCompatActivity {
                             if(mainTheme.equals("캠핑")){
                                 if(selectedLocation.equals("강원도 고성")){
                                     selectedLocation = "강_고성";
-                                    url = "http://13.209.33.141:5000/camping";
+                                    url = "https://api.tourrand.com/camping";
                                     data = "{\"destination\":\""+selectedLocation+"\" }";
                                 } else if (selectedLocation.equals("경상남도 고성")) {
                                     selectedLocation = "경_고성";
-                                    url = "http://13.209.33.141:5000/camping";
+                                    url = "https://api.tourrand.com/camping";
                                     data = "{\"destination\":\""+selectedLocation+"\" }";
                                 } else {
                                     //고성 아닌데 캠핑인 것들
-                                    url = "http://13.209.33.141:5000/camping";
+                                    url = "https://api.tourrand.com/camping";
                                     data = "{\"destination\":\""+selectedLocation+"\" }";
                                 }
                             } else{
                                 //여행 이틀만 가는데 캠핑 안 나왔을 때
                                 mainTheme = chooseTheme();
-                                url = "http://13.209.33.141:5000/route";
+                                url = "https://api.tourrand.com/route";
                                 data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                             }
                         } else{
                             //반려동물 + 캠핑 미포함
                             mainTheme = chooseTheme();
-                            url = "http://13.209.33.141:5000/route";
+                            url = "https://api.tourrand.com/route";
                             data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
 
                             Log.d("데이터 보낸 거", data);

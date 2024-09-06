@@ -168,7 +168,7 @@ public class HomeFragment2 extends Fragment {
 
         String user_id = UserManager.getInstance().getUserId();
 
-        String url = "http://13.209.33.141:5000/map";
+        String url = "https://api.tourrand.com/map";
         String inputText = "map_userInfo";
         String data = "{ \"user_id\" : \""+user_id+"\" }";
 //        Log.d("inputText", user_id);

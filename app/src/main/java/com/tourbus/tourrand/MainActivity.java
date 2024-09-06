@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 String id = idEditText.getText().toString().trim();
                 String pw = pwEditText.getText().toString().trim();
 
-                String url = "http://13.209.33.141:5000/login";
+                String url = "https://api.tourrand.com/login";
                 String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
 
 

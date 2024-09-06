@@ -173,7 +173,7 @@ public class PlanEditActivity extends AppCompatActivity {
 
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
-        url = "http://13.209.33.141:5000/tour_detail";
+        url = "https://api.tourrand.com/tour_detail";
 // JSON 문자열을 구성하기 위한 StringBuilder 사용
         StringBuilder data = new StringBuilder();
 
@@ -372,7 +372,7 @@ public class PlanEditActivity extends AppCompatActivity {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
 
-        String url = "http://13.209.33.141:5000/update_itinerary";
+        String url = "https://api.tourrand.com/update_itinerary";
 //            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
         // JSON 문자열을 구성하기 위한 StringBuilder 사용

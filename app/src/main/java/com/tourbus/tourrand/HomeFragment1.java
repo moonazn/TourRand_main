@@ -146,7 +146,7 @@ public class HomeFragment1 extends Fragment {
         String userId = userManager.getUserNickname();
         logo = rootView.findViewById(R.id.logo);
 
-        String url = "http://13.209.33.141:5000/tour_list";
+        String url = "https://api.tourrand.com/tour_list";
         String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
 
         new Thread(() -> {
@@ -178,7 +178,7 @@ public class HomeFragment1 extends Fragment {
 //        logo.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                String url = "http://13.209.33.141:5000/tour_list";
+//                String url = "https://api.tourrand.com/tour_list";
 //                String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
 //
 //                new Thread(() -> {
@@ -364,7 +364,7 @@ public class HomeFragment1 extends Fragment {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
 
-        String url = "http://13.209.33.141:5000/delete";
+        String url = "https://api.tourrand.com/delete";
 //            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
         // JSON 문자열을 구성하기 위한 StringBuilder 사용

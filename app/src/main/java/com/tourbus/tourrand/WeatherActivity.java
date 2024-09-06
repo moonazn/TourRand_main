@@ -95,7 +95,7 @@ public class WeatherActivity extends AppCompatActivity {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserNickname();
 
-        String url = "http://13.209.33.141:5000/weather";
+        String url = "https://api.tourrand.com/weather";
 // JSON 문자열을 구성하기 위한 StringBuilder 사용
         StringBuilder data = new StringBuilder();
 
