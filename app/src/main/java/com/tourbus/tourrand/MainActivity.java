@@ -201,6 +201,10 @@ public class MainActivity extends AppCompatActivity {
                                 loginInfoText.setVisibility(View.VISIBLE);
                                 Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
                                 loginInfoText.startAnimation(shake);
+                            }else if(userId.equals("사용자가 존재하지 않음")){
+                                loginInfoText.setVisibility(View.VISIBLE);
+                                Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                                loginInfoText.startAnimation(shake);
                             }else {
                                 // 싱글톤 인스턴스 가져오기
                                 UserManager userManager = UserManager.getInstance();
