@@ -162,7 +162,7 @@ public class JoinActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String id = idEditText.getText().toString();
-                String url = "http://13.209.33.141:5000/check_id";
+                String url = "https://api.tourrand.com/check_id";
                 String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
 
                 new Thread(() -> {
@@ -245,7 +245,7 @@ public class JoinActivity extends AppCompatActivity {
 //                // 여기서 회원가입 요청을 서버에 보낼 수 있습니다.
 //
 //                //url 회원가입 버전으로 바꾸기⭐️⭐️⭐️
-//                String url = "http://13.209.33.141:5000/login";
+//                String url = "https://api.tourrand.com/login";
 //                String data = "{ \"id\" : \""+id+"\",\"pw\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 //                new Thread(() -> {
 //                    String result = httpPostBodyConnection(url, data);
@@ -271,7 +271,7 @@ public class JoinActivity extends AppCompatActivity {
                     String pw = pwEditText.getText().toString().trim();
                     String nickname = nicknameEditText.getText().toString().trim();
 
-                    String url = "http://13.209.33.141:5000/join";
+                    String url = "https://api.tourrand.com/join";
                     String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\",\"nickname\":\""+nickname+"\" }"; //json 형식 데이터
 
                     new Thread(() -> {
@@ -301,7 +301,7 @@ public class JoinActivity extends AppCompatActivity {
     // 아이디 중복 확인
     private boolean isIdDuplicated(String id) {
 
-        String url = "http://13.209.33.141:5000/check_id";
+        String url = "https://api.tourrand.com/check_id";
         String data = "{ \"id\" : \""+id+"\" }"; // JSON 형식 데이터
 
         new Thread(() -> {

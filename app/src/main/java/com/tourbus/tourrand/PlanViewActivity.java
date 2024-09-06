@@ -400,7 +400,7 @@ public class PlanViewActivity extends AppCompatActivity {
                 //반려동물이랑 같이 갈 때
                 if(withAnimal == true){
                     Log.d("반려동물 동반 여부", "반려동물");
-                    url = "http://13.209.33.141:5000/pet";
+                    url = "https://api.tourrand.com/pet";
                     data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
 
                 } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
@@ -416,20 +416,20 @@ public class PlanViewActivity extends AppCompatActivity {
 
                     if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
                         selectedLocation ="강_고성";
-                        url = "http://13.209.33.141:5000/ecotourism";
+                        url = "https://api.tourrand.com/ecotourism";
                         data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                     } else if(mainTheme.equals("생태관광")){
-                        url = "http://13.209.33.141:5000/ecotourism";
+                        url = "https://api.tourrand.com/ecotourism";
                         data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
                     } else {
                         //위 지역임에도 불구하고 생태관광이 안 나왔을 때
-                        url = "http://13.209.33.141:5000/route";
+                        url = "https://api.tourrand.com/route";
                         data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                     }
                 } else if(selectedLocation.equals("경상남도 고성")){
                     selectedLocation = "경_고성";
                     mainTheme = chooseTheme();
-                    url = "http://13.209.33.141:5000/route";
+                    url = "https://api.tourrand.com/route";
                     data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                 }
                 else{
@@ -444,27 +444,27 @@ public class PlanViewActivity extends AppCompatActivity {
                         if(mainTheme.equals("캠핑")){
                             if(selectedLocation.equals("강원도 고성")){
                                 selectedLocation = "강_고성";
-                                url = "http://13.209.33.141:5000/camping";
+                                url = "https://api.tourrand.com/camping";
                                 data = "{\"destination\":\""+selectedLocation+"\" }";
                             } else if (selectedLocation.equals("경상남도 고성")) {
                                 selectedLocation = "경_고성";
-                                url = "http://13.209.33.141:5000/camping";
+                                url = "https://api.tourrand.com/camping";
                                 data = "{\"destination\":\""+selectedLocation+"\" }";
                             } else {
                                 //고성 아닌데 캠핑인 것들
-                                url = "http://13.209.33.141:5000/camping";
+                                url = "https://api.tourrand.com/camping";
                                 data = "{\"destination\":\""+selectedLocation+"\" }";
                             }
                         } else{
                             //여행 이틀만 가는데 캠핑 안 나왔을 때
                             mainTheme = chooseTheme();
-                            url = "http://13.209.33.141:5000/route";
+                            url = "https://api.tourrand.com/route";
                             data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                         }
                     }
                     //반려동물 + 캠핑 미포함
                     mainTheme = chooseTheme();
-                    url = "http://13.209.33.141:5000/route";
+                    url = "https://api.tourrand.com/route";
                     data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
                     //data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \"문화\",\"destination\":\""+selectedLocation+"\" }";
 
@@ -490,7 +490,7 @@ public class PlanViewActivity extends AppCompatActivity {
             UserManager userManager = UserManager.getInstance();
             String userId = userManager.getUserId();
 
-            String url = "http://13.209.33.141:5000/confirmed";
+            String url = "https://api.tourrand.com/confirmed";
 //            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
             // JSON 문자열을 구성하기 위한 StringBuilder 사용
