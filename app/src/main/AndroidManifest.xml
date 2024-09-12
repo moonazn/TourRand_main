@@ -56,9 +56,6 @@
             android:name=".DateQActivity"
             android:exported="false" />
         <activity
-            android:name=".CustomSetActivity"
-            android:exported="false" />
-        <activity
             android:name=".QuestionActivity"
             android:exported="false" />
         <activity
@@ -107,12 +104,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="oauth"
-                    android:scheme="kakao{d71b70e03d7f7b494a72421fb46cba46}" />
-                <data
-                    android:host="vectormap"
-                    android:scheme="d71b70e03d7f7b494a72421fb46cba46" />
+                <data android:scheme="kakao{e211572ac7a98da2054d8a998e86a28a}"/>
+                <data android:host="oauth"/>
+                <data android:scheme="e211572ac7a98da2054d8a998e86a28a"/>
+                <data android:host="vectormap"/>
             </intent-filter>
 
             <!-- <intent-filter> -->

@@ -127,7 +127,7 @@ public class PlanViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_plan_view);
 
         handler = new Handler();
-        KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
+        KakaoMapSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
 
         Intent intent = getIntent();
         tripPlanDetailList = getIntent().getParcelableArrayListExtra("TripPlanDetailList");
@@ -154,6 +154,7 @@ public class PlanViewActivity extends AppCompatActivity {
             public void onMapError(Exception error) {
                 // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
                 Log.e("개같이 멸망", "다시");
+                Log.e("개같이 멸망", "error: " + error);
             }
         }, new KakaoMapReadyCallback() {
             @Override

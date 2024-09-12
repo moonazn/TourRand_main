@@ -69,7 +69,7 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
             holder.drag.setVisibility(View.GONE);
         }
 
-        String apiKey = "856b60d15352dfaae39da72e011fc9c3";
+        String apiKey = "fe49cf8c95a5f7436ec71df81036c51e";
 
         if (position < placesList.size() - 1) {
             holder.mapIcon.setVisibility(View.VISIBLE);
