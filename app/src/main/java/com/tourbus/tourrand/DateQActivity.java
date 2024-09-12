@@ -12,6 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -46,8 +47,15 @@ public class DateQActivity extends AppCompatActivity {
         tripDateTextView = findViewById(R.id.tripDateTextView);
         ImageView calendarIcon = findViewById(R.id.calendarIcon);
         TextView noAnswer = findViewById(R.id.noAnswer);
+        LinearLayout dateLinear = findViewById(R.id.dateLinear);
 
 
+        dateLinear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDateRangePicker();
+            }
+        });
         calendarIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

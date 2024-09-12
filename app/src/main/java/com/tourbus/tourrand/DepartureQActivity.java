@@ -9,6 +9,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class DepartureQActivity extends AppCompatActivity {
@@ -35,6 +36,8 @@ public class DepartureQActivity extends AppCompatActivity {
         searchIcon = findViewById(R.id.searchIcon);
         departureTextView = findViewById(R.id.departureTextView);
 
+        LinearLayout departureLinear = findViewById(R.id.departureLinear);
+
 
         // 이전 액티비티에서 전달된 데이터 받기
         Intent intent = getIntent();
@@ -44,7 +47,14 @@ public class DepartureQActivity extends AppCompatActivity {
 
 
         findDepartureDialog = new FindDepartureDialog(this);
-
+        departureLinear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isFinishing() && !isDestroyed()) {
+                    findDepartureDialog.show();
+                }
+            }
+        });
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -36,6 +36,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -345,7 +348,7 @@ public class HomeFragment1 extends Fragment {
                 }
 
                 if (tripName != null && travelDate != null) {
-                    TripPlan tripPlan = new TripPlan(tripName, travelDate, "3", tourId);
+                    TripPlan tripPlan = new TripPlan(tripName, travelDate, getDday(travelDate), tourId);
                     TripPlanList.add(tripPlan);
                 } else {
                     Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
@@ -387,6 +390,35 @@ public class HomeFragment1 extends Fragment {
                 seeNetworkResult(getData);
             });
         }).start();
+    }
+    private String getDday(String planDate){
+// 입력 문자열
+        String dateRange = planDate;
+
+        // 날짜 형식 지정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        // 시작 날짜와 끝 날짜 분리
+        String[] dates = dateRange.split("~");
+        LocalDate startDate = LocalDate.parse(dates[0].trim(), formatter);
+        LocalDate endDate = LocalDate.parse(dates[1].trim(), formatter);
+
+        // 현재 날짜 가져오기
+        LocalDate currentDate = LocalDate.now();
+
+        // D-day 계산
+        long dDay = ChronoUnit.DAYS.between(currentDate, startDate);
+        String dDaytoString  = String.valueOf(dDay);
+
+        if (currentDate.isBefore(startDate)) {
+            System.out.println("D-" + dDay);
+        } else if (currentDate.isAfter(endDate)) {
+            System.out.println("기간이 종료되었습니다.");
+        } else {
+            System.out.println("기간 중입니다. (" + dDay + "일 지남)");
+        }
+
+        return dDaytoString;
     }
 
 //    public ArrayList<TripPlan> parseTripPlan(String json) {
