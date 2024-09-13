@@ -146,7 +146,7 @@ public class HomeFragment1 extends Fragment {
             }
         });
         UserManager userManager = UserManager.getInstance();
-        String userId = userManager.getUserNickname();
+        String userId = userManager.getUserId();
         logo = rootView.findViewById(R.id.logo);
 
         String url = "https://api.tourrand.com/tour_list";
