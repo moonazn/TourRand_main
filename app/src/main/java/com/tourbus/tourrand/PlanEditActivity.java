@@ -380,6 +380,7 @@ public class PlanEditActivity extends AppCompatActivity {
 
         data.append("{");
         data.append("\"user_id\":\"").append(userId).append("\",");
+        data.append("\"tour_id\":").append(tourId).append(",");
         data.append("\"tour_name\":\"").append(tripTitleEditText.getText()).append("\",");
         data.append("\"planDate\":\"").append(planDate).append("\",");
         data.append("\"schedules\":[");
