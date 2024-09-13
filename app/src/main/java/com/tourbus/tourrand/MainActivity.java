@@ -55,22 +55,13 @@ public class MainActivity extends AppCompatActivity {
     private EditText idEditText, pwEditText;
     private Button loginBtn;
     private TextView join;
-
+    private UserManager userManager;
     boolean isLoginFinish = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ImageView icon = findViewById(R.id.icon);
-        icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
@@ -97,24 +88,24 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         };
-        kakaoLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//                finish();
-
-                if(UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)){
-                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, callback);
-                }else{
-                    // 카카오톡이 설치되어 있지 않다면
-                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-                }
-            }
-
-
-        });
+//        kakaoLoginButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+////                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+////                startActivity(intent);
+////                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+////                finish();
+//
+//                if(UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)){
+//                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, callback);
+//                }else{
+//                    // 카카오톡이 설치되어 있지 않다면
+//                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+//                }
+//            }
+//
+//
+//        });
 
         kakaoLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                                 loginInfoText.startAnimation(shake);
                             }else {
                                 // 싱글톤 인스턴스 가져오기
-                                UserManager userManager = UserManager.getInstance();
+                                userManager = UserManager.getInstance();
 
                                 Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
                                 // 값 저장하기
@@ -309,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "invoke: profile = " + user.getKakaoAccount().getProfile().getThumbnailImageUrl());
 
-                    String url = "http://13.209.33.141:5000/login";
+                    String url = "https://api.tourrand.com/kakao_login";
 //                    //10자리 숫자/이메일/이름/프로필 사진 주소
                     inputText = user.getId().toString()+"^^"+user.getKakaoAccount().getEmail().toString()+"^^"+
                             user.getKakaoAccount().getProfile().getNickname()+"^^"+user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
@@ -318,6 +309,7 @@ public class MainActivity extends AppCompatActivity {
                     String email = user.getKakaoAccount().getEmail().toString();
                     String nickname = user.getKakaoAccount().getProfile().getNickname();
                     String user_img = user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
+                    userManager.setUserId(id);
                    // Log.d("id값", "카카오ID " + user.getId().toString());
                     //String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
                     String data = "{ \"id\" : \""+id+"\",\"email\" : \""+email+"\",\"nickname\":\""+nickname+"\",\"user_img\":\""+user_img+"\" }"; //json 형식 데이터
@@ -326,7 +318,11 @@ public class MainActivity extends AppCompatActivity {
                     new Thread(() -> {
                         String result = httpPostBodyConnection(url, data);
                         // 처리 결과 확인
-                        handler.post(() -> seeNetworkResult(result));
+                        handler.post(() ->{
+                            userManager = UserManager.getInstance();
+                            userManager.setUserNickname(result);
+                            seeNetworkResult(result);
+                                });
                     }).start();
 
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
