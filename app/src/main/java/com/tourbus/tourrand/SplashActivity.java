@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.VideoView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.kakao.sdk.user.UserApiClient;
@@ -70,10 +71,15 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         public Unit invoke(User user, Throwable throwable) {
                             if (user != null) {
-                                currentUser = new AppUser(user.getId().toString(),
-                            user.getKakaoAccount().getProfile().getNickname(),
-                            user.getKakaoAccount().getEmail(),
-                            user.getKakaoAccount().getProfile().getProfileImageUrl());
+
+                                UserManager userManager = UserManager.getInstance();
+                                userManager.setUserNickname(user.getKakaoAccount().getProfile().getNickname());
+                                userManager.setUserId(user.getId().toString());
+                                userManager.getUserNickname();
+                                Log.d("닉네임",userManager.getUserNickname());
+                                userManager.getUserId();
+                                userManager.setUserProfileImg(user.getKakaoAccount().getProfile().getProfileImageUrl());
+                                userManager.getUserProfileImg();
                                 moveToActivity(HomeActivity.class);
                             } else {
                                 moveToActivity(MainActivity.class);

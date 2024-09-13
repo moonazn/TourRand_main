@@ -52,8 +52,8 @@ public class MyPageActivity extends AppCompatActivity {
         name.setText(UserManager.getInstance().getUserNickname() + "님, 환영합니다!");
         email.setText("");
 
-//        Glide.with(profileImg).load(SplashActivity.currentUser.getProfileImage())
-//                .circleCrop().into(profileImg);
+        Glide.with(profileImg).load(UserManager.getInstance().getUserProfileImg())
+                .circleCrop().into(profileImg);
 
 
         logout = findViewById(R.id.logout);
