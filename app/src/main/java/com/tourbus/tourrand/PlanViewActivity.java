@@ -672,7 +672,9 @@ public class PlanViewActivity extends AppCompatActivity {
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
         TextView themaText = findViewById(R.id.themaText);
-        themaText.setText("이번 여행의 테마는 " + tripPlanDetailList.get(0).getTheme() + "입니다!");
+        if(themaText.getText() == "이번 여행의 테마는 null입니다!") {
+            themaText.setText("이번 여행의 테마는 " + tripPlanDetailList.get(0).getTheme() + "입니다!");
+        }
         setThemeText(theme, semiTheme);
 
         placesMap = new HashMap<>();
