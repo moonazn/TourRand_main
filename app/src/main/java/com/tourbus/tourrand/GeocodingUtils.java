@@ -10,7 +10,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class GeocodingUtils {
 
-    private static final String KAKAO_API_KEY = "856b60d15352dfaae39da72e011fc9c3";
+    private static final String KAKAO_API_KEY = "fe49cf8c95a5f7436ec71df81036c51e";
 
     public static CompletableFuture<Location> geocodeAsync(String address) {
         return CompletableFuture.supplyAsync(() -> {

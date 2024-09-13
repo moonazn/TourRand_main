@@ -9,6 +9,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    signingConfigs {
+        config {
+            keyAlias "key0"
+            keyPassword "toqlqjs21"
+            storeFile file("tourrand_key")
+            storePassword "toqlqjs21"
+        }
+    }
 //    dexOptions {
 //        javaMaxHeapSize "4g"
 //    }
@@ -41,8 +50,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {

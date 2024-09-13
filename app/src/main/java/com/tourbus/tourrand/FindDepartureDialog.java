@@ -94,7 +94,7 @@ public class FindDepartureDialog extends Dialog {
         String url = "https://dapi.kakao.com/v2/local/search/keyword.json?query=" + query;
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "KakaoAK " + "856b60d15352dfaae39da72e011fc9c3")
+                .header("Authorization", "KakaoAK " + "fe49cf8c95a5f7436ec71df81036c51e")
                 .build();
 
         client.newCall(request).enqueue(new Callback() {

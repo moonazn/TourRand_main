@@ -167,7 +167,7 @@ public class PlanEditActivity extends AppCompatActivity {
         tripTitleEditText = findViewById(R.id.tripTitleEditText);
         tripTitleEditText.setEnabled(false);
 
-        KakaoMapSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
+        KakaoMapSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
 
         mapView = findViewById(R.id.map);
 

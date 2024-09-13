@@ -119,30 +119,30 @@ public class MainActivity extends AppCompatActivity {
         kakaoLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
-//                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
-//                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
-//                        @Override
-//                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
-//                            if (oAuthToken != null) {
-//                                // 로그인 성공
-//                                updateKakaoLoginUi();
-//                            } else {
-//                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
-//                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
-//                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
-//                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                            }
-//                            return null;
-//                        }
-//                    });
-//                } else {
-//                    // 카카오톡이 설치되어 있지 않다면
-//                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                }
+//                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                finish();
+                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
+                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
+                        @Override
+                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
+                            if (oAuthToken != null) {
+                                // 로그인 성공
+                                updateKakaoLoginUi();
+                            } else {
+                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
+                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
+                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
+                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                            }
+                            return null;
+                        }
+                    });
+                } else {
+                    // 카카오톡이 설치되어 있지 않다면
+                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                }
             }
         });
 

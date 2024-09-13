@@ -8,7 +8,7 @@ public class GlobalApplication extends Application {
     public void onCreate() {
         super.onCreate();
         // Kakao SDK 초기화
-        KakaoSdk.init(this, "d71b70e03d7f7b494a72421fb46cba46");
+        KakaoSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
         System.out.println("GlobalApplication class is executed.");
     }
 }
