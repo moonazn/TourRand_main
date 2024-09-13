@@ -5,6 +5,7 @@ import android.os.Parcelable;
 public class TripPlanDetail implements Parcelable {
 
     private String tripName;
+    private String theme;
     private String departure;
     private int day;
     private String planDate;
@@ -22,6 +23,14 @@ public class TripPlanDetail implements Parcelable {
     }
 
     public TripPlanDetail() {};
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
 
     public void setAddress(String address) {
         this.address = address;

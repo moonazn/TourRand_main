@@ -439,6 +439,7 @@ public class DstActivity extends AppCompatActivity {
 
                 if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
                     TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, departureDocument.getPlaceName(), day, planDate, location, address,latitude,longitude);
+                    TripPlanDetail.setTheme(mainTheme);
                     TripPlanDetailList.add(TripPlanDetail);
 
 //                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
