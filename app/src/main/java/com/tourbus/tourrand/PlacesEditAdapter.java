@@ -1,5 +1,6 @@
 package com.tourbus.tourrand;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -29,6 +30,8 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
     private List<Place> placesList;
     private boolean isEditing = false;
     private DataChangeListener dataChangeListener;
+    private FindDepartureDialog findDepartureDialog;
+    private Place anotherPlace;
 
     // DataChangeListener 인터페이스 정의
     public interface DataChangeListener {
@@ -159,7 +162,29 @@ public class PlacesEditAdapter extends RecyclerView.Adapter<PlacesEditAdapter.Pl
 
                 if (item.getItemId() == R.id.menu_find_alternative) {
                     // 대체 장소 찾기 기능 실행
-                    Toast.makeText(v.getContext(), "대체 장소 찾기", Toast.LENGTH_SHORT).show();
+                    Activity activity = (Activity) v.getContext();
+// findDepartureDialog 초기화 및 실행
+                    findDepartureDialog = new FindDepartureDialog(activity);
+                    findDepartureDialog.show();
+
+                    findDepartureDialog.setOnItemClickListener(new FindDepartureDialog.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(Place document) {
+                            if (document != null) {
+                                anotherPlace = document;
+                                holder.placeName.setText(anotherPlace.getPlaceName());
+                                holder.placeAddress.setText(anotherPlace.getAddress());
+
+                                // 일정 목록이 업데이트되었음을 알림
+                                placesList.set(holder.getAdapterPosition(), anotherPlace); // 일정 목록에서 해당 아이템 업데이트
+                                if (dataChangeListener != null) {
+                                    dataChangeListener.onDataChanged(placesList); // 변경된 데이터 전달
+                                }
+                            }
+                        }
+                    });
+
+//                    Toast.makeText(v.getContext(), "대체 장소 찾기", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if(item.getItemId() == R.id.menu_delete) {
                     // 일정 삭제 기능 실행
