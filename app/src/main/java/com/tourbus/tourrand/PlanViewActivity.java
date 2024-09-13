@@ -644,10 +644,10 @@ public class PlanViewActivity extends AppCompatActivity {
 
     private void updateThemeText(String theme) {
 
-        if(withAnimal ==true)
+        if(withAnimal == true)
             theme = "반려동물";
 
-        if(theme == null) {
+        if(theme == null || theme == "null") {
             theme = "반려동물";
         }
         TextView themaText = findViewById(R.id.themaText);
@@ -671,6 +671,10 @@ public class PlanViewActivity extends AppCompatActivity {
 
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
+        TextView themaText = findViewById(R.id.themaText);
+        themaText.setText("이번 여행의 테마는 " + tripPlanDetailList.get(0).getTheme() + "입니다!");
+        setThemeText(theme, semiTheme);
+
         placesMap = new HashMap<>();
         locationArrayList.clear();
         locationArrayList = new ArrayList<>();
@@ -1201,6 +1205,7 @@ public class PlanViewActivity extends AppCompatActivity {
                     } else {
                         TripPlanDetail = new TripPlanDetail(selectedLocation, departureDocument.getPlaceName(), day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
                     }
+                    TripPlanDetail.setTheme(mainTheme);
                     TripPlanDetailList.add(TripPlanDetail);
 
 //                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
