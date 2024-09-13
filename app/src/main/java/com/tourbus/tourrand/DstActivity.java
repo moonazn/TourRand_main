@@ -384,7 +384,7 @@ public class DstActivity extends AppCompatActivity {
 
             // 다음 화면으로 전환
             Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-
+            TripPlanDetailList.get(0).setTheme(mainTheme);
             intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
 
             intent.putExtra("withAnimal", withAnimal);

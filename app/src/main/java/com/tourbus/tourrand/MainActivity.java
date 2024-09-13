@@ -305,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
                     inputText = user.getId().toString()+"^^"+user.getKakaoAccount().getEmail().toString()+"^^"+
                             user.getKakaoAccount().getProfile().getNickname()+"^^"+user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
 
+                    userManager = UserManager.getInstance();
                     String id = user.getId().toString();
                     String email = user.getKakaoAccount().getEmail().toString();
                     String nickname = user.getKakaoAccount().getProfile().getNickname();
