@@ -62,29 +62,31 @@ public class MyPageActivity extends AppCompatActivity {
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                UserApiClient.getInstance().logout(new Function1<Throwable, Unit>() {
-//                    @Override
-//                    public Unit invoke(Throwable throwable) {
-//                        SplashActivity.currentUser.deleteUser();
-//                        System.out.println("currentUser deleted");
-//
-//
-//                        Intent intent = new Intent(MyPageActivity.this, HomeActivity.class);
-//                        startActivity(intent);
-////                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-////                        finish();
-//
-//                        return null;
-//                    }
-//                });
+                UserApiClient.getInstance().logout(new Function1<Throwable, Unit>() {
+                    @Override
+                    public Unit invoke(Throwable throwable) {
+                        if (SplashActivity.currentUser != null) {
+                            SplashActivity.currentUser.deleteUser();
+                        }
+                        System.out.println("currentUser deleted");
+
+
                         Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
+
+                        return null;
+                    }
+                });
+//                        Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+//                        startActivity(intent);
             }
         });
         backToHomeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MyPageActivity.this, HomeFragment1.class);
+                Intent intent = new Intent(MyPageActivity.this, HomeActivity.class);
                 startActivity(intent);
             }
         });
