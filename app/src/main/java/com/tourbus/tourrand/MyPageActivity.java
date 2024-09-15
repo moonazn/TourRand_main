@@ -94,7 +94,7 @@ public class MyPageActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String url = "https://api.tourrand.com/resign";
-                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserNickname()+"\" }";
+                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\" }";
                 new Thread(() -> {
                     // DELETE 요청을 수행
                     String result = httpPostBodyConnection(url, data);
@@ -192,5 +192,17 @@ public class MyPageActivity extends AppCompatActivity {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
+        UserApiClient.getInstance().unlink(new Function1<Throwable, Unit>() {
+            @Override
+            public Unit invoke(Throwable throwable) {
+                Intent intent = new Intent(MyPageActivity.this, MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+
+                return null;
+            }
+        });
+
     }
 }

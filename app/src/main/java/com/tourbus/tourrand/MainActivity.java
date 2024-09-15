@@ -63,6 +63,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("getKeyHash", ""+getKeyHash(MainActivity.this));
+
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
         handler = new Handler(Looper.getMainLooper());
@@ -433,6 +435,27 @@ public class MainActivity extends AppCompatActivity {
         currentUser.setUserId("realuserid");
 
         isLoginFinish = true;
+    }
+    public static String getKeyHash(final Context context){
+        PackageManager pm = context.getPackageManager();
+        try{
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+            if(packageInfo == null)
+                return null;
+            for(Signature signature : packageInfo.signatures){
+                try {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(signature.toByteArray());
+                    return android.util.Base64.encodeToString(md.digest(), Base64.NO_WRAP);
+                }catch (NoSuchAlgorithmException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

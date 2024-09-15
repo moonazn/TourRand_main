@@ -6,15 +6,62 @@
     android:layout_height="match_parent"
     tools:context=".TeamActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="업데이트 예정입니다."
-        android:fontFamily="@font/pyeongchang_bold"
-        android:textSize="18sp"
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/logo_colorback_text"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:gravity="center"/>
+        android:layout_margin="20dp"/>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:text="그룹 관리"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="50dp"/>
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/teamback"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title">
+
+        <TextView
+            android:id="@+id/userTxt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_regular"
+            android:gravity="center"
+            android:text="username"
+            android:textSize="25sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/teamPlus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/plusbtn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        android:layout_marginTop="20dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         app:layout_constraintBottom_toBottomOf="parent"
