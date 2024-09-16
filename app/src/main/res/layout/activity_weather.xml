@@ -48,6 +48,7 @@
         />
 
     <LinearLayout
+        android:id="@+id/infoLinear"
         android:layout_width="340dp"
         android:layout_height="120dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -90,7 +91,27 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="오늘의 옷차림 추천"
+        android:textSize="17sp"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toBottomOf="@id/infoLinear"
+        android:layout_marginTop="20dp"
+        android:paddingHorizontal="30dp"
+        android:fontFamily="@font/pyeongchang_bold"/>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:paddingHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:foregroundGravity="center"
+        android:scrollbars="vertical"/>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

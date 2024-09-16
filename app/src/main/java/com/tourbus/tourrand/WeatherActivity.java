@@ -1,6 +1,9 @@
 package com.tourbus.tourrand;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +25,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class WeatherActivity extends AppCompatActivity {
 
@@ -31,6 +36,7 @@ public class WeatherActivity extends AppCompatActivity {
     int tourId;
     Handler handler;
     String getData;
+    String cloth = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +124,7 @@ public class WeatherActivity extends AppCompatActivity {
 //                                tripPlans = parseTripPlan(result);
 //                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
 
+                        setClothData();
                     } else {
                         Log.e("Error", "Result is null or empty");
                     }
@@ -219,8 +226,8 @@ public class WeatherActivity extends AppCompatActivity {
             String pty = null;
             String pop = null;
             String tmp = null;
-            String cloth = null;
             String wsd = null;
+            String sky = null;
             String location = null;
 
             if (jsonObject.has("강수 형태(PTY)")) {
@@ -253,15 +260,46 @@ public class WeatherActivity extends AppCompatActivity {
                 Log.d("풍속(WSD)", wsd);
             }
 
+            if (jsonObject.has("하늘 상태(SKY)")) {
+                sky = jsonObject.getString("하늘 상태(SKY)");
+                Log.d("하늘 상태(SKY)", sky);
+            }
+
             ptyTextView.setText("강수 형태: " + pty);
             popTextView.setText("강수 확률: " + pop);
             tmpTextView.setText(tmp);
-            wsdTextView.setText(wsd);
+            wsdTextView.setText("풍속: " + wsd);
             locationTextView.setText("여행 지역: "+location);
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void setClothData() {
+        List<String> keywords = Arrays.asList(cloth.split(","));
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+
+//        int numberOfColumns = 3; // 열의 개수를 원하는 대로 설정하세요.
+//        recyclerView.setLayoutManager(new GridLayoutManager(this, numberOfColumns));
+//
+//// 간격을 설정할 ItemDecoration 추가
+//        int spacing = 8; // 간격을 dp로 설정
+//        boolean includeEdge = true; // 가장자리 포함 여부
+//        recyclerView.addItemDecoration(new GridSpacingItemDecoration(numberOfColumns, spacing, includeEdge));
+//
+//
+//        KeywordAdapter adapter = new KeywordAdapter(keywords);
+//        recyclerView.setAdapter(adapter);
+
+// 2개의 열로 설정
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
+        recyclerView.setLayoutManager(gridLayoutManager);
+
+        KeywordAdapter adapter = new KeywordAdapter(keywords);
+        recyclerView.setAdapter(adapter);
+
 
     }
 }
