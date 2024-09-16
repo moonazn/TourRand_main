@@ -95,4 +95,5 @@ public class Place implements Parcelable {
         dest.writeDouble(latitude);
         dest.writeDouble(longitude);
     }
+
 }

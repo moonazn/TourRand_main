@@ -90,7 +90,7 @@ public class DateQActivity extends AppCompatActivity {
                     noAnswer.startAnimation(shake);
 
                 } else {
-                    Intent intent = new Intent(DateQActivity.this, DepartureQActivity.class);
+                    Intent intent = new Intent(DateQActivity.this, DstActivity.class);
                     intent.putExtra("withAnimal", withAnimal);
                     intent.putExtra("planDate", planDate);
                     intent.putExtra("tripLength", tripLength);

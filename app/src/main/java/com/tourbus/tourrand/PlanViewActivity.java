@@ -199,7 +199,7 @@ public class PlanViewActivity extends AppCompatActivity {
 
                     Log.d("locationArrayList", "locationArrayList (i) - " + locationArrayList.get(i).getName());
 
-                    options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude()))
+                    options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLongitude(), locationArrayList.get(i).getLatitude()))
                             .setStyles(styles);
 //                    labelLayer.addLabel(options);
 //
@@ -227,8 +227,8 @@ public class PlanViewActivity extends AppCompatActivity {
 
 
                         segment = RouteLineSegment.from(Arrays.asList(
-                                        LatLng.from(locationArrayList.get(i-1).getLatitude(), locationArrayList.get(i-1).getLongitude()),
-                                        LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude())))
+                                        LatLng.from(locationArrayList.get(i-1).getLongitude(), locationArrayList.get(i-1).getLatitude()),
+                                        LatLng.from(locationArrayList.get(i).getLongitude(), locationArrayList.get(i).getLatitude())))
                                 .setStyles(stylesSet.getStyles(0));
                         routeoptions = RouteLineOptions.from(segment)
                                 .setStylesSet(stylesSet);
@@ -244,7 +244,7 @@ public class PlanViewActivity extends AppCompatActivity {
 //                }
             }@Override
             public LatLng getPosition() {
-                return LatLng.from(locationArrayList.get(0).getLatitude(), locationArrayList.get(0).getLongitude());
+                return LatLng.from(locationArrayList.get(0).getLongitude(), locationArrayList.get(0).getLatitude());
             }
 
             @Override
@@ -687,13 +687,13 @@ public class PlanViewActivity extends AppCompatActivity {
                 day = detail.getDay();
                 String location = detail.getLocation();
                 String address = detail.getAddress();
-                double longitude = detail.getLatitude();
-                double latitude = detail.getLongitude();
+                double latitude = detail.getLatitude();
+                double longitude = detail.getLongitude();
 
                 Log.d("day", String.valueOf(day));
                 Log.d("location", location);
                 Log.d("address", address);
-                Log.d("latitude", String.valueOf(latitude));
+                Log.d("latitude", String.valueOf(longitude));
                 Log.d("longitude", String.valueOf(latitude));
 
 //                locationArrayList.clear();
@@ -880,7 +880,7 @@ public class PlanViewActivity extends AppCompatActivity {
 
                     Log.d("locationArrayList", "locationArrayList (" + i + ") - " + locationArrayList.get(i).getName());
 
-                    options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude()))
+                    options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLongitude(), locationArrayList.get(i).getLatitude()))
                             .setStyles(styles);
 //                    labelLayer.addLabel(options);
 //
@@ -908,8 +908,8 @@ public class PlanViewActivity extends AppCompatActivity {
 
 
                         segment = RouteLineSegment.from(Arrays.asList(
-                                        LatLng.from(locationArrayList.get(i-1).getLatitude(), locationArrayList.get(i-1).getLongitude()),
-                                        LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude())))
+                                        LatLng.from(locationArrayList.get(i-1).getLongitude(), locationArrayList.get(i-1).getLatitude()),
+                                        LatLng.from(locationArrayList.get(i).getLongitude(), locationArrayList.get(i).getLatitude())))
                                 .setStyles(stylesSet.getStyles(0));
                         routeoptions = RouteLineOptions.from(segment)
                                 .setStylesSet(stylesSet);
@@ -925,7 +925,7 @@ public class PlanViewActivity extends AppCompatActivity {
 //                }
             }@Override
             public LatLng getPosition() {
-                return LatLng.from(locationArrayList.get(0).getLatitude(), locationArrayList.get(0).getLongitude());
+                return LatLng.from(locationArrayList.get(0).getLongitude(), locationArrayList.get(0).getLongitude());
             }
 
             @Override
@@ -1203,9 +1203,9 @@ public class PlanViewActivity extends AppCompatActivity {
                 TripPlanDetail TripPlanDetail;
                 if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
                     if (departureDocument == null) {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, "출발지역 없음", day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
+                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
                     } else {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, departureDocument.getPlaceName(), day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
+                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
                     }
                     TripPlanDetail.setTheme(mainTheme);
                     TripPlanDetailList.add(TripPlanDetail);

@@ -51,6 +51,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,6 +59,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlanEditActivity extends AppCompatActivity {
     private LabelLayer labelLayer;
@@ -98,6 +100,7 @@ public class PlanEditActivity extends AppCompatActivity {
     String getData;
     TextView tripTitleEditText;
     int tourId;
+    double latitude, longtitude;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -366,6 +369,59 @@ public class PlanEditActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("StaticFieldLeak")
+    private void getGeoDataByAddress(final String completeAddress, final GeoDataCallback callback) {
+        new AsyncTask<Void, Void, Void>() {
+            private Double latitude;
+            private Double longitude;
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                Log.d("getGeoDataByAddress", "getGeoDataByAddress executed");
+                try {
+                    String API_KEY = "AIzaSyCD4wiVWqJJAq1ipj5VdS4CXVG7ulEswkE";
+                    String surl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + URLEncoder.encode(completeAddress, "UTF-8") + "&key=" + API_KEY;
+                    URL url = new URL(surl);
+                    InputStream is = url.openConnection().getInputStream();
+
+                    BufferedReader streamReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+
+                    StringBuilder responseStrBuilder = new StringBuilder();
+                    String inputStr;
+                    while ((inputStr = streamReader.readLine()) != null) {
+                        responseStrBuilder.append(inputStr);
+                    }
+
+                    JSONObject jo = new JSONObject(responseStrBuilder.toString());
+                    JSONArray results = jo.getJSONArray("results");
+                    if (results.length() > 0) {
+                        JSONObject jsonObject = results.getJSONObject(0);
+                        latitude = jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lat");
+                        longitude = jsonObject.getJSONObject("geometry").getJSONObject("location").getDouble("lng");
+                    }
+                } catch (Exception e) {
+                    Log.d("getGeoDataByAddress", String.valueOf(e));
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
+                // UI 업데이트는 메인 스레드에서 처리해야 하므로, 콜백을 사용
+                if (callback != null && latitude != null && longitude != null) {
+
+                    Log.d("GeoCoding", "Getting geo data for latitude: " + latitude);
+                    callback.onGeoDataReceived(latitude, longitude);
+                    Log.d("GeoCoding", "Geo data received: Lat " + latitude + ", Lon " + longitude);
+
+                }
+            }
+        }.execute();
+    }
+
+
+
     private void saveChanges() {
 
         // 싱글톤 인스턴스 가져오기
@@ -439,35 +495,31 @@ public class PlanEditActivity extends AppCompatActivity {
         placesEditAdapter.setEditing(isEditing);
         placesEditAdapter.notifyDataSetChanged();
     }
-//    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
-//        // tripPlanDetailList를 업데이트합니다.
-//
-//        Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
-//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
-//            TripPlanDetail detail = tripPlanDetailList.get(i);
-//            if (detail.getDay() == day) {
-//                // 해당 일차의 장소를 업데이트합니다.
-//                Place place = updatedPlacesList.get(i); // 어댑터의 리스트와 인덱스를 맞추세요.
-//                detail.setLocation(place.getPlaceName());
-//                detail.setAddress(place.getAddress());
-//                detail.setLatitude(place.getLatitude());
-//                detail.setLongitude(place.getLongitude());
-//            }
-//        }
-//
-//        Log.d("updateTripPlanDetailList", String.valueOf(updatedPlacesList));
-//    }
 
 //    private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
 //        Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
 //
 //        // 입력된 데이터 상태 로그
-//        Log.d("updateTripPlanDetailList", "Day: " + day);
+////        Log.d("updateTripPlanDetailList", "Day: " + day);
 //        Log.d("updateTripPlanDetailList", "Updated Places List Size: " + updatedPlacesList.size());
 //        for (int j = 0; j < updatedPlacesList.size(); j++) {
 //            Place place = updatedPlacesList.get(j);
-//            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude());
+//            if (place.getLatitude() == 0.0) {
+//
+//                new Thread(() -> {
+//                    getGeoDataByAddress(place.getAddress());
+//
+//                    // Handler를 사용하여 UI 스레드에서 후속 작업 실행
+//                    new Handler(Looper.getMainLooper()).post(() -> {
+//                        place.setLatitude(latitude);
+//                        place.setLongitude(longtitude);
+//                        Log.d("getGeoDataByAddress", String.valueOf(longtitude) + latitude);
+//                    });
+//                }).start();
+//            }
+//            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude() + ", Day: " + place.getDay());
 //        }
+//
 //
 //        // 기존 tripPlanDetailList 상태 로그
 //        Log.d("updateTripPlanDetailList", "Original TripPlanDetailList Size: " + tripPlanDetailList.size());
@@ -476,25 +528,35 @@ public class PlanEditActivity extends AppCompatActivity {
 //            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
 //        }
 //
-//        // 업데이트 과정: day가 일치하는 곳만 업데이트
-//        int updateIndex = 0;
-//        for (int i = 0; i < tripPlanDetailList.size(); i++) {
-//            TripPlanDetail detail = tripPlanDetailList.get(i);
-//            if (detail.getDay() == day && updateIndex < updatedPlacesList.size()) {
-//                Place place = updatedPlacesList.get(updateIndex);
-//                Log.d("updateTripPlanDetailList", "Updating TripPlanDetail for Day: " + day + ", Index: " + i);
-//                Log.d("updateTripPlanDetailList", "Before Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//        // 기존 항목 삭제
+//        tripPlanDetailList.removeIf(detail -> detail.getDay() == day+1);
+//        Log.d("updateTripPlanDetailList", "day: " + String.valueOf(day));
 //
-//                detail.setLocation(place.getPlaceName());
-//                detail.setAddress(place.getAddress());
-//                detail.setLatitude(place.getLatitude());
-//                detail.setLongitude(place.getLongitude());
 //
-//                Log.d("updateTripPlanDetailList", "After Update - Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+//        // 새로운 항목 추가
+//        for (Place place : updatedPlacesList) {
+//            place.setDay(day+1);
 //
-//                updateIndex++;  // 다음 updatedPlacesList의 항목으로 이동
-//            }
+//            Log.d("updateTripPlanDetailList", "place.getDay(): " + place.getDay());
+//            TripPlanDetail newDetail = new TripPlanDetail();
+//            newDetail.setDay(day+1);
+//            newDetail.setLocation(place.getPlaceName());
+//            newDetail.setAddress(place.getAddress());
+//            newDetail.setLongitude(place.getLatitude());
+//            newDetail.setLatitude(place.getLongitude());
+//
+//            tripPlanDetailList.add(newDetail);
+//
+//
 //        }
+//
+//        // day 기준으로 TripPlanDetailList를 정렬 (오름차순)
+//        Collections.sort(tripPlanDetailList, new Comparator<TripPlanDetail>() {
+//            @Override
+//            public int compare(TripPlanDetail o1, TripPlanDetail o2) {
+//                return Integer.compare(o1.getDay(), o2.getDay());
+//            }
+//        });
 //
 //        // 최종 결과 로그
 //        Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
@@ -502,60 +564,114 @@ public class PlanEditActivity extends AppCompatActivity {
 //            TripPlanDetail detail = tripPlanDetailList.get(i);
 //            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
 //        }
+//
 //    }
+
+    public interface GeoDataCallback {
+        void onGeoDataReceived(double latitude, double longitude);
+    }
+
+
 
     private void updateTripPlanDetailList(int day, List<Place> updatedPlacesList) {
         Log.d("updateTripPlanDetailList", "updateTripPlanDetailList executed");
-
-        // 입력된 데이터 상태 로그
-//        Log.d("updateTripPlanDetailList", "Day: " + day);
         Log.d("updateTripPlanDetailList", "Updated Places List Size: " + updatedPlacesList.size());
-        for (int j = 0; j < updatedPlacesList.size(); j++) {
-            Place place = updatedPlacesList.get(j);
-            Log.d("updateTripPlanDetailList", "Updated Place " + j + ": " + place.getPlaceName() + ", " + place.getAddress() + ", Lat: " + place.getLatitude() + ", Lon: " + place.getLongitude() + ", Day: " + place.getDay());
-        }
 
-        // 기존 tripPlanDetailList 상태 로그
-        Log.d("updateTripPlanDetailList", "Original TripPlanDetailList Size: " + tripPlanDetailList.size());
-        for (int i = 0; i < tripPlanDetailList.size(); i++) {
-            TripPlanDetail detail = tripPlanDetailList.get(i);
-            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
-        }
-
-        // 기존 항목 삭제
-        tripPlanDetailList.removeIf(detail -> detail.getDay() == day+1);
-        Log.d("updateTripPlanDetailList", "day: " + String.valueOf(day));
-
-
-        // 새로운 항목 추가
-        for (Place place : updatedPlacesList) {
-            place.setDay(day+1);
-
-            Log.d("updateTripPlanDetailList", "place.getDay(): " + place.getDay());
-            TripPlanDetail newDetail = new TripPlanDetail();
-            newDetail.setDay(day+1);
-            newDetail.setLocation(place.getPlaceName());
-            newDetail.setAddress(place.getAddress());
-            newDetail.setLatitude(place.getLatitude());
-            newDetail.setLongitude(place.getLongitude());
-            tripPlanDetailList.add(newDetail);
-        }
-
-        // day 기준으로 TripPlanDetailList를 정렬 (오름차순)
-        Collections.sort(tripPlanDetailList, new Comparator<TripPlanDetail>() {
-            @Override
-            public int compare(TripPlanDetail o1, TripPlanDetail o2) {
-                return Integer.compare(o1.getDay(), o2.getDay());
+        // 일자별로 기존 장소를 그룹화
+        Map<Integer, List<TripPlanDetail>> dayToDetailMap = new HashMap<>();
+        for (TripPlanDetail detail : tripPlanDetailList) {
+            if (!dayToDetailMap.containsKey(detail.getDay())) {
+                dayToDetailMap.put(detail.getDay(), new ArrayList<>());
             }
-        });
-
-        // 최종 결과 로그
-        Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
-        for (int i = 0; i < tripPlanDetailList.size(); i++) {
-            TripPlanDetail detail = tripPlanDetailList.get(i);
-            Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+            dayToDetailMap.get(detail.getDay()).add(detail);
         }
 
+        // 기존 장소 삭제
+        tripPlanDetailList.removeIf(detail -> detail.getDay() == day + 1);
+        Log.d("updateTripPlanDetailList", "Removed details for day: " + day);
+
+        // 지오코딩 작업을 마친 후 새로운 장소를 추가하기 위한 리스트
+        List<TripPlanDetail> newDetails = new ArrayList<>();
+        List<Place> placesToProcess = new ArrayList<>(updatedPlacesList);
+
+        // 위도/경도가 없는 장소가 있다면 처리
+        processGeoCodingForPlaces(day, placesToProcess, newDetails, dayToDetailMap);
+    }
+
+    private void processGeoCodingForPlaces(int day, List<Place> placesToProcess, List<TripPlanDetail> newDetails, Map<Integer, List<TripPlanDetail>> dayToDetailMap) {
+        if (placesToProcess.isEmpty()) {
+            // 모든 장소에 대한 처리가 완료되면 최종 리스트를 업데이트
+            tripPlanDetailList.addAll(newDetails);
+
+            // day 기준으로 TripPlanDetailList를 정렬 (오름차순)
+            Collections.sort(tripPlanDetailList, (o1, o2) -> Integer.compare(o1.getDay(), o2.getDay()));
+
+            // 최종 결과 로그
+            Log.d("updateTripPlanDetailList", "Final TripPlanDetailList State:");
+            for (int i = 0; i < tripPlanDetailList.size(); i++) {
+                TripPlanDetail detail = tripPlanDetailList.get(i);
+                Log.d("updateTripPlanDetailList", "TripPlanDetail " + i + ": Day " + detail.getDay() + ", Location: " + detail.getLocation() + ", Address: " + detail.getAddress() + ", Lat: " + detail.getLatitude() + ", Lon: " + detail.getLongitude());
+            }
+
+            // RecyclerView 어댑터 업데이트
+            // (여기서 어댑터에 리스트 변경 사항을 반영)
+            return;
+        }
+
+        Place place = placesToProcess.remove(0);
+        if (place.getLatitude() == 0.0 || place.getLongitude() == 0.0) {
+            // 지오코딩 처리 필요
+            getGeoDataByAddress(place.getAddress(), (latitude, longitude) -> {
+                place.setLatitude(latitude);
+                place.setLongitude(longitude);
+                Log.d("GeoCoding", "GeoData updated for place: " + place.getPlaceName());
+                addPlaceToList(place, day, dayToDetailMap, newDetails);
+                // 다음 장소로 이동
+                processGeoCodingForPlaces(day, placesToProcess, newDetails, dayToDetailMap);
+            });
+        } else {
+            // 위도/경도가 이미 있는 경우 바로 추가
+            addPlaceToList(place, day, dayToDetailMap, newDetails);
+            // 다음 장소로 이동
+            processGeoCodingForPlaces(day, placesToProcess, newDetails, dayToDetailMap);
+        }
+    }
+
+    // 장소를 리스트에 추가하는 메서드 분리
+    private void addPlaceToList(Place place, int day, Map<Integer, List<TripPlanDetail>> dayToDetailMap, List<TripPlanDetail> newDetails) {
+        TripPlanDetail newDetail = new TripPlanDetail();
+        newDetail.setDay(day + 1);
+        newDetail.setLocation(place.getPlaceName());
+        newDetail.setAddress(place.getAddress());
+        newDetail.setLongitude(place.getLongitude());
+        newDetail.setLatitude(place.getLatitude());
+
+        // 기존 장소 리스트에서 위치를 찾거나 추가
+        List<TripPlanDetail> detailsForDay = dayToDetailMap.getOrDefault(day + 1, new ArrayList<>());
+        int index = getIndexForPlace(detailsForDay, place);
+        if (index != -1) {
+            // 기존 장소를 업데이트
+            detailsForDay.set(index, newDetail);
+        } else {
+            // 새로운 장소를 추가
+            detailsForDay.add(newDetail);
+        }
+
+        newDetails.add(newDetail);
+    }
+
+
+
+    // 기존 장소 리스트에서 위치를 찾는 메서드
+    private int getIndexForPlace(List<TripPlanDetail> detailsForDay, Place place) {
+        for (int i = 0; i < detailsForDay.size(); i++) {
+            TripPlanDetail detail = detailsForDay.get(i);
+            // 장소 이름이나 주소 등을 통해 위치를 찾을 수 있습니다.
+            if (detail.getLocation().equals(place.getPlaceName()) || detail.getAddress().equals(place.getAddress())) {
+                return i;
+            }
+        }
+        return -1; // 위치를 찾지 못한 경우
     }
 
 
@@ -1046,9 +1162,9 @@ public class PlanEditActivity extends AppCompatActivity {
                 if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
                     TripPlanDetail tripPlanDetail;
                     if (departureDocument == null) {
-                        tripPlanDetail = new TripPlanDetail(tour_name, "출발지역 없음", day, planDate, location, address, latitude, longitude);
+                        tripPlanDetail = new TripPlanDetail(tour_name, day, planDate, location, address, latitude, longitude);
                     } else {
-                        tripPlanDetail = new TripPlanDetail(tour_name, departureDocument.getPlaceName(), day, planDate, location, address, latitude, longitude);
+                        tripPlanDetail = new TripPlanDetail(tour_name, day, planDate, location, address, latitude, longitude);
                     }
                     TripPlanDetailList.add(tripPlanDetail);
                 } else {

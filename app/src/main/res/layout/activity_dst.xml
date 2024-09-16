@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DstActivity"
-    android:background="@drawable/q4">
+    android:background="@drawable/q3">
 
     <ImageView
         android:id="@+id/back"
