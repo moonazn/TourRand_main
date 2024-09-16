@@ -89,9 +89,14 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
 
                                 Log.d("연결 완", "삭제");
                                 // 삭제 확인 시 해당 아이템 삭제
-                                tripPlanList.remove(position);
-                                notifyItemRemoved(position);
-                                notifyItemRangeChanged(position, tripPlanList.size());
+                                if (position >= 0 && position < tripPlanList.size()) {
+                                    tripPlanList.remove(position);
+                                    notifyDataSetChanged();
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, tripPlanList.size());
+                                } else {
+                                    Log.e("TripPlanAdapter", "Attempted to remove item at invalid index: " + position);
+                                }
                             })
                             .setNegativeButton("취소", null)
                             .show();

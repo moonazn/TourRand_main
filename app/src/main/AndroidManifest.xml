@@ -50,9 +50,6 @@
             android:name=".DstActivity"
             android:exported="false" />
         <activity
-            android:name=".DepartureQActivity"
-            android:exported="false" />
-        <activity
             android:name=".DateQActivity"
             android:exported="false" />
         <activity

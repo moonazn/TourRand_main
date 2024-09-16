@@ -76,7 +76,6 @@ public class DstActivity extends AppCompatActivity {
         Intent intent = getIntent();
         withAnimal = intent.getBooleanExtra("withAnimal", false);
         planDate = intent.getStringExtra("planDate");
-        departureDocument = intent.getParcelableExtra("departureDocument");
 //        destination = intent.getParcelableExtra("destination");
         tripLength = intent.getIntExtra("tripLength", 1);
 
@@ -108,7 +107,7 @@ public class DstActivity extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DstActivity.this, DepartureQActivity.class);
+                Intent intent = new Intent(DstActivity.this, DateQActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
@@ -438,7 +437,7 @@ public class DstActivity extends AppCompatActivity {
                 }
 
                 if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
-                    TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, departureDocument.getPlaceName(), day, planDate, location, address,latitude,longitude);
+                    TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, day, planDate, location, address,latitude,longitude);
                     TripPlanDetail.setTheme(mainTheme);
                     TripPlanDetailList.add(TripPlanDetail);
 
