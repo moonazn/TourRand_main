@@ -33,6 +33,7 @@ import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -60,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView join;
     private UserManager userManager;
     boolean isLoginFinish = true;
+    private String inviteTourName;
+    private int inviteTourId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -336,13 +339,44 @@ public class MainActivity extends AppCompatActivity {
                         String result = httpPostBodyConnection(url, data);
                         // 처리 결과 확인
                         handler.post(() ->{
-                            userManager = UserManager.getInstance();
-                            userManager.setUserNickname(result);
+                            try {
+                                // JSON 문자열을 JSONObject로 변환
+                                JSONObject jsonObject = new JSONObject(result);
+
+                                // 공통된 값 처리 (nickname)
+                                String get_nickname = jsonObject.getString("nickname");
+                                UserManager.getInstance().setUserNickname(get_nickname);
+
+                                // "invite"가 있는지 체크하여 처리
+                                if (jsonObject.has("invite")) {
+                                    String invite = jsonObject.getString("invite");
+                                    // invite에 대한 로직 처리
+                                    System.out.println("Invite: " + invite);
+                                }
+                                // "tour_id"가 있는지 체크하여 처리
+                                if (jsonObject.has("tour_id")) {
+                                    inviteTourId = jsonObject.getInt("tour_id");
+                                    inviteTourName = jsonObject.getString("tour_name");
+                                    // tour에 대한 로직 처리
+                                    System.out.println("Tour ID: " + inviteTourId);
+                                    System.out.println("Tour Name: " + inviteTourName);
+                                }
+
+                                // 공통 처리
+                                System.out.println("Nickname: " + nickname);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                             seeNetworkResult(result);
                                 });
                     }).start();
 
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    if(inviteTourName !=null && inviteTourId!=0){
+                        intent.putExtra("inviteTourName", inviteTourName);
+                        intent.putExtra("inviteTourId", inviteTourId);
+                    }
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();
