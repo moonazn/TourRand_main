@@ -60,6 +60,8 @@ public class HomeFragment1 extends Fragment {
     private Handler handler;
     private int tourId;
     String getData;
+    private String inviteTourName;
+    private int inviteTourId;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -68,6 +70,9 @@ public class HomeFragment1 extends Fragment {
         // RecyclerView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if(inviteTourId!=0&&inviteTourName!=null){
+
+        }
 
         // 임시 데이터 생성 (실제 데이터는 네트워크 요청 또는 로컬 DB에서 가져와야 함)
         tripPlans = new ArrayList<>();
