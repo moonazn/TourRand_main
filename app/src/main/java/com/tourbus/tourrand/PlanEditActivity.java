@@ -919,14 +919,14 @@ public class PlanEditActivity extends AppCompatActivity {
                 day = detail.getDay();
                 String location = detail.getLocation();
                 String address = detail.getAddress();
-                double longitude = detail.getLatitude();
-                double latitude = detail.getLongitude();
+                double latitude = detail.getLatitude();
+                double longitude = detail.getLongitude();
 
                 Log.d("day", String.valueOf(day));
                 Log.d("location", location);
                 Log.d("address", address);
                 Log.d("latitude", String.valueOf(latitude));
-                Log.d("longitude", String.valueOf(latitude));
+                Log.d("longitude", String.valueOf(longitude));
 
 //                locationArrayList.clear();
 
@@ -964,7 +964,7 @@ public class PlanEditActivity extends AppCompatActivity {
                     Log.d("PlanViewActivity", "index=" + index);
                     Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getDay()) + " : " + index);
                     if (tripPlanDetailList.get(index).getDay() == i) {
-                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLongitude(), tripPlanDetailList.get(index).getLatitude()));
+                        placesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLatitude(), tripPlanDetailList.get(index).getLongitude()));
                         Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
                         Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLatitude()));
                         Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLongitude()));
@@ -981,7 +981,7 @@ public class PlanEditActivity extends AppCompatActivity {
                 List<Place> remainingPlacesList = new ArrayList<>();
                 for (int index = lastIdx; index < tripPlanDetailList.size(); index++) {
                     if (tripPlanDetailList.get(index).getDay() == day) {
-                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLongitude(), tripPlanDetailList.get(index).getLatitude()));
+                        remainingPlacesList.add(new Place(tripPlanDetailList.get(index).getLocation(), tripPlanDetailList.get(index).getAddress(), tripPlanDetailList.get(index).getLatitude(), tripPlanDetailList.get(index).getLongitude()));
                         Log.d("PlanViewActivity", tripPlanDetailList.get(index).getLocation());
                         Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLatitude()));
                         Log.d("PlanViewActivity", String.valueOf(tripPlanDetailList.get(index).getLongitude()));
