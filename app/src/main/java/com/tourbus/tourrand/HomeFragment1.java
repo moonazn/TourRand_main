@@ -167,36 +167,37 @@ public class HomeFragment1 extends Fragment {
         String url = "https://api.tourrand.com/tour_list";
         String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
 
-//        new Thread(() -> {
-//            String result = httpPostBodyConnection(url, data);
-//            // 처리 결과 확인
-//            handler = new Handler(Looper.getMainLooper());
-//            if (handler != null) {
-//                handler.post(() -> {
-//                    if(result != null && !result.isEmpty()) {
-//                        // tripPlans 초기화 및 데이터 파싱
-//                        tripPlans.clear();
-//                        tripPlans.addAll(parseTripPlan(result));
-////                                tripPlans = parseTripPlan(result);
-////                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
-//
-//                        // 데이터 확인 로그
-//                        Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
-//                        for (TripPlan plan : tripPlans) {
-//                            Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
-//                        }
-//
-//                    } else {
-//                        Log.e("Error", "Result is null or empty");
-//                    }
-//                    seeNetworkResult(result);
-//                });
-//            }
-//        }).start();
+        new Thread(() -> {
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            handler = new Handler(Looper.getMainLooper());
+            if (handler != null) {
+                handler.post(() -> {
+                    if(result != null && !result.isEmpty()) {
+                        // tripPlans 초기화 및 데이터 파싱
+                        tripPlans.clear();
+                        tripPlans.addAll(parseTripPlan(result));
+//                                tripPlans = parseTripPlan(result);
+//                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+
+                        // 데이터 확인 로그
+                        Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+                        for (TripPlan plan : tripPlans) {
+                            Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
+                        }
+
+                    } else {
+                        Log.e("Error", "Result is null or empty");
+                    }
+                    seeNetworkResult(result);
+                });
+            }
+        }).start();
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                InviteDialog dialog = new InviteDialog(getActivity());
+                dialog.show();
             }
         });
 
