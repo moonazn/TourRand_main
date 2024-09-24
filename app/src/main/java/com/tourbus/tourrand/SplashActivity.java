@@ -91,7 +91,7 @@ public class SplashActivity extends AppCompatActivity {
                                 userManager.setUserProfileImg(user.getKakaoAccount().getProfile().getProfileImageUrl());
                                 userManager.getUserProfileImg();
                                 String url = "https://api.tourrand.com/kakao_login";
-                                String data = "{ \"id\" : \""+userManager.getUserId()+"\",\"nickname\":\""+userManager.getUserNickname()+"\",\"user_img\":\""+userManager.getUserProfileImg()+"\" }"; //json 형식 데이터
+                                String data = "{ \"id\" : \""+userManager.getUserId()+"\",\"nickname\":\""+userManager.getUserNickname()+"\",\"user_img\":\""+userManager.getUserProfileImg()+"\",\"email\" : \""+user.getKakaoAccount().getEmail().toString()+"\" }"; //json 형식 데이터
                                 new Thread(() -> {
                                     String result = httpPostBodyConnection(url, data);
                                     // 처리 결과 확인
