@@ -209,6 +209,8 @@ public class HomeFragment2 extends Fragment {
                             Log.d("colorcode", String.valueOf(colorcode[i]));
                             Log.d("visited", visited[i]);
                             Log.d("visitCnt", visitCnt[i]);
+
+
                             switch (visited[i]){
 
                                 //서울1
@@ -1438,8 +1440,8 @@ public class HomeFragment2 extends Fragment {
                     colorcode = jsonObject.getInt("colorcode");
                 }
 
-                if (jsonObject.has("visited")) {
-                    visited = jsonObject.getString("visited").toString();
+                if (jsonObject.has("place")) {
+                    visited = jsonObject.getString("place").toString();
                     Log.d("tlqkf", visited);
 
                 }

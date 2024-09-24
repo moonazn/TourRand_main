@@ -94,7 +94,7 @@
         app:layout_constraintTop_toBottomOf="@+id/text"
         android:layout_marginBottom="10dp">
 
-        <Button
+        <android.widget.Button
             android:id="@+id/noBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
             android:text="아니오"
             android:textSize="21sp" />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/yesBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
