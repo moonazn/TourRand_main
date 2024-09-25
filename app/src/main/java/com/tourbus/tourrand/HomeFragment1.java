@@ -1,5 +1,7 @@
 package com.tourbus.tourrand;
 
+import static android.content.Intent.getIntent;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -70,7 +72,16 @@ public class HomeFragment1 extends Fragment {
         // RecyclerView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if(inviteTourId!=0&&inviteTourName!=null){
+
+        Bundle bundle = getArguments();
+        if(bundle !=null){
+            String inviteTourName = bundle.getString("inviteTourName");
+            String inviteNickname = bundle.getString("inviteNickname");
+            int inviteTourid = bundle.getInt("inviteTourId");
+
+            InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid);
+
+            dialog.show();
 
         }
 
@@ -196,8 +207,8 @@ public class HomeFragment1 extends Fragment {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InviteDialog dialog = new InviteDialog(getActivity());
-                dialog.show();
+//                InviteDialog dialog = new InviteDialog(getActivity());
+//                dialog.show();
             }
         });
 
