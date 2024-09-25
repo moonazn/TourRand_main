@@ -5,6 +5,7 @@ import static android.util.Base64.encodeToString;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     boolean isLoginFinish = true;
     private String inviteTourName;
     private int inviteTourId;
+    private String isInviteCheck;
+    private String inviteNickname;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -346,20 +349,19 @@ public class MainActivity extends AppCompatActivity {
                                 // 공통된 값 처리 (nickname)
                                 String get_nickname = jsonObject.getString("nickname");
                                 UserManager.getInstance().setUserNickname(get_nickname);
-
-                                // "invite"가 있는지 체크하여 처리
-                                if (jsonObject.has("invite")) {
-                                    String invite = jsonObject.getString("invite");
-                                    // invite에 대한 로직 처리
-                                    System.out.println("Invite: " + invite);
-                                }
-                                // "tour_id"가 있는지 체크하여 처리
-                                if (jsonObject.has("tour_id")) {
-                                    inviteTourId = jsonObject.getInt("tour_id");
+                                isInviteCheck = jsonObject.getString("invite");
+                                Log.d("초대여부 체크", isInviteCheck);
+                                if(isInviteCheck.equals("초대 있음")){
                                     inviteTourName = jsonObject.getString("tour_name");
-                                    // tour에 대한 로직 처리
-                                    System.out.println("Tour ID: " + inviteTourId);
-                                    System.out.println("Tour Name: " + inviteTourName);
+                                    inviteTourId = jsonObject.getInt("tour_id");
+                                    inviteNickname = jsonObject.getString("invite_nickname");
+                                    Fragment fragment = new HomeFragment1();
+                                    Bundle bundle = new Bundle();
+
+                                    bundle.putString("inviteTourName", inviteTourName);
+                                    bundle.putInt("inviteTourId", inviteTourId);
+                                    bundle.putString("inviteNickname", inviteNickname);
+                                    fragment.setArguments(bundle);
                                 }
 
                                 // 공통 처리
@@ -373,10 +375,6 @@ public class MainActivity extends AppCompatActivity {
                     }).start();
 
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                    if(inviteTourName !=null && inviteTourId!=0){
-                        intent.putExtra("inviteTourName", inviteTourName);
-                        intent.putExtra("inviteTourId", inviteTourId);
-                    }
                     startActivity(intent);
                     overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     finish();

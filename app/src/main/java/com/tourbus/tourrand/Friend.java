@@ -1,17 +1,21 @@
 package com.tourbus.tourrand;
 
+import java.util.UUID;
+
 public class Friend {
     private String nickname;
-    private String uuid;
+    private String id;
     private String userProfileImg;
+    private String uuid;
     public Friend (){
 
     }
 
-    public Friend(String nickname, String uuid, String userProfileImg) {
+    public Friend(String nickname, String id, String userProfileImg, String uuid) {
         this.nickname = nickname;
-        this.uuid = uuid;
+        this.id = id;
         this.userProfileImg = userProfileImg;
+        this.uuid = uuid;
     }
 
     public void setNickname(String nickname) {
@@ -22,14 +26,18 @@ public class Friend {
         this.userProfileImg = userProfileImg;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setId(String id) {
+        this.id = id;
     }
+    public void setUuid(String uuid){this.uuid = uuid;}
 
     public String getNickname() {
         return nickname;
     }
     public String getUserProfileImg(){ return userProfileImg;}
+    public String getId() {
+        return id;
+    }
 
     public String getUuid() {
         return uuid;

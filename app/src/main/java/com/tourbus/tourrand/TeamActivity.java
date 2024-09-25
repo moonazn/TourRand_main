@@ -2,6 +2,7 @@ package com.tourbus.tourrand;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -21,9 +22,14 @@ import com.kakao.sdk.common.KakaoSdk;
 import com.kakao.sdk.friend.client.PickerClient;
 import com.kakao.sdk.friend.model.OpenPickerFriendRequestParams;
 import com.kakao.sdk.friend.model.PickerOrientation;
+import com.kakao.sdk.friend.model.SelectedUser;
 import com.kakao.sdk.friend.model.ViewAppearance;
+
 import com.kakao.sdk.talk.TalkApiClient;
 import com.kakao.sdk.talk.model.Friends;
+import com.kakao.sdk.template.model.DefaultTemplate;
+import com.kakao.sdk.template.model.Link;
+import com.kakao.sdk.template.model.TextTemplate;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
 
@@ -34,7 +40,12 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import kotlin.Unit;
 
@@ -116,6 +127,7 @@ public class TeamActivity extends AppCompatActivity {
                             } else if (token != null) {
                                 // 로그인 성공 후 추가 동의 요청
                                 requestAdditionalConsent();
+
                             }
                             return null;
                         });
@@ -206,10 +218,11 @@ public class TeamActivity extends AppCompatActivity {
                         // 자신의 Friend 객체 생성 및 데이터 설정
                         Friend myFriend = new Friend();
                         myFriend.setNickname(kakaoFriend.getProfileNickname());
-                        myFriend.setUuid(String.valueOf(kakaoFriend.getId())); // UUID도 설정
+                        myFriend.setId(String.valueOf(kakaoFriend.getId())); // ID도 설정
                         myFriend.setProfileImage(kakaoFriend.getProfileThumbnailImage());
+                        myFriend.setUuid(kakaoFriend.getUuid());
                         myFriends.add(myFriend);
-                        Log.d("초대된 친구의 id", myFriend.getUuid());
+                        Log.d("초대된 친구의 id", myFriend.getId());
                     }
                 }
                 // 변환된 친구 목록 사용 (myFriends)
@@ -227,7 +240,6 @@ public class TeamActivity extends AppCompatActivity {
 //                        5, // 최대 선택 가능 친구 수
 //                        1 // 최소 선택 가능 친구 수
                 );
-                Friend myFriend = new Friend();
                 TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
                 PickerClient.getInstance().selectFriends(
                         TeamActivity.this,
@@ -236,16 +248,57 @@ public class TeamActivity extends AppCompatActivity {
                             if (er != null) {
                                 Log.e(TAG, "친구 선택 실패", er);
                             } else {
-                                String url = "https://api.tourrand.com/invite";
-                                String data = "{ \"user_id\" : \""+myFriend.getUuid()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
-                                new Thread(() -> {
-                                    String result = httpPostBodyConnection(url, data);
-                                    // 처리 결과 확인
-                                    handler.post(() ->{
-                                        seeNetworkResult(result);
-                                    });
-                                }).start();
-                                Log.d(TAG, "친구 선택 성공 " + selectedUsers);
+                                Log.d("selectedUsers 타입 확인", selectedUsers.getClass().getName());
+                                if(selectedUsers!=null){
+                                    // selectedUsers에서 선택된 친구 리스트를 가져옵니다.
+                                    List<SelectedUser> selectedFriendList = selectedUsers.getUsers(); // getFriends()는 예시입니다. SDK 문서에서 실제 메서드를 확인하세요.
+
+                                    if (selectedFriendList != null && !selectedFriendList.isEmpty()) {
+                                        // 첫 번째 선택된 친구 가져오기
+                                        SelectedUser selectedFriend = selectedFriendList.get(0);
+
+                                        // 선택된 친구의 UUID와 닉네임 가져오기
+                                        String selectedUuid = selectedFriend.getUuid();
+                                        String selectedId = String.valueOf(selectedFriend.getId());
+                                        String selectedNickname = selectedFriend.getProfileNickname();
+
+                                        Log.d("시ㅣㅣㅣ바", "선택된 친구 UUID: " + selectedUuid + ", 닉네임: " + selectedNickname);
+
+                                        String url = "https://api.tourrand.com/invite";
+                                        //초대 하는 사람의 id가 invite_id
+                                        String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())+"\",\"tour_id\" : \""+tourId+"\",\"nickname\" : \""+UserManager.getInstance().getUserNickname()+"\"}"; //json 형식 데이터
+                                        // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+                                        new Thread(() -> {
+                                            String result = httpPostBodyConnection(url, data);
+                                            // 처리 결과 확인
+                                            handler.post(() ->{
+                                                seeNetworkResult(result);
+                                            });
+                                        }).start();
+                                        Log.d(TAG, "친구 선택 성공 " + selectedUsers);
+                                        Log.d("친구 UUID 확인", "Kakao UUID: " + selectedFriend.getId());
+
+                                        // Kakao 메시지 보내기 함수 호출
+                                        sendKakaoMessage(selectedFriend);
+                                    }
+                                }
+
+//                                String url = "https://api.tourrand.com/invite";
+//                                //초대 하는 사람의 id가 invite_id
+//                                String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())()+"\",\"tour_id\" : \""+tourId+"\",\"invite_id\" : \""+UserManager.getInstance().getUserId()+"\"}"; //json 형식 데이터
+//                               // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+//                                new Thread(() -> {
+//                                    String result = httpPostBodyConnection(url, data);
+//                                    // 처리 결과 확인
+//                                    handler.post(() ->{
+//                                        seeNetworkResult(result);
+//                                    });
+//                                }).start();
+//                                Log.d(TAG, "친구 선택 성공 " + selectedUsers);
+//                                Log.d("친구 UUID 확인", "Kakao UUID: " + String.valueOf(selectedFriend.getId());
+//
+//                                //메세지 보내기
+//                                sendKakaoMessage(friends);
                             }
                             return Unit.INSTANCE;
                         }
@@ -258,6 +311,37 @@ public class TeamActivity extends AppCompatActivity {
             return null;
         });
     }
+    private void sendKakaoMessage(SelectedUser selectedUser) {
+        String templateId = "112266"; // 사용하고자 하는 템플릿 ID
+        String friendUUid = selectedUser.getUuid();
+        if(friendUUid == null || friendUUid.isEmpty()){
+            Log.e("UUID 오류", "친구의 UUID가 null거나 빈 값 입니다.");
+            Toast.makeText(getApplicationContext(), "친구의 UUID를 확인할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        List<String> receiverUuids = new ArrayList<>();
+        receiverUuids.add(friendUUid);
+        // 템플릿 파라미터 설정 (Kakao Developer Console에서 정의한 변수에 맞게 데이터 설정)
+        Map<String, String> templateArgs = new HashMap<>();
+        templateArgs.put("${userNickname}", "값1");
+        templateArgs.put("${tourname}", "값2");
+
+        TalkApiClient.getInstance().sendCustomMessage(receiverUuids, Long.parseLong(templateId), templateArgs, (result, error) -> {
+            if (error != null) {
+                // 에러 발생 시 처리
+                Toast.makeText(getApplicationContext(), "메시지 보내기 실패: " + error, Toast.LENGTH_SHORT).show();
+                Log.e("카카오 메시지 보내기 실패", Log.getStackTraceString(error));
+            } else {
+                // 성공적으로 메시지 보냄
+                Toast.makeText(getApplicationContext(), "메시지 전송 성공", Toast.LENGTH_SHORT).show();
+                Log.d("카카오 메시지 전송", "성공적으로 메시지를 보냈습니다.");
+            }
+
+        return Unit.INSTANCE;
+        });
+    }
+
     public String httpPostBodyConnection(String UrlData, String ParamData) {
         // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
         // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
