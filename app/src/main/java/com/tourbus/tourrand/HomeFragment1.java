@@ -91,14 +91,14 @@ public class HomeFragment1 extends Fragment {
         adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
         recyclerView.setAdapter(adapter);
 
-        Button move = rootView.findViewById(R.id.move);
-        move.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), TeamActivity.class);
-                startActivity(intent);
-            }
-        });
+//        Button move = rootView.findViewById(R.id.move);
+//        move.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), TeamActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         tripzero = rootView.findViewById(R.id.tripzero);
         updateUI();
