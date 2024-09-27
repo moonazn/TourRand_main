@@ -1,5 +1,7 @@
 package com.tourbus.tourrand;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,13 +41,15 @@ public class InviteDialog extends Dialog {
     private String TourName;
     private String Nickname;
     private int tourId;
+    private boolean isInviteStatus;
     private Handler handler;
 
-    public InviteDialog(@NonNull Context context, String TourName, String Nickname, int tourId) {
+    public InviteDialog(@NonNull Context context, String TourName, String Nickname, int tourId, boolean isInviteStatus) {
         super(context);
         this.Nickname = Nickname;
         this.TourName = TourName;
         this.tourId = tourId;
+        this.isInviteStatus = isInviteStatus;
     }
 
     @Override
@@ -71,7 +75,7 @@ public class InviteDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 String url = "https://api.tourrand.com/add";
-                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\" }"; //json 형식 데이터
+                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
 
                 new Thread(() -> {
                     String result = httpPostBodyConnection(url, data);
@@ -82,18 +86,61 @@ public class InviteDialog extends Dialog {
                     });
                 }).start();
                 //확인 버튼을 누르고 따로 처리해야 하는 게 있나?
-                dismiss();
             }
         });
         negativeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String url = "https://api.tourrand.com/invite_delete";
+                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+
+                new Thread(() -> {
+                    String result = httpPostBodyConnection(url, data);
+                    // 처리 결과 확인
+                    handler.post(() -> {
+                        seeNetworkResult(result);
+
+                    });
+                }).start();
                 Toast.makeText(getContext(),"힝",Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         });
 
     }
+//    private String conncetAgain(String againUrl, String againData){
+//        againUrl = "https://api.tourrand.com/tour_list";
+//        againData = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\"}"; //json 형식 데이터
+//        String finalAgainUrl = againUrl;
+//        String finalAgainData = againData;
+//        new Thread(() -> {
+//            String result = httpPostBodyConnection(finalAgainUrl, finalAgainData);
+//            // 처리 결과 확인
+//            handler = new Handler(Looper.getMainLooper());
+//            if (handler != null) {
+//                handler.post(() -> {
+//                    if(result != null && !result.isEmpty()) {
+//                        // tripPlans 초기화 및 데이터 파싱
+//                        tripPlans.clear();
+//                        tripPlans.addAll(parseTripPlan(result));
+////                                tripPlans = parseTripPlan(result);
+////                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+//
+//                        // 데이터 확인 로그
+//                        Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
+//                        for (TripPlan plan : tripPlans) {
+//                            Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
+//                        }
+//
+//                    } else {
+//                        Log.e("Error", "Result is null or empty");
+//                    }
+//                    seeNetworkResult(result);
+//                });
+//            }
+//        }).start();
+//
+//    }
     public String httpPostBodyConnection(String UrlData, String ParamData) {
         // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
         // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.

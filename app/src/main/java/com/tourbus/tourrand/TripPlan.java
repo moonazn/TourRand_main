@@ -9,9 +9,9 @@ public class TripPlan implements Serializable {
     private String travelDate;
     private String dDay;
     private int tourId;
-    private List<Integer> memberImages; // 멤버 이미지들의 리소스 ID 리스트
+    private List<String> memberImages; // 멤버 이미지들의 리소스 ID 리스트
 
-    public TripPlan(String tripName, String travelDate, String dDay, int tourId, List<Integer> memberImages) {
+    public TripPlan(String tripName, String travelDate, String dDay, int tourId, List<String> memberImages) {
         this.tripName = tripName;
         this.travelDate = travelDate;
         this.dDay = dDay;
@@ -44,7 +44,7 @@ public class TripPlan implements Serializable {
         return dDay;
     }
 
-    public List<Integer> getMemberImages() {
+    public List<String> getMemberImages() {
         return memberImages;
     }
 }

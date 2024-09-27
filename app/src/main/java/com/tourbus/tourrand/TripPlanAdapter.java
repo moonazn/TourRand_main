@@ -37,7 +37,7 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
     @Override
     public TripPlanViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.item_trip_plan, parent, false);
-        return new TripPlanViewHolder(view);
+        return new TripPlanViewHolder(view, context);
     }
 
     @Override
