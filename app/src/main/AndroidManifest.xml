@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".GlobalApplication"
@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".RouletteMemberActivity"
+            android:exported="false" />
+        <activity
             android:name=".TeamActivity"
             android:exported="true">
             <intent-filter>
@@ -33,7 +36,6 @@
                 <data android:scheme="tourbus" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".RandomActivity"
             android:exported="false" />
@@ -113,10 +115,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="kakaoe211572ac7a98da2054d8a998e86a28a"/>
-                <data android:host="oauth"/>
-                <data android:scheme="e211572ac7a98da2054d8a998e86a28a"/>
-                <data android:host="vectormap"/>
+                <data android:scheme="kakaoe211572ac7a98da2054d8a998e86a28a" />
+                <data android:host="oauth" />
+                <data android:scheme="e211572ac7a98da2054d8a998e86a28a" />
+                <data android:host="vectormap" />
             </intent-filter>
 
             <!-- <intent-filter> -->
