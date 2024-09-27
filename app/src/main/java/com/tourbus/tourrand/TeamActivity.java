@@ -5,6 +5,8 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -32,6 +34,10 @@ import com.kakao.sdk.template.model.Link;
 import com.kakao.sdk.template.model.TextTemplate;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,6 +70,10 @@ public class TeamActivity extends AppCompatActivity {
         void onResult(List<User> selectedUsers, Throwable error);
     }
     private Handler handler;
+    private RecyclerView teamRecyclerView;
+    private RecyclerView.Adapter adapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private List<TeamItem> teamItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +81,21 @@ public class TeamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_team);
         handler = new Handler(Looper.getMainLooper());
 
-        selectedFriends = new ArrayList<>();
+        teamRecyclerView = findViewById(R.id.teamRecyclerView);
+        teamRecyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        teamRecyclerView.setLayoutManager(layoutManager);
 
+        teamItem = new ArrayList<>();
+        teamItem.add(new TeamItem("이연진"));
+        teamItem.add(new TeamItem("송지연"));
+        teamItem.add(new TeamItem("김재균"));
+        adapter = new TeamAdapter(teamItem);
+        teamRecyclerView.setAdapter(adapter);
+
+
+
+        selectedFriends = new ArrayList<>();
         // Kakao SDK 초기화
         KakaoSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
         // bottom.xml에서 ImageView 찾기
@@ -87,32 +110,27 @@ public class TeamActivity extends AppCompatActivity {
         weatherPageIcon.setImageResource(R.drawable.weather_off);
         randomPageIcon.setImageResource(R.drawable.random_off);
 
-        userTxt = findViewById(R.id.userTxt);
+        TextView title = findViewById(R.id.title);
+        title.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "";
+                new Thread(() -> {
+                    // DELETE 요청을 수행
+                    String result = httpPostBodyConnection(url, "");
+                    // 처리 결과 확인
+                    handler = new Handler(Looper.getMainLooper());
+                    if (handler != null) {
+                        handler.post(() -> {
+                            parseTeamMember(result);
+                            seeNetworkResult(result.toString());
+                        });
+                    }
+                }).start();
+            }
+        });
+
         plus = findViewById(R.id.teamPlus);
-        userTxt.setText(userManager.getUserNickname());
-
-//        // plus 버튼 클릭 리스너
-//        plus.setOnClickListener(v -> {
-//            // 카카오톡 또는 카카오 계정 로그인이 되어 있는지 확인
-//            UserApiClient.getInstance().me((user, error) -> {
-//                if (error != null) {
-//                    // 로그인하지 않은 경우 카카오 계정으로 로그인 시도
-//                    UserApiClient.getInstance().loginWithKakaoAccount(this, (OAuthToken token, Throwable loginError) -> {
-//                        if (loginError != null) {
-//                            Toast.makeText(getApplicationContext(), "로그인 실패: " + loginError.getMessage(), Toast.LENGTH_SHORT).show();
-//                        } else if (token != null) {
-//                            // 로그인 성공 후 친구 목록 가져오기
-//                            fetchFriendsList();
-//                        }
-//                        return null;
-//                    });
-//                } else {
-//                    // 이미 로그인된 경우 바로 친구 목록 가져오기
-//                    fetchFriendsList();
-//                }
-//            });
-//        });
-
         plus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,6 +194,70 @@ public class TeamActivity extends AppCompatActivity {
                 finish();
             }
         });
+    }
+    public ArrayList<TeamItem> parseTeamMember(String json) {
+        ArrayList<TeamItem> teamItems = new ArrayList<>();
+
+        try {
+
+            // 전체 JSON 데이터는 JSONObject로 파싱
+            JSONObject jsonObject = new JSONObject(json);
+
+            // JSONObject에서 "data" 필드를 JSONArray로 추출
+            JSONArray jsonArray = jsonObject.getJSONArray("member");
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject postObject = jsonArray.getJSONObject(i);
+
+                String member = null;
+
+                if (postObject.has("member")) {
+                    member = postObject.getString("member");
+                    Log.d("member", member);
+                }
+
+                if (member !=null) {
+                    TeamItem teamItem = new TeamItem(member);
+                    teamItems.add(teamItem);
+                } else {
+                    Log.e("JSONError", "Missing key in JSON object: " + postObject.toString());
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return teamItems;
+    }
+
+//서버 응답 코드가 아래일 때는 밑에 있는 파싱 코드 사용하기
+//    {
+//        "member": ["이연진", "송지연", "김재균"]
+//    }
+
+    public void parseJsonResponse(String jsonResponse) {
+        List<TeamItem> teamList = new ArrayList<>();
+
+        try {
+            // JSON 문자열을 JSONObject로 변환
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+
+            // "member" 배열 가져오기
+            JSONArray memberArray = jsonObject.getJSONArray("member");
+
+            // 각 멤버 이름을 TeamItem 리스트에 추가
+            for (int i = 0; i < memberArray.length(); i++) {
+                String memberName = memberArray.getString(i);
+                TeamItem teamItem = new TeamItem(memberName);
+                teamList.add(teamItem);
+            }
+
+            // 여기서 어댑터에 teamList를 전달해서 리사이클러뷰에 적용 가능
+            adapter = new TeamAdapter(teamList);
+            teamRecyclerView.setAdapter(adapter);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     // 추가 동의 요청 함수
@@ -425,6 +507,65 @@ public class TeamActivity extends AppCompatActivity {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
+    }public String httpGetConnection(String UrlData, String s) {
+        String totalUrl = UrlData.trim();
+
+        //http 통신을 하기위한 객체 선언 실시
+        URL url = null;
+        HttpURLConnection conn = null;
+
+        //http 통신 요청 후 응답 받은 데이터를 담기 위한 변수
+        String responseData = "";
+        BufferedReader br = null;
+        StringBuffer sb = null;
+
+        //메소드 호출 결과값을 반환하기 위한 변수
+        String returnData = "";
+
+        try {
+            //파라미터로 들어온 url을 사용해 connection 실시
+            url = new URL(totalUrl);
+            conn = (HttpURLConnection) url.openConnection();
+
+            //http 요청에 필요한 타입 정의 실시
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept", "application/json; utf-8");
+
+            //http 요청 실시
+            conn.connect();
+            System.out.println("http 요청 방식 : " + "GET");
+            System.out.println("http 요청 주소 : " + totalUrl);
+            System.out.println("");
+
+            //http 요청 후 응답 받은 데이터를 버퍼에 쌓는다
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            sb = new StringBuffer();
+            while ((responseData = br.readLine()) != null) {
+                sb.append(responseData); //StringBuffer에 응답받은 데이터 순차적으로 저장 실시
+            }
+
+            //메소드 호출 완료 시 반환하는 변수에 버퍼 데이터 삽입 실시
+            returnData = sb.toString();
+            Log.d("TAG2", returnData);
+            //http 요청 응답 코드 확인 실시
+            String responseCode = String.valueOf(conn.getResponseCode());
+            System.out.println("http 응답 코드 : " + responseCode);
+            System.out.println("http 응답 데이터 : " + returnData);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //http 요청 및 응답 완료 후 BufferedReader를 닫아줍니다
+            try {
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return returnData; // 네트워크 요청 결과를 반환
     }
 
 }
