@@ -78,11 +78,19 @@ public class HomeFragment1 extends Fragment {
             String inviteTourName = bundle.getString("inviteTourName");
             String inviteNickname = bundle.getString("inviteNickname");
             int inviteTourid = bundle.getInt("inviteTourId");
+            Log.d("홈프래그먼트",inviteTourName);
+            boolean isInviteStatus = bundle.getBoolean("isInviteState");
 
-            InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid);
+            getActivity().runOnUiThread(() -> {
+                InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname, inviteTourid, isInviteStatus);
+                dialog.show();
+            });
+            //InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid, isInviteStatus);
 
-            dialog.show();
+            //dialog.show();
 
+        }else {
+            Log.d("홈프래그먼트", "Bundle is null");
         }
 
 
@@ -174,6 +182,7 @@ public class HomeFragment1 extends Fragment {
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
         logo = rootView.findViewById(R.id.logo);
+        Log.d("홈프래그먼트","홈프래그먼트");
 
         String url = "https://api.tourrand.com/tour_list";
         String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
@@ -207,15 +216,16 @@ public class HomeFragment1 extends Fragment {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                InviteDialog dialog = new InviteDialog(getActivity());
-//                dialog.show();
+                InviteDialog dialog = new InviteDialog(getActivity(), "부산여행", "장징징",16, false);
+                dialog.show();
             }
         });
 
         return rootView;
     }
     private void updateUI() {
-        if (tripPlans.isEmpty()) {
+
+        if (tripPlans == null || tripPlans.isEmpty()) {
             tripzero.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         } else {
@@ -223,6 +233,8 @@ public class HomeFragment1 extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             if (adapter != null) {
                 adapter.notifyDataSetChanged();
+            } else {
+                Log.e("updateUI", "adapter is null");
             }
         }
     }
@@ -309,9 +321,6 @@ public class HomeFragment1 extends Fragment {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
-
-
-
         // UI 갱신
         updateUI();
         Log.d("updateUI","실행완");
@@ -327,6 +336,9 @@ public class HomeFragment1 extends Fragment {
 
                 String tripName = null;
                 String travelDate = null;
+                String memberImg = null;
+
+                ArrayList<String> userImgs = new ArrayList<>();
 
                 if (jsonObject.has("tour_name")) {
                     tripName = jsonObject.getString("tour_name");
@@ -342,9 +354,19 @@ public class HomeFragment1 extends Fragment {
                     travelDate = jsonObject.getString("planDate");
                     Log.d("여행 날짜", travelDate);
                 }
-
-                if (tripName != null && travelDate != null) {
-                    TripPlan tripPlan = new TripPlan(tripName, travelDate, getDday(travelDate), tourId);
+                if (jsonObject.has("user_imgs")) {
+                    JSONArray imgArray = jsonObject.getJSONArray("user_imgs");
+                    for (int j = 0; j < imgArray.length(); j++) {
+                        String imageUrl = imgArray.getString(j);
+                        userImgs.add(imageUrl);
+                        Log.d("유저 이미지", imageUrl);
+                    }
+                }
+                if (tripName != null && travelDate != null && userImgs!=null) {
+                    TripPlan tripPlan = new TripPlan(tripName, travelDate, getDday(travelDate), tourId,userImgs );
+                    TripPlanList.add(tripPlan);
+                } else if (tripName != null && travelDate != null) {
+                    TripPlan tripPlan = new TripPlan(tripName, travelDate, getDday(travelDate), tourId );
                     TripPlanList.add(tripPlan);
                 } else {
                     Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
@@ -407,7 +429,7 @@ public class HomeFragment1 extends Fragment {
         String dDaytoString  = String.valueOf(dDay);
 
         if (currentDate.isBefore(startDate)) {
-            System.out.println("D-" + dDay);
+            System.out.println("D" + dDay);
         } else if (currentDate.isAfter(endDate)) {
             System.out.println("기간이 종료되었습니다.");
         } else {

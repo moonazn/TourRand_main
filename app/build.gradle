@@ -115,5 +115,6 @@ dependencies {
     implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '5.0.0-alpha.14'
 
 
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
 }

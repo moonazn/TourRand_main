@@ -350,17 +350,29 @@ public class MainActivity extends AppCompatActivity {
                                 String get_nickname = jsonObject.getString("nickname");
                                 UserManager.getInstance().setUserNickname(get_nickname);
                                 isInviteCheck = jsonObject.getString("invite");
-                                Log.d("초대여부 체크", isInviteCheck);
+                                Log.d("초대여부 체크-메", isInviteCheck);
                                 if(isInviteCheck.equals("초대 있음")){
                                     inviteTourName = jsonObject.getString("tour_name");
                                     inviteTourId = jsonObject.getInt("tour_id");
                                     inviteNickname = jsonObject.getString("invite_nickname");
+                                    boolean isInviteState = jsonObject.getBoolean("isInviteState");
+
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    intent.putExtra("inviteTourName", inviteTourName);
+                                    intent.putExtra("inviteTourId", inviteTourId);
+                                    intent.putExtra("inviteNickname", inviteNickname);
+                                    intent.putExtra("isInviteState", isInviteState);
+                                    startActivity(intent);
+                                    finish();
+
                                     Fragment fragment = new HomeFragment1();
                                     Bundle bundle = new Bundle();
 
                                     bundle.putString("inviteTourName", inviteTourName);
                                     bundle.putInt("inviteTourId", inviteTourId);
                                     bundle.putString("inviteNickname", inviteNickname);
+                                    bundle.putBoolean("isInviteState", isInviteState);
+
                                     fragment.setArguments(bundle);
                                 }
 

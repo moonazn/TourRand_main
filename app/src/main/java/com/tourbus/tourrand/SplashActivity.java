@@ -7,9 +7,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.VideoView;
+
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -96,6 +105,58 @@ public class SplashActivity extends AppCompatActivity {
                                     String result = httpPostBodyConnection(url, data);
                                     // 처리 결과 확인
                                     handler.post(() ->{
+                                        try {
+                                            // JSON 문자열을 JSONObject로 변환
+                                            JSONObject jsonObject = new JSONObject(result);
+
+                                            // 공통된 값 처리 (nickname)
+                                            String get_nickname = jsonObject.getString("nickname");
+                                            UserManager.getInstance().setUserNickname(get_nickname);
+                                            String isInviteCheck = jsonObject.getString("invite");
+                                            Log.d("초대여부 체크-스", isInviteCheck);
+                                            if(isInviteCheck.equals("초대 있음")){
+                                                String inviteTourName = jsonObject.getString("tour_name");
+                                                int inviteTourId = jsonObject.getInt("tour_id");
+                                                String inviteNickname = jsonObject.getString("invite_nickname");
+                                                boolean isInviteState = jsonObject.getBoolean("isInviteState");
+
+//                                                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+//                                                intent.putExtra("inviteTourName",inviteTourName);
+//                                                intent.putExtra("inviteTourId",inviteTourId);
+//                                                intent.putExtra("inviteNickname",inviteNickname);
+//                                                intent.putExtra("isInviteState",isInviteState);
+
+                                                // Intent로 HomeActivity에 값 전달
+                                                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+                                                intent.putExtra("inviteTourName", inviteTourName);
+                                                intent.putExtra("inviteTourId", inviteTourId);
+                                                intent.putExtra("inviteNickname", inviteNickname);
+                                                intent.putExtra("isInviteState", isInviteState);
+                                                startActivity(intent);
+                                                finish();
+
+//                                                Fragment fragment = new HomeFragment1();
+//                                                Bundle bundle = new Bundle();
+//                                                Log.d("스플래시inviteTourName",inviteTourName);
+//                                                Log.d("isInviteState", String.valueOf(isInviteState));
+//                                                bundle.putString("inviteTourName", inviteTourName);
+//                                                bundle.putInt("inviteTourId", inviteTourId);
+//                                                bundle.putString("inviteNickname", inviteNickname);
+//                                                bundle.putBoolean("isInviteState", isInviteState);
+//                                                fragment.setArguments(bundle);
+                                                // FragmentManager를 사용해 프래그먼트를 추가 또는 교체
+//                                                FragmentManager fragmentManager = getSupportFragmentManager();
+//                                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//                                                fragmentTransaction.replace(R.id.fragment_container, fragment);  // fragment_container는 실제 레이아웃 ID로 교체해야 합니다.
+//                                                fragmentTransaction.commit();
+                                            }
+
+                                            // 공통 처리
+                                           // System.out.println("Nickname: " + nickname);
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                         seeNetworkResult(result);
                                     });
                                 }).start();
