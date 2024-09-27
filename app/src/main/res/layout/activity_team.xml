@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -28,31 +29,22 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="50dp"/>
 
-
     <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_marginLeft="10dp"
+        android:id="@+id/linear"
         android:layout_marginTop="50dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/teamback"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title">
-
-        <TextView
-            android:id="@+id/userTxt"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:fontFamily="@font/pyeongchang_regular"
-            android:gravity="center"
-            android:text="username"
-            android:textSize="25sp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/teamRecyclerView"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </androidx.recyclerview.widget.RecyclerView>
     </LinearLayout>
-
     <ImageView
         android:id="@+id/teamPlus"
         android:layout_width="wrap_content"
@@ -60,7 +52,7 @@
         android:src="@drawable/plusbtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/linear"
         android:layout_marginTop="20dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
