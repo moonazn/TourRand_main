@@ -19,11 +19,12 @@ import retrofit2.Response;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesViewHolder> {
 
-    private List<Place> placesList;
+    private List<Place> placesList = new ArrayList<>();
 
     private OnItemClickListener onItemClickListener;
 
@@ -145,7 +146,7 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesAdapter.PlacesView
 
     @Override
     public int getItemCount() {
-        return placesList.size();
+        return placesList != null ? placesList.size() : 0;
     }
 
     private boolean isAppInstalled(Context context, String packageName) {
