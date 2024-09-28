@@ -106,6 +106,7 @@ public class InviteDialog extends Dialog {
 //                        }
                         // HomeActivity 인스턴스가 존재할 경우, viewPager 처리
                         if (homeActivity != null) {
+                            Log.d("여기다","여기다");
                             homeActivity.viewPager.setCurrentItem(0, false);
                         } else {
                             Log.e("InviteDialog", "HomeActivity instance is null");
