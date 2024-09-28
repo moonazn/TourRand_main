@@ -20,7 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Log.d("홈액티비티", "홈액티비티");
+        Log.d("홈액티비티", "시작");
 
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new HomeViewPagerAdapter(this));
@@ -42,7 +42,9 @@ public class HomeActivity extends AppCompatActivity {
         // 넘어온 Intent에 따라 특정 프래그먼트로 이동
         String fragmentToLoad = getIntent().getStringExtra("fragmentToLoad");
         if ("homeFragment1".equals(fragmentToLoad)) {
+            Log.d("홈액티비티","인텐트");
             viewPager.setCurrentItem(0, false); // HomeFragment1의 위치를 0번째로 가정
+
         }
     }
 }

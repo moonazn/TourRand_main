@@ -22,6 +22,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -70,6 +72,23 @@ public class HomeFragment1 extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_home1, container, false);
+
+        Log.d("홈프래그먼트","시작");
+        // HomeActivity에서 Fragment를 다시 실행하는 코드
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//
+//// HomeFragment1을 찾아서 제거하고 다시 추가
+//        HomeFragment1 homeFragment1 = (HomeFragment1) fragmentManager.findFragmentByTag("f0"); // 0번 인덱스 Fragment의 태그
+//        if (homeFragment1 != null) {
+//            transaction.remove(homeFragment1);
+//            transaction.commitNow(); // 즉시 commit
+//            // 다시 Fragment를 추가
+//            transaction = fragmentManager.beginTransaction();
+//            transaction.add(R.id.fragment_container, new HomeFragment1(), "f0");
+//            transaction.commit();
+//        }
+
 
         Button test = rootView.findViewById(R.id.test);
         test.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +144,7 @@ public class HomeFragment1 extends Fragment {
                 if (tripPlans != null && !tripPlans.isEmpty()) {
                     // 예: RecyclerView에 데이터 세팅
 // 어댑터 초기화
+                    Log.d("홈프래그먼트", "onCreate connect");
                     adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
                     recyclerView.setAdapter(adapter);
 
@@ -380,7 +400,7 @@ public class HomeFragment1 extends Fragment {
         List<TripPlan> tripPlansHere = new ArrayList<>();
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
-        Log.d("홈프래그먼트", "홈프래그먼트");
+        Log.d("홈프래그먼트", "connect");
 
         String url = "https://api.tourrand.com/tour_list";
         String data = "{ \"user_id\" : \"" + userId + "\"}"; // json 형식 데이터
@@ -524,4 +544,47 @@ public class HomeFragment1 extends Fragment {
 //        }
 //        return TripPlanList;
 //    }
+@Override
+public void onResume() {
+    super.onResume();
+
+    connect(new OnTripPlansReceivedListener() {
+
+        @Override
+        public void onTripPlansReceived(List<TripPlan> tripPlans) {
+            // tripPlans를 받아서 UI를 업데이트
+            if (tripPlans != null && !tripPlans.isEmpty()) {
+                // 예: RecyclerView에 데이터 세팅
+// 어댑터 초기화
+                adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+                recyclerView.setAdapter(adapter);
+                Log.d(" 홈프래그먼트", "onResume, connect");
+
+                updateUI();
+
+                if(tripPlans.size() == 0) {
+                    tripzero.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    tripzero.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    // Adapter 설정
+                    adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+
+                    // GridLayoutManager 설정
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    layoutManager.setOrientation(RecyclerView.VERTICAL);
+
+                    // RecyclerView에 LayoutManager와 Adapter 설정
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setAdapter(adapter);
+
+                }                } else {
+                // 데이터가 없을 때 처리
+                Log.d("MyFragment", "No trip plans received");
+            }
+        }
+    });
+}
 }

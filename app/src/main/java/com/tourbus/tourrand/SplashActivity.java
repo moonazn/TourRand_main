@@ -149,6 +149,8 @@ public class SplashActivity extends AppCompatActivity {
 //                                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 //                                                fragmentTransaction.replace(R.id.fragment_container, fragment);  // fragment_container는 실제 레이아웃 ID로 교체해야 합니다.
 //                                                fragmentTransaction.commit();
+                                            }else{
+                                                moveToActivity(HomeActivity.class);
                                             }
 
                                             // 공통 처리
@@ -160,7 +162,7 @@ public class SplashActivity extends AppCompatActivity {
                                         seeNetworkResult(result);
                                     });
                                 }).start();
-                                moveToActivity(HomeActivity.class);
+                                //moveToActivity(HomeActivity.class);
                             } else {
                                 moveToActivity(MainActivity.class);
                             }
