@@ -114,7 +114,7 @@ public class TeamActivity extends AppCompatActivity {
         title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "";
+                String url = "https://api.tourrand.com/checkteam";
                 String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
 
                 new Thread(() -> {
