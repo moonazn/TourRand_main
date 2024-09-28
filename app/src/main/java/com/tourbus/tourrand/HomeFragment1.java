@@ -59,7 +59,7 @@ public class HomeFragment1 extends Fragment {
     private ImageView logo;
 
     private TextView tripzero;
-    private Handler handler;
+    private Handler handler = new Handler();
     private int tourId;
     String getData;
     private String inviteTourName;
@@ -213,8 +213,8 @@ public class HomeFragment1 extends Fragment {
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InviteDialog dialog = new InviteDialog(getActivity(), "부산여행", "장징징",16, false);
-                dialog.show();
+//                InviteDialog dialog = new InviteDialog(HomeActivity.class, "부산여행", "장징징",16, false);
+//                dialog.show();
             }
         });
 
@@ -439,6 +439,31 @@ public class HomeFragment1 extends Fragment {
             getData = httpPostBodyConnection(url, jsonData);
             // 처리 결과 확인
             handler.post(() -> {
+                List<TripPlan> newTripPlan = parseTripPlan(getData);
+                adapter = new TripPlanAdapter(getActivity(), newTripPlan, HomeFragment1.this);
+                recyclerView.setAdapter(adapter);
+
+                updateUI();
+
+                if(newTripPlan.size() == 0) {
+                    tripzero.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                } else {
+                    tripzero.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
+                    // Adapter 설정
+                    adapter = new TripPlanAdapter(getActivity(), newTripPlan, HomeFragment1.this);
+
+                    // GridLayoutManager 설정
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    layoutManager.setOrientation(RecyclerView.VERTICAL);
+
+                    // RecyclerView에 LayoutManager와 Adapter 설정
+                    recyclerView.setLayoutManager(layoutManager);
+                    recyclerView.setAdapter(adapter);
+
+                }
                 seeNetworkResult(getData);
             });
         }).start();

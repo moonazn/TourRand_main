@@ -46,9 +46,18 @@ public class InviteDialog extends Dialog {
     private int tourId;
     private boolean isInviteStatus;
     private Handler handler;
+    private HomeActivity homeActivity;
 
     public InviteDialog(@NonNull Context context, String TourName, String Nickname, int tourId, boolean isInviteStatus) {
         super(context);
+
+        // 여기서 Context가 HomeActivity로 캐스팅 가능한지 확인
+        if (context instanceof HomeActivity) {
+            this.homeActivity = (HomeActivity) context;
+        } else {
+            throw new ClassCastException("Context is not an instance of HomeActivity");
+        }
+
         this.Nickname = Nickname;
         this.TourName = TourName;
         this.tourId = tourId;
@@ -90,11 +99,21 @@ public class InviteDialog extends Dialog {
 //                        transaction.replace(R.id.fragment_container, new HomeFragment1());
 //                        transaction.commit();
 
-                        ((HomeActivity) getContext()).viewPager.setCurrentItem(0); // 0은 HomeFragment1의 위치
-
+//                        if (getOwnerActivity() instanceof HomeActivity) {
+//                            ((HomeActivity) getOwnerActivity()).viewPager.setCurrentItem(0, false);
+//                        } else {
+//                            Log.e("InviteDialog", "Owner Activity is not an instance of HomeActivity");
+//                        }
+                        // HomeActivity 인스턴스가 존재할 경우, viewPager 처리
+                        if (homeActivity != null) {
+                            homeActivity.viewPager.setCurrentItem(0, false);
+                        } else {
+                            Log.e("InviteDialog", "HomeActivity instance is null");
+                        }
                     });
                 }).start();
-                //확인 버튼을 누르고 따로 처리해야 하는 게 있나?
+                dismiss();
+
             }
         });
         negativeBtn.setOnClickListener(new View.OnClickListener() {
