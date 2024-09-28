@@ -28,6 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kakao.sdk.user.UserApiClient;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -413,61 +414,46 @@ public class HomeFragment1 extends Fragment {
     }
 
     public void deleteTripOnServer(int tripId, int position) {
-        adapter.removeItem(position);
-
-        // 싱글톤 인스턴스 가져오기
+        // 서버에 삭제 요청을 먼저 보냄
         UserManager userManager = UserManager.getInstance();
         String userId = userManager.getUserId();
 
         String url = "https://api.tourrand.com/delete";
-//            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
-        // JSON 문자열을 구성하기 위한 StringBuilder 사용
-        StringBuilder data = new StringBuilder();
-
-        data.append("{");
-        data.append("\"user_id\":\"").append(userId).append("\",");
-        data.append("\"tour_id\":\"").append(tripId).append("\"");
-        data.append("}");
-
-        // 최종적으로 생성된 JSON 문자열
-        String jsonData = data.toString();
-
-        // jsonData를 서버에 전송
+        // JSON 문자열을 구성
+        String jsonData = String.format("{\"user_id\":\"%s\",\"tour_id\":\"%d\"}", userId, tripId);
         Log.d("data", jsonData);
+
         new Thread(() -> {
-            getData = httpPostBodyConnection(url, jsonData);
-            // 처리 결과 확인
+            // 서버에 요청 보내기
+            String getData = httpPostBodyConnection(url, jsonData);
+
+            // 요청 처리 결과 확인
             handler.post(() -> {
+                // 응답 처리 및 새로운 TripPlan 리스트 파싱
                 List<TripPlan> newTripPlan = parseTripPlan(getData);
-                adapter = new TripPlanAdapter(getActivity(), newTripPlan, HomeFragment1.this);
-                recyclerView.setAdapter(adapter);
 
-                updateUI();
+                // 기존 adapter의 데이터 갱신
+                tripPlans.clear(); // 기존 데이터 삭제
+                tripPlans.addAll(newTripPlan); // 새로운 데이터 추가
+                adapter = null; // 데이터 변경 알림
+                adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
 
-                if(newTripPlan.size() == 0) {
+                // RecyclerView의 상태 업데이트
+                if (newTripPlan.isEmpty()) {
                     tripzero.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 } else {
                     tripzero.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-
-                    // Adapter 설정
-                    adapter = new TripPlanAdapter(getActivity(), newTripPlan, HomeFragment1.this);
-
-                    // GridLayoutManager 설정
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    layoutManager.setOrientation(RecyclerView.VERTICAL);
-
-                    // RecyclerView에 LayoutManager와 Adapter 설정
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setAdapter(adapter);
-
                 }
+                recyclerView.setAdapter(adapter);
+
                 seeNetworkResult(getData);
             });
         }).start();
     }
+
     private String getDday(String planDate){
 // 입력 문자열
         String dateRange = planDate;
