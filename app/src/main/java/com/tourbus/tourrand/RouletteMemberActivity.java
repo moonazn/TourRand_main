@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -40,6 +41,26 @@ public class RouletteMemberActivity extends AppCompatActivity {
         TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         tourId = tripPlan.getTourId();
 
+        String url = "https://api.tourrand.com/roulette_results";
+        String data = "{\"tour_id\" : "+String.valueOf(tourId)+"}";
+
+        new Thread(() -> {
+            // DELETE 요청을 수행
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            handler = new Handler(Looper.getMainLooper());
+            if (handler != null) {
+                handler.post(() -> {
+                    try {
+                        parseAndAddItems(result);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    seeNetworkResult(result.toString());
+                });
+            }
+        }).start();
+
 
         randomBtn = findViewById(R.id.randomBtn);
         randomBtn.setOnClickListener(new View.OnClickListener() {
@@ -48,7 +69,7 @@ public class RouletteMemberActivity extends AppCompatActivity {
 //                randomBtn.setText("축당첨");
 //                randomBtn.setBackgroundResource(R.drawable.teamback);
                 String url = "https://api.tourrand.com/roulette_save";
-                String data = String.valueOf(tourId);
+                String data = "{\"tour_id\" : "+String.valueOf(tourId)+"}";
                 new Thread(() -> {
                     // DELETE 요청을 수행
                     String result = httpPostBodyConnection(url, data);
