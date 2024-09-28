@@ -7,8 +7,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.util.ArrayList;
 
@@ -18,14 +21,49 @@ public class CustomSetActivity extends AppCompatActivity {
     private Button addButton, nextButton;
     private ArrayList<String> elements;
     private ImageView back;
+    private LinearLayout linearBack;
+    private ImageView noticeBtn;
+    private ConstraintLayout background;
+    private TextView noticeTxt;
+    private ScrollView scroll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_set);
 
-        back = findViewById(R.id.back);
+        linearBack = findViewById(R.id.linearBack);
+        noticeBtn = findViewById(R.id.noticeBtn);
+        background = findViewById(R.id.background);
+        noticeTxt = findViewById(R.id.noticeTxt);
+        scroll = findViewById(R.id.scroll);
+        scroll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noticeTxt.setVisibility(View.GONE);
+            }
+        });
+        noticeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noticeTxt.setVisibility(View.VISIBLE);
+                noticeTxt.bringToFront();
+            }
+        });
+        background.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noticeTxt.setVisibility(View.GONE);
+            }
+        });
+        linearBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                noticeTxt.setVisibility(View.GONE);
+            }
+        });
 
+        back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

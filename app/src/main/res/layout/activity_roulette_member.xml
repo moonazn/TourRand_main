@@ -6,6 +6,13 @@
     android:layout_height="match_parent"
     tools:context=".RouletteMemberActivity">
 
+    <nl.dionsegijn.konfetti.KonfettiView
+        android:id="@+id/viewKonfetti"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/logo"
         android:layout_width="50dp"
@@ -23,39 +30,55 @@
         android:fontFamily="@font/pyeongchang_bold"
         android:text="돌 리 기"
         android:gravity="center"
-        android:background="@drawable/teamback"
+        android:background="@drawable/round_rectangle_realgray"
         android:textColor="#000000"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo"
-        android:layout_marginTop="17dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"/>
 
-    <TextView
-        android:id="@+id/semititle"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:background="@drawable/underlinethin"
-        android:fontFamily="@font/pyeongchang_bold"
-        android:text="현 황"
-        android:textSize="33sp"
-        android:layout_marginTop="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:gravity="center"
-        android:layout_marginRight="100dp"
-        android:layout_marginLeft="100dp"
-        app:layout_constraintTop_toBottomOf="@+id/randomBtn"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/randRecyclerView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginTop="70dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginLeft="30dp"
+        android:background="@drawable/randback"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/semititle"
-        android:layout_marginTop="17dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/randomBtn"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/semititle"
+            android:layout_width="100dp"
+            android:layout_height="55dp"
+            android:background="@drawable/underlinethin"
+            android:fontFamily="@font/pyeongchang_bold"
+            android:layout_gravity="center"
+            android:text="현 황"
+            android:textColor="#000000"
+            android:textSize="33sp"
+            android:gravity="center"
+            android:layout_marginRight="100dp"
+            android:layout_marginLeft="100dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/randRecyclerView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/semititle"
+            android:layout_marginTop="17dp"/>
+
+    </LinearLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

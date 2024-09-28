@@ -22,6 +22,8 @@
         android:layout_width="350dp"
         android:layout_height="350dp"
         android:layout_centerInParent="true"
+        app:background_color="@color/black"
+        app:arrow_image="@drawable/picker"
         app:layout_constraintTop_toBottomOf="@id/back"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

@@ -2,11 +2,13 @@ package com.tourbus.tourrand;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -89,7 +91,8 @@ public class CustomRouletteActivity extends AppCompatActivity {
         int colorIndex = 0;
         for (String element : elements) {
             int color = ContextCompat.getColor(this, COLOR_PALETTE[colorIndex % COLOR_PALETTE.length]);
-            Bitmap bitmap = BitmapUtils.textAsBitmap(element, 30, Color.WHITE);
+            Typeface customFont = ResourcesCompat.getFont(CustomRouletteActivity.this,R.font.pyeongchang_regular);
+            Bitmap bitmap = BitmapUtils.textAsBitmap(element, 80, Color.WHITE,customFont);
             wheelItems.add(new WheelItem(color, bitmap));
             colorIndex++;
         }
