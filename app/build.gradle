@@ -117,4 +117,6 @@ dependencies {
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
+    implementation 'nl.dionsegijn:konfetti-compose:2.0.4'
+
 }

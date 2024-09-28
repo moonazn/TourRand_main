@@ -45,7 +45,11 @@ public class RandomActivity extends AppCompatActivity {
         random_one.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(RandomActivity.this, RouletteMemberActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
             }
         });
 

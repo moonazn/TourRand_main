@@ -3,6 +3,7 @@ package com.tourbus.tourrand;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.bluehomestudio.luckywheel.LuckyWheel;
 import com.bluehomestudio.luckywheel.OnLuckyWheelReachTheTarget;
@@ -93,7 +95,11 @@ public class RandomCustomRouletteActivity extends AppCompatActivity {
         int colorIndex = 0;
         for (String element : elements) {
             int color = ContextCompat.getColor(this, COLOR_PALETTE[colorIndex % COLOR_PALETTE.length]);
-            Bitmap bitmap = BitmapUtils.textAsBitmap(element, 30, Color.WHITE);
+
+            //luckyWheel.getWheelView().setWheelBackgoundWheel(Color.RED);
+
+            Typeface customFont = ResourcesCompat.getFont(RandomCustomRouletteActivity.this,R.font.pyeongchang_regular);
+            Bitmap bitmap = BitmapUtils.textAsBitmap(element, 100, Color.WHITE,customFont);
             wheelItems.add(new WheelItem(color, bitmap));
             colorIndex++;
         }
@@ -107,6 +113,7 @@ public class RandomCustomRouletteActivity extends AppCompatActivity {
                     selected = selectedElement;
                     Toast.makeText(RandomCustomRouletteActivity.this, "Selected element: " + selectedElement, Toast.LENGTH_LONG).show();
                     next.setVisibility(View.VISIBLE);
+                    next.setText(selectedElement);
                 } else {
                     Toast.makeText(RandomCustomRouletteActivity.this, "Invalid target index", Toast.LENGTH_LONG).show();
                 }

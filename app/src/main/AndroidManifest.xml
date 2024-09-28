@@ -75,6 +75,12 @@
         <activity
             android:name=".MyPageActivity"
             android:exported="false" />
+        <activity
+            android:name=".RandomCustomSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RandomCustomRouletteActivity"
+            android:exported="false" />
         <!--
         <meta-data
             android:name="com.kakao.sdk.AppKey"

@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.material.datepicker.CalendarConstraints;
@@ -55,7 +56,7 @@ public class CustomQuestionActivity extends AppCompatActivity {
     private TextView tripDateTextView;
     private int tripLength;
     private String mainTheme;
-
+    private LinearLayout dateLinear;
     String selectedLocation, previousActivity;
 
     @Override
@@ -67,6 +68,13 @@ public class CustomQuestionActivity extends AppCompatActivity {
         nextBtn = findViewById(R.id.nextBtn);
         withAnimalToggle = findViewById(R.id.withAnimal);
         TextView noAnswer = findViewById(R.id.noAnswer);
+        dateLinear = findViewById(R.id.dateLinear);
+        dateLinear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDateRangePicker();
+            }
+        });
 
         tripDateTextView = findViewById(R.id.tripDateTextView);
         ImageView calendarIcon = findViewById(R.id.calendarIcon);

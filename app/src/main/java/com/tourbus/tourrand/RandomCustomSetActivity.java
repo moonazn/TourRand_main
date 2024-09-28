@@ -73,7 +73,7 @@ public class RandomCustomSetActivity extends AppCompatActivity {
             }
         }
 
-        Intent intent = new Intent(this, CustomRouletteActivity.class);
+        Intent intent = new Intent(this, RandomCustomRouletteActivity.class);
         intent.putStringArrayListExtra("elements", elements);
         intent.putExtra("tripPlan",tripPlan);
         startActivity(intent);
