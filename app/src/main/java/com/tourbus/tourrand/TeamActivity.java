@@ -110,27 +110,30 @@ public class TeamActivity extends AppCompatActivity {
         weatherPageIcon.setImageResource(R.drawable.weather_off);
         randomPageIcon.setImageResource(R.drawable.random_off);
 
-        TextView title = findViewById(R.id.title);
-        title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://api.tourrand.com/checkteam";
-                String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+        String url = "https://api.tourrand.com/checkteam";
+        String data = "{ \"user_id\" : \""+UserManager.getInstance().getUserId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
 
-                new Thread(() -> {
-                    // DELETE 요청을 수행
-                    String result = httpPostBodyConnection(url, data);
-                    // 처리 결과 확인
-                    handler = new Handler(Looper.getMainLooper());
-                    if (handler != null) {
-                        handler.post(() -> {
-                            parseTeamMember(result);
-                            seeNetworkResult(result.toString());
-                        });
+        new Thread(() -> {
+            // DELETE 요청을 수행
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            handler = new Handler(Looper.getMainLooper());
+            if (handler != null) {
+                handler.post(() -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        boolean isMemberCheck = jsonObject.getBoolean("message");
+                        if(isMemberCheck){
+
+                            parseJsonResponse(result);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }).start();
+                    seeNetworkResult(result.toString());
+                });
             }
-        });
+        }).start();
 
         plus = findViewById(R.id.teamPlus);
         plus.setOnClickListener(new View.OnClickListener() {
