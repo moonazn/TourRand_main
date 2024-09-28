@@ -1,14 +1,18 @@
 package com.tourbus.tourrand;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,6 +37,10 @@ public class RouletteMemberActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private List<RMItem> rmItemList;
+    private ConstraintLayout backLayout;
+    ImageView back;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +48,19 @@ public class RouletteMemberActivity extends AppCompatActivity {
 
         TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         tourId = tripPlan.getTourId();
+        backLayout = findViewById(R.id.backLayout);
+        back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RouletteMemberActivity.this, RandomActivity.class);
+                intent.putExtra("tripPlan",tripPlan);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+        });
+
 
         String url = "https://api.tourrand.com/roulette_results";
         String data = "{\"tour_id\" : "+String.valueOf(tourId)+"}";
@@ -98,10 +119,10 @@ public class RouletteMemberActivity extends AppCompatActivity {
         rouletteMemberRecyclerView.setLayoutManager(layoutManager);
 
         rmItemList = new ArrayList<>();
-        rmItemList.add(new RMItem("장징징","4"));
-        rmItemList.add(new RMItem("장징징","4"));
-        rmItemList.add(new RMItem("장징징","4"));
-        rmItemList.add(new RMItem("장징징","4"));
+//        rmItemList.add(new RMItem("장징징","4"));
+//        rmItemList.add(new RMItem("장징징","4"));
+//        rmItemList.add(new RMItem("장징징","4"));
+//        rmItemList.add(new RMItem("장징징","4"));
 
         adapter = new RMAdapter(rmItemList);
         rouletteMemberRecyclerView.setAdapter(adapter);
