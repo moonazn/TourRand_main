@@ -74,55 +74,10 @@ public class HomeFragment1 extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_home1, container, false);
 
         Log.d("홈프래그먼트","시작");
-        // HomeActivity에서 Fragment를 다시 실행하는 코드
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
-//
-//// HomeFragment1을 찾아서 제거하고 다시 추가
-//        HomeFragment1 homeFragment1 = (HomeFragment1) fragmentManager.findFragmentByTag("f0"); // 0번 인덱스 Fragment의 태그
-//        if (homeFragment1 != null) {
-//            transaction.remove(homeFragment1);
-//            transaction.commitNow(); // 즉시 commit
-//            // 다시 Fragment를 추가
-//            transaction = fragmentManager.beginTransaction();
-//            transaction.add(R.id.fragment_container, new HomeFragment1(), "f0");
-//            transaction.commit();
-//        }
 
-
-        Button test = rootView.findViewById(R.id.test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Intent intent = new Intent(getActivity(), RouletteMember.class);
-                Intent intent = new Intent(getActivity(), RandomCustomSetActivity.class);
-                startActivity(intent);
-            }
-        });
         // RecyclerView 초기화
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-//        Bundle bundle = getArguments();
-//        if(bundle !=null){
-//            String inviteTourName = bundle.getString("inviteTourName");
-//            String inviteNickname = bundle.getString("inviteNickname");
-//            int inviteTourid = bundle.getInt("inviteTourId");
-//            Log.d("홈프래그먼트",inviteTourName);
-//            boolean isInviteStatus = bundle.getBoolean("isInviteState");
-//
-//            getActivity().runOnUiThread(() -> {
-//                InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname, inviteTourid, isInviteStatus);
-//                dialog.show();
-//            });
-//            //InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid, isInviteStatus);
-//
-//            //dialog.show();
-//
-//        }else {
-//            Log.d("홈프래그먼트", "Bundle is null");
-//        }
-
 
         // 임시 데이터 생성 (실제 데이터는 네트워크 요청 또는 로컬 DB에서 가져와야 함)
         tripPlans = new ArrayList<>();
@@ -174,23 +129,6 @@ public class HomeFragment1 extends Fragment {
                 }
             }
         });
-//        requireActivity().runOnUiThread(() -> {
-//            connect(listener);
-//
-//
-//        });
-
-
-//        Button move = rootView.findViewById(R.id.move);
-//        move.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), TeamActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-
-
 
         // 애니메이션 설정 및 시작
         Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
@@ -207,8 +145,6 @@ public class HomeFragment1 extends Fragment {
                 rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
         });
-
-//        System.out.println("email = " + SplashActivity.currentUser.getEmail());
 
         mypageBtn = rootView.findViewById(R.id.mypage);
         plusBtn = rootView.findViewById(R.id.plusBut);
@@ -227,15 +163,6 @@ public class HomeFragment1 extends Fragment {
                 Intent intent = new Intent(getActivity(), QuestionActivity.class);
 //                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
-            }
-        });
-        logo = rootView.findViewById(R.id.logo);
-
-        logo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                InviteDialog dialog = new InviteDialog(HomeActivity.class, "부산여행", "장징징",16, false);
-//                dialog.show();
             }
         });
 

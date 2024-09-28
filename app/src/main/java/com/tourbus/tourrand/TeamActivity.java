@@ -86,6 +86,12 @@ public class TeamActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         teamRecyclerView.setLayoutManager(layoutManager);
 
+        //친구 불러오기 할 때만 주석하기
+        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        planDate = tripPlan.getTravelDate();
+        tour_name = tripPlan.getTripName();
+        tourId = tripPlan.getTourId();
+
         teamItem = new ArrayList<>();
 //        teamItem.add(new TeamItem("이연진"));
 //        teamItem.add(new TeamItem("송지연"));
@@ -163,12 +169,6 @@ public class TeamActivity extends AppCompatActivity {
             }
         });
 
-
-//친구 불러오기 할 때만 주석하기
-        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
-        planDate = tripPlan.getTravelDate();
-        tour_name = tripPlan.getTripName();
-        tourId = tripPlan.getTourId();
         weatherPageIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,13 +204,9 @@ public class TeamActivity extends AppCompatActivity {
         ArrayList<TeamItem> teamItems = new ArrayList<>();
 
         try {
-
             // 전체 JSON 데이터는 JSONObject로 파싱
             JSONObject jsonObject = new JSONObject(json);
             boolean isMemberCheck = jsonObject.getBoolean("message");
-
-
-
 
             // JSONObject에서 "data" 필드를 JSONArray로 추출
             JSONArray jsonArray = jsonObject.getJSONArray("member");
@@ -237,12 +233,6 @@ public class TeamActivity extends AppCompatActivity {
         }
         return teamItems;
     }
-
-//서버 응답 코드가 아래일 때는 밑에 있는 파싱 코드 사용하기
-//    {
-//        "member": ["이연진", "송지연", "김재균"]
-//    }
-
     public void parseJsonResponse(String jsonResponse) {
         List<TeamItem> teamList = new ArrayList<>();
 
@@ -380,58 +370,12 @@ public class TeamActivity extends AppCompatActivity {
                                         for (SelectedUser selectedFriend : selectedFriendList) {
                                             sendKakaoMessage(selectedFriend);
                                         }
-
-//                                        // 첫 번째 선택된 친구 가져오기 한명만 보내기 성공
-//                                        SelectedUser selectedFriend = selectedFriendList.get(0);
-//
-//                                        // 선택된 친구의 UUID와 닉네임 가져오기
-//                                        String selectedUuid = selectedFriend.getUuid();
-//                                        String selectedId = String.valueOf(selectedFriend.getId());
-//                                        String selectedNickname = selectedFriend.getProfileNickname();
-//
-//                                        Log.d("시ㅣㅣㅣ바", "선택된 친구 UUID: " + selectedUuid + ", 닉네임: " + selectedNickname);
-//
-//                                        String url = "https://api.tourrand.com/invite";
-//                                        //초대 하는 사람의 id가 invite_id
-//                                        String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())+"\",\"tour_id\" : \""+tourId+"\",\"nickname\" : \""+UserManager.getInstance().getUserNickname()+"\"}"; //json 형식 데이터
-//                                        // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
-//                                        new Thread(() -> {
-//                                            String result = httpPostBodyConnection(url, data);
-//                                            // 처리 결과 확인
-//                                            handler.post(() ->{
-//                                                seeNetworkResult(result);
-//                                            });
-//                                        }).start();
-//                                        Log.d(TAG, "친구 선택 성공 " + selectedUsers);
-//                                        Log.d("친구 UUID 확인", "Kakao UUID: " + selectedFriend.getId());
-//
-//                                        // Kakao 메시지 보내기 함수 호출
-//                                        sendKakaoMessage(selectedFriend);
                                     }
                                 }
-
-//                                String url = "https://api.tourrand.com/invite";
-//                                //초대 하는 사람의 id가 invite_id
-//                                String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())()+"\",\"tour_id\" : \""+tourId+"\",\"invite_id\" : \""+UserManager.getInstance().getUserId()+"\"}"; //json 형식 데이터
-//                               // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
-//                                new Thread(() -> {
-//                                    String result = httpPostBodyConnection(url, data);
-//                                    // 처리 결과 확인
-//                                    handler.post(() ->{
-//                                        seeNetworkResult(result);
-//                                    });
-//                                }).start();
-//                                Log.d(TAG, "친구 선택 성공 " + selectedUsers);
-//                                Log.d("친구 UUID 확인", "Kakao UUID: " + String.valueOf(selectedFriend.getId());
-//
-//                                //메세지 보내기
-//                                sendKakaoMessage(friends);
                             }
                             return Unit.INSTANCE;
                         }
                 );
-
-
             } else {
                 Toast.makeText(getApplicationContext(), "친구 목록이 없습니다.", Toast.LENGTH_SHORT).show();
             }
@@ -461,14 +405,12 @@ public class TeamActivity extends AppCompatActivity {
                 Log.e("카카오 메시지 보내기 실패", Log.getStackTraceString(error));
             } else {
                 // 성공적으로 메시지 보냄
-                Toast.makeText(getApplicationContext(), "메시지 전송 성공", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "초대 완료!", Toast.LENGTH_SHORT).show();
                 Log.d("카카오 메시지 전송", "성공적으로 메시지를 보냈습니다.");
             }
-
         return Unit.INSTANCE;
         });
     }
-
     public String httpPostBodyConnection(String UrlData, String ParamData) {
         // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
         // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
@@ -487,8 +429,6 @@ public class TeamActivity extends AppCompatActivity {
 
         //메소드 호출 결과값을 반환하기 위한 변수
         String returnData = "";
-
-
         try {
             //파라미터로 들어온 url을 사용해 connection 실시
             url = null;
@@ -546,12 +486,11 @@ public class TeamActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-
         return returnData; // 네트워크 요청 결과를 반환
     }
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
-        Log.d(result, "network");
+        Log.d("network",result );
     }
 
 }

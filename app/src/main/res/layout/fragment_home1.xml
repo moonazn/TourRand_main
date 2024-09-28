@@ -8,11 +8,6 @@
     android:orientation="vertical"
     android:tag="HomeFragment1">
 
-    <android.widget.Button
-        android:id="@+id/test"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraint"
         android:layout_width="match_parent"
