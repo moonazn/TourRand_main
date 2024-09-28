@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -105,15 +106,26 @@ public class InviteDialog extends Dialog {
 //                            Log.e("InviteDialog", "Owner Activity is not an instance of HomeActivity");
 //                        }
                         // HomeActivity 인스턴스가 존재할 경우, viewPager 처리
+//                        if (homeActivity != null) {
+//                            Log.d("여기다","여기다");
+//                            homeActivity.viewPager.setCurrentItem(0, false);
+//                        } else {
+//                            Log.e("InviteDialog", "HomeActivity instance is null");
+//                        }
                         if (homeActivity != null) {
-                            Log.d("여기다","여기다");
-                            homeActivity.viewPager.setCurrentItem(0, false);
-                        } else {
-                            Log.e("InviteDialog", "HomeActivity instance is null");
+                            Log.d("다이얼로그", "재시작");
+                            FragmentManager fragmentManager = homeActivity.getSupportFragmentManager();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            Fragment fragment = homeActivity.getSupportFragmentManager().findFragmentByTag(
+                                    "android:switcher:" + R.id.viewPager + ":" + 0);
+                            transaction.detach(fragment);
+                            transaction.attach(new HomeFragment1()); // 새 Fragment를 다시 붙이기
+                            transaction.commit();
                         }
+                        dismiss();
                     });
                 }).start();
-                dismiss();
+
 
             }
         });

@@ -345,32 +345,68 @@ public class TeamActivity extends AppCompatActivity {
                                     List<SelectedUser> selectedFriendList = selectedUsers.getUsers(); // getFriends()는 예시입니다. SDK 문서에서 실제 메서드를 확인하세요.
 
                                     if (selectedFriendList != null && !selectedFriendList.isEmpty()) {
-                                        // 첫 번째 선택된 친구 가져오기
-                                        SelectedUser selectedFriend = selectedFriendList.get(0);
 
-                                        // 선택된 친구의 UUID와 닉네임 가져오기
-                                        String selectedUuid = selectedFriend.getUuid();
-                                        String selectedId = String.valueOf(selectedFriend.getId());
-                                        String selectedNickname = selectedFriend.getProfileNickname();
+                                        // 선택된 친구들의 ID와 닉네임을 수집하는 부분
+                                        JSONArray friendArray = new JSONArray();
 
-                                        Log.d("시ㅣㅣㅣ바", "선택된 친구 UUID: " + selectedUuid + ", 닉네임: " + selectedNickname);
+                                        for (SelectedUser selectedFriend : selectedFriendList) {
+                                            JSONObject friendObject = new JSONObject();
+                                            try {
+                                                friendObject.put("user_id", String.valueOf(selectedFriend.getId()));
+                                                //friendObject.put("nickname", selectedFriend.getProfileNickname());
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                            friendArray.put(friendObject);
+                                        }
+
+                                        Log.d("친구 리스트", "선택된 친구들: " + friendArray.toString());
 
                                         String url = "https://api.tourrand.com/invite";
-                                        //초대 하는 사람의 id가 invite_id
-                                        String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())+"\",\"tour_id\" : \""+tourId+"\",\"nickname\" : \""+UserManager.getInstance().getUserNickname()+"\"}"; //json 형식 데이터
-                                        // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+                                        // 초대하는 사람의 ID가 invite_id
+                                        String data = "{ \"users\" : " + friendArray.toString() + ", \"tour_id\" : \"" + tourId + "\", \"nickname\" : \"" + UserManager.getInstance().getUserNickname() + "\" }"; // JSON 형식 데이터
+
                                         new Thread(() -> {
                                             String result = httpPostBodyConnection(url, data);
                                             // 처리 결과 확인
-                                            handler.post(() ->{
+                                            handler.post(() -> {
                                                 seeNetworkResult(result);
                                             });
                                         }).start();
-                                        Log.d(TAG, "친구 선택 성공 " + selectedUsers);
-                                        Log.d("친구 UUID 확인", "Kakao UUID: " + selectedFriend.getId());
 
-                                        // Kakao 메시지 보내기 함수 호출
-                                        sendKakaoMessage(selectedFriend);
+                                        Log.d(TAG, "친구 선택 성공 " + selectedUsers);
+
+                                        // Kakao 메시지 보내기 함수 호출 (여러 친구에게 메시지를 보내려면 이 부분도 수정해야 할 수 있음)
+                                        for (SelectedUser selectedFriend : selectedFriendList) {
+                                            sendKakaoMessage(selectedFriend);
+                                        }
+
+//                                        // 첫 번째 선택된 친구 가져오기 한명만 보내기 성공
+//                                        SelectedUser selectedFriend = selectedFriendList.get(0);
+//
+//                                        // 선택된 친구의 UUID와 닉네임 가져오기
+//                                        String selectedUuid = selectedFriend.getUuid();
+//                                        String selectedId = String.valueOf(selectedFriend.getId());
+//                                        String selectedNickname = selectedFriend.getProfileNickname();
+//
+//                                        Log.d("시ㅣㅣㅣ바", "선택된 친구 UUID: " + selectedUuid + ", 닉네임: " + selectedNickname);
+//
+//                                        String url = "https://api.tourrand.com/invite";
+//                                        //초대 하는 사람의 id가 invite_id
+//                                        String data = "{ \"user_id\" : \""+String.valueOf(selectedFriend.getId())+"\",\"tour_id\" : \""+tourId+"\",\"nickname\" : \""+UserManager.getInstance().getUserNickname()+"\"}"; //json 형식 데이터
+//                                        // String data = "{ \"user_id\" : \""+myFriend.getId()+"\",\"tour_id\" : \""+tourId+"\"}"; //json 형식 데이터
+//                                        new Thread(() -> {
+//                                            String result = httpPostBodyConnection(url, data);
+//                                            // 처리 결과 확인
+//                                            handler.post(() ->{
+//                                                seeNetworkResult(result);
+//                                            });
+//                                        }).start();
+//                                        Log.d(TAG, "친구 선택 성공 " + selectedUsers);
+//                                        Log.d("친구 UUID 확인", "Kakao UUID: " + selectedFriend.getId());
+//
+//                                        // Kakao 메시지 보내기 함수 호출
+//                                        sendKakaoMessage(selectedFriend);
                                     }
                                 }
 
