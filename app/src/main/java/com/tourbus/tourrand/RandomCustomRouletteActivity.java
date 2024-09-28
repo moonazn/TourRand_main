@@ -72,7 +72,7 @@ public class RandomCustomRouletteActivity extends AppCompatActivity {
             setupLuckyWheel();
             spinRoulette();
         } else {
-            Toast.makeText(this, "No elements found", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "후보를 입력해주세요", Toast.LENGTH_SHORT).show();
         }
 
         next.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +111,7 @@ public class RandomCustomRouletteActivity extends AppCompatActivity {
                 if (targetIndex != -1 && targetIndex < elements.size()) {
                     String selectedElement = elements.get(targetIndex);
                     selected = selectedElement;
-                    Toast.makeText(RandomCustomRouletteActivity.this, "Selected element: " + selectedElement, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RandomCustomRouletteActivity.this, "축 당 첨" + selectedElement, Toast.LENGTH_LONG).show();
                     next.setVisibility(View.VISIBLE);
                     next.setText(selectedElement);
                 } else {
