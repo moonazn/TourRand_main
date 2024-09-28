@@ -48,7 +48,7 @@ public class TripPlanViewHolder extends RecyclerView.ViewHolder {
         if(Integer.parseInt(tripPlan.getDDay()) >= 0) {
             dday = "D-" + tripPlan.getDDay();
         } else {
-            dday = "D+" + tripPlan.getDDay();
+            dday = "D+" + Math.abs(Integer.parseInt(tripPlan.getDDay()));
         }
 
         dDayTextView.setText(dday);
