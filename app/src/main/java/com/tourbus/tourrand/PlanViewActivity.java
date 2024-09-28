@@ -166,10 +166,11 @@ public class PlanViewActivity extends AppCompatActivity {
                 // 인증 후 API가 정상적으로 실행될 때 호출됨
                 LabelStyles styles = kakaoMap.getLabelManager()
                         .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
-                        .setStyles(styles);
+//                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
+//                        .setStyles(styles);
+                LabelOptions options;
                 LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-                Label label = layer.addLabel(options);
+//                Label label = layer.addLabel(options);
 
 
                 //핀 사이 선으로 표시
@@ -178,14 +179,16 @@ public class PlanViewActivity extends AppCompatActivity {
 
                 RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
                         RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-                                LatLng.from(37.394660, 127.111182),
-                                LatLng.from(37.5642135, 127.0016985)))
-                        .setStyles(stylesSet.getStyles(0));
-                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-                        .setStylesSet(stylesSet);
-                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
+//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
+//                                LatLng.from(37.394660, 127.111182),
+//                                LatLng.from(37.5642135, 127.0016985)))
+//                        .setStyles(stylesSet.getStyles(0));
+//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
+//                        .setStylesSet(stylesSet);
+//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
 
+                RouteLineSegment segment;
+                RouteLineOptions routeoptions;
 //                setMapPlaces(locationArrayList, kakaoMap);
 
                 if (locationArrayList.isEmpty()) {
@@ -847,10 +850,11 @@ public class PlanViewActivity extends AppCompatActivity {
                 // 인증 후 API가 정상적으로 실행될 때 호출됨
                 LabelStyles styles = kakaoMap.getLabelManager()
                         .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
-                        .setStyles(styles);
+//                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
+//                        .setStyles(styles);
+                LabelOptions options;
                 LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-                Label label = layer.addLabel(options);
+//                Label label = layer.addLabel(options);
 
 
                 //핀 사이 선으로 표시
@@ -859,14 +863,16 @@ public class PlanViewActivity extends AppCompatActivity {
 
                 RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
                         RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-                                LatLng.from(37.394660, 127.111182),
-                                LatLng.from(37.5642135, 127.0016985)))
-                        .setStyles(stylesSet.getStyles(0));
-                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-                        .setStylesSet(stylesSet);
-                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
+//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
+//                                LatLng.from(37.394660, 127.111182),
+//                                LatLng.from(37.5642135, 127.0016985)))
+//                        .setStyles(stylesSet.getStyles(0));
+//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
+//                        .setStylesSet(stylesSet);
+//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
 
+                RouteLineSegment segment;
+                RouteLineOptions routeoptions;
 //                setMapPlaces(locationArrayList, kakaoMap);
 
                 if (locationArrayList.isEmpty()) {
@@ -925,7 +931,7 @@ public class PlanViewActivity extends AppCompatActivity {
 //                }
             }@Override
             public LatLng getPosition() {
-                return LatLng.from(locationArrayList.get(0).getLongitude(), locationArrayList.get(0).getLongitude());
+                return LatLng.from(locationArrayList.get(0).getLatitude(), locationArrayList.get(0).getLongitude());
             }
 
             @Override
