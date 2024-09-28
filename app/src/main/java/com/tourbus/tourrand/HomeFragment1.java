@@ -338,7 +338,7 @@ public class HomeFragment1 extends Fragment {
     }
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
-        Log.d(result, "network");
+        Log.d("network", result);
         // UI 갱신
         updateUI();
         Log.d("updateUI","실행완");
@@ -544,47 +544,47 @@ public class HomeFragment1 extends Fragment {
 //        }
 //        return TripPlanList;
 //    }
-@Override
-public void onResume() {
-    super.onResume();
-
-    connect(new OnTripPlansReceivedListener() {
-
-        @Override
-        public void onTripPlansReceived(List<TripPlan> tripPlans) {
-            // tripPlans를 받아서 UI를 업데이트
-            if (tripPlans != null && !tripPlans.isEmpty()) {
-                // 예: RecyclerView에 데이터 세팅
-// 어댑터 초기화
-                adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
-                recyclerView.setAdapter(adapter);
-                Log.d(" 홈프래그먼트", "onResume, connect");
-
-                updateUI();
-
-                if(tripPlans.size() == 0) {
-                    tripzero.setVisibility(View.VISIBLE);
-                    recyclerView.setVisibility(View.GONE);
-                } else {
-                    tripzero.setVisibility(View.GONE);
-                    recyclerView.setVisibility(View.VISIBLE);
-
-                    // Adapter 설정
-                    adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
-
-                    // GridLayoutManager 설정
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    layoutManager.setOrientation(RecyclerView.VERTICAL);
-
-                    // RecyclerView에 LayoutManager와 Adapter 설정
-                    recyclerView.setLayoutManager(layoutManager);
-                    recyclerView.setAdapter(adapter);
-
-                }                } else {
-                // 데이터가 없을 때 처리
-                Log.d("MyFragment", "No trip plans received");
-            }
-        }
-    });
-}
+//@Override
+//public void onResume() {
+//    super.onResume();
+//
+//    connect(new OnTripPlansReceivedListener() {
+//
+//        @Override
+//        public void onTripPlansReceived(List<TripPlan> tripPlans) {
+//            // tripPlans를 받아서 UI를 업데이트
+//            if (tripPlans != null && !tripPlans.isEmpty()) {
+//                // 예: RecyclerView에 데이터 세팅
+//// 어댑터 초기화
+//                adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+//                recyclerView.setAdapter(adapter);
+//                Log.d(" 홈프래그먼트", "onResume, connect");
+//
+//                updateUI();
+//
+//                if(tripPlans.size() == 0) {
+//                    tripzero.setVisibility(View.VISIBLE);
+//                    recyclerView.setVisibility(View.GONE);
+//                } else {
+//                    tripzero.setVisibility(View.GONE);
+//                    recyclerView.setVisibility(View.VISIBLE);
+//
+//                    // Adapter 설정
+//                    adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+//
+//                    // GridLayoutManager 설정
+//                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//                    layoutManager.setOrientation(RecyclerView.VERTICAL);
+//
+//                    // RecyclerView에 LayoutManager와 Adapter 설정
+//                    recyclerView.setLayoutManager(layoutManager);
+//                    recyclerView.setAdapter(adapter);
+//
+//                }                } else {
+//                // 데이터가 없을 때 처리
+//                Log.d("MyFragment", "No trip plans received");
+//            }
+//        }
+//    });
+//}
 }

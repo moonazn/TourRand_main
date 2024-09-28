@@ -267,6 +267,6 @@ public class SplashActivity extends AppCompatActivity {
     }
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
-        Log.d(result, "network");
+        Log.d("network", result);
     }
 }
