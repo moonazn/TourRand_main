@@ -31,7 +31,7 @@ public class HomeActivity extends AppCompatActivity {
             String inviteNickname = intent.getStringExtra("inviteNickname");
             int inviteTourid = intent.getIntExtra("inviteTourId",0);
             if(inviteNickname!=null){
-                InviteDialog dialog = new InviteDialog(HomeActivity.this, inviteTourName, inviteNickname, inviteTourid, true);
+                InviteDialog dialog = new InviteDialog(this, inviteTourName, inviteNickname, inviteTourid, true);
                 dialog.show();
             }
         //Log.d("홈프래그먼트",inviteTourName);
