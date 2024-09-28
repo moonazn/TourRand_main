@@ -27,6 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import org.json.JSONObject;
 
@@ -82,6 +85,12 @@ public class InviteDialog extends Dialog {
                     // 처리 결과 확인
                     handler.post(() -> {
                         seeNetworkResult(result);
+//                        FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+//                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//                        transaction.replace(R.id.fragment_container, new HomeFragment1());
+//                        transaction.commit();
+
+                        ((HomeActivity) getContext()).viewPager.setCurrentItem(0); // 0은 HomeFragment1의 위치
 
                     });
                 }).start();

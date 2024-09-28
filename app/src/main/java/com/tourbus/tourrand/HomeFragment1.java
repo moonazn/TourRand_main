@@ -64,6 +64,7 @@ public class HomeFragment1 extends Fragment {
     String getData;
     private String inviteTourName;
     private int inviteTourId;
+    OnTripPlansReceivedListener listener;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -82,25 +83,25 @@ public class HomeFragment1 extends Fragment {
         recyclerView = rootView.findViewById(R.id.recycler_view_trip_plans);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        Bundle bundle = getArguments();
-        if(bundle !=null){
-            String inviteTourName = bundle.getString("inviteTourName");
-            String inviteNickname = bundle.getString("inviteNickname");
-            int inviteTourid = bundle.getInt("inviteTourId");
-            Log.d("홈프래그먼트",inviteTourName);
-            boolean isInviteStatus = bundle.getBoolean("isInviteState");
-
-            getActivity().runOnUiThread(() -> {
-                InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname, inviteTourid, isInviteStatus);
-                dialog.show();
-            });
-            //InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid, isInviteStatus);
-
-            //dialog.show();
-
-        }else {
-            Log.d("홈프래그먼트", "Bundle is null");
-        }
+//        Bundle bundle = getArguments();
+//        if(bundle !=null){
+//            String inviteTourName = bundle.getString("inviteTourName");
+//            String inviteNickname = bundle.getString("inviteNickname");
+//            int inviteTourid = bundle.getInt("inviteTourId");
+//            Log.d("홈프래그먼트",inviteTourName);
+//            boolean isInviteStatus = bundle.getBoolean("isInviteState");
+//
+//            getActivity().runOnUiThread(() -> {
+//                InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname, inviteTourid, isInviteStatus);
+//                dialog.show();
+//            });
+//            //InviteDialog dialog = new InviteDialog(getActivity(), inviteTourName, inviteNickname,inviteTourid, isInviteStatus);
+//
+//            //dialog.show();
+//
+//        }else {
+//            Log.d("홈프래그먼트", "Bundle is null");
+//        }
 
 
         // 임시 데이터 생성 (실제 데이터는 네트워크 요청 또는 로컬 DB에서 가져와야 함)
@@ -114,10 +115,50 @@ public class HomeFragment1 extends Fragment {
 //        tripPlans.add(new TripPlan("여행 이름 5", "2024-06-20 ~ 2024-07-01", "120"));
 //        tripPlans.add(new TripPlan("여행 이름 5", "2024-06-20 ~ 2024-07-01", "120"));
 //        tripPlans.add(new TripPlan("여행 이름 5", "2024-06-20 ~ 2024-07-01", "120"));
+        tripzero = rootView.findViewById(R.id.tripzero);
 
-        // 어댑터 초기화
-        adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
-        recyclerView.setAdapter(adapter);
+        connect(new OnTripPlansReceivedListener() {
+            @Override
+            public void onTripPlansReceived(List<TripPlan> tripPlans) {
+                // tripPlans를 받아서 UI를 업데이트
+                if (tripPlans != null && !tripPlans.isEmpty()) {
+                    // 예: RecyclerView에 데이터 세팅
+// 어댑터 초기화
+                    adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+                    recyclerView.setAdapter(adapter);
+
+                    updateUI();
+
+                    if(tripPlans.size() == 0) {
+                        tripzero.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(View.GONE);
+                    } else {
+                        tripzero.setVisibility(View.GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+
+                        // Adapter 설정
+                        adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
+
+                        // GridLayoutManager 설정
+                        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                        layoutManager.setOrientation(RecyclerView.VERTICAL);
+
+                        // RecyclerView에 LayoutManager와 Adapter 설정
+                        recyclerView.setLayoutManager(layoutManager);
+                        recyclerView.setAdapter(adapter);
+
+                    }                } else {
+                    // 데이터가 없을 때 처리
+                    Log.d("MyFragment", "No trip plans received");
+                }
+            }
+        });
+//        requireActivity().runOnUiThread(() -> {
+//            connect(listener);
+//
+//
+//        });
+
 
 //        Button move = rootView.findViewById(R.id.move);
 //        move.setOnClickListener(new View.OnClickListener() {
@@ -128,28 +169,7 @@ public class HomeFragment1 extends Fragment {
 //            }
 //        });
 
-        tripzero = rootView.findViewById(R.id.tripzero);
-        updateUI();
 
-        if(tripPlans.size() == 0) {
-            tripzero.setVisibility(View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        } else {
-            tripzero.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-
-            // Adapter 설정
-            adapter = new TripPlanAdapter(getActivity(), tripPlans, HomeFragment1.this);
-
-            // GridLayoutManager 설정
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-            layoutManager.setOrientation(RecyclerView.VERTICAL);
-
-            // RecyclerView에 LayoutManager와 Adapter 설정
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.setAdapter(adapter);
-
-        }
 
         // 애니메이션 설정 및 시작
         Animation shake = AnimationUtils.loadAnimation(getContext(), R.anim.shake);
@@ -188,40 +208,8 @@ public class HomeFragment1 extends Fragment {
                 startActivity(intent);
             }
         });
-        UserManager userManager = UserManager.getInstance();
-        String userId = userManager.getUserId();
         logo = rootView.findViewById(R.id.logo);
-        Log.d("홈프래그먼트","홈프래그먼트");
 
-        String url = "https://api.tourrand.com/tour_list";
-        String data = "{ \"user_id\" : \""+userId+"\"}"; //json 형식 데이터
-
-        new Thread(() -> {
-            String result = httpPostBodyConnection(url, data);
-            // 처리 결과 확인
-            handler = new Handler(Looper.getMainLooper());
-            if (handler != null) {
-                handler.post(() -> {
-                    if(result != null && !result.isEmpty()) {
-                        // tripPlans 초기화 및 데이터 파싱
-                        tripPlans.clear();
-                        tripPlans.addAll(parseTripPlan(result));
-//                                tripPlans = parseTripPlan(result);
-//                                Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
-
-                        // 데이터 확인 로그
-                        Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlans.size());
-                        for (TripPlan plan : tripPlans) {
-                            Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
-                        }
-
-                    } else {
-                        Log.e("Error", "Result is null or empty");
-                    }
-                    seeNetworkResult(result);
-                });
-            }
-        }).start();
         logo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -387,6 +375,43 @@ public class HomeFragment1 extends Fragment {
 
         return TripPlanList;
     }
+    public void connect(OnTripPlansReceivedListener listener) {
+        List<TripPlan> tripPlansHere = new ArrayList<>();
+        UserManager userManager = UserManager.getInstance();
+        String userId = userManager.getUserId();
+        Log.d("홈프래그먼트", "홈프래그먼트");
+
+        String url = "https://api.tourrand.com/tour_list";
+        String data = "{ \"user_id\" : \"" + userId + "\"}"; // json 형식 데이터
+
+        new Thread(() -> {
+            String result = httpPostBodyConnection(url, data);
+            // 처리 결과 확인
+            Handler handler2 = new Handler(Looper.getMainLooper());
+            handler2.post(() -> {
+                if (result != null && !result.isEmpty()) {
+                    // tripPlans 초기화 및 데이터 파싱
+                    tripPlansHere.clear();
+                    tripPlansHere.addAll(parseTripPlan(result));
+
+                    // 데이터 확인 로그
+                    Log.d("TripPlansSize", "Size of tripPlans after parsing: " + tripPlansHere.size());
+                    for (TripPlan plan : tripPlansHere) {
+                        Log.d("TripPlan", "Plan: " + plan.getTripName() + ", Date: " + plan.getTravelDate());
+                    }
+                }
+                seeNetworkResult(result);
+                // 콜백 호출
+                listener.onTripPlansReceived(tripPlansHere);
+            });
+        }).start();
+    }
+
+    // 콜백 인터페이스
+    public interface OnTripPlansReceivedListener {
+        void onTripPlansReceived(List<TripPlan> tripPlans);
+    }
+
     public void deleteTripOnServer(int tripId, int position) {
         adapter.removeItem(position);
 

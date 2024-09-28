@@ -1,15 +1,20 @@
 package com.tourbus.tourrand;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private ViewPager2 viewPager;
+    public ViewPager2 viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
