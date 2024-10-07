@@ -9,12 +9,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
     public ViewPager2 viewPager;
+    private long lastTimeBackPressed = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,21 @@ public class HomeActivity extends AppCompatActivity {
             Log.d("홈액티비티","인텐트");
             viewPager.setCurrentItem(0, false); // HomeFragment1의 위치를 0번째로 가정
 
+        }
+    }
+    @Override
+    public void onBackPressed() {
+        // 2초 이내에 백버튼을 두 번 누르면 앱 종료
+        if (System.currentTimeMillis() > lastTimeBackPressed + 2000) {
+            lastTimeBackPressed = System.currentTimeMillis();
+            // "뒤로가기 버튼을 한번 더 누르면 종료됩니다" 메시지 출력
+            Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        // 백버튼을 두 번 눌렀다면 토스트 메시지를 종료하고 앱을 종료
+        if (System.currentTimeMillis() <= lastTimeBackPressed + 2000) {
+            //if (backToast != null) backToast.cancel();  // 토스트 메시지 종료
+            super.onBackPressed();  // 앱 종료
         }
     }
 }

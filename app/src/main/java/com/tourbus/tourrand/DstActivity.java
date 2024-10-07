@@ -389,6 +389,7 @@ public class DstActivity extends AppCompatActivity {
             intent.putExtra("withAnimal", withAnimal);
             Log.d("withAnimal", String.valueOf(withAnimal));
             intent.putExtra("mainTheme", mainTheme);
+            Log.d("dst mainTheme", mainTheme);
             intent.putExtra("selectedLocation", selectedLocation);
             intent.putExtra("departureDocument", departureDocument);
             intent.putExtra("previousActivity", previousActivity);
