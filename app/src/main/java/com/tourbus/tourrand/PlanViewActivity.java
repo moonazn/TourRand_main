@@ -263,6 +263,7 @@ public class PlanViewActivity extends AppCompatActivity {
         //이자식 머임??? 얘 땜시 테마 하는 거 두번 실행되는데 그래서 널
         setDataWithTripDetailList(tripPlanDetailList);
 
+        tripPlanDetailList.get(0).setTheme(getTheme);
         savedTripPlans.add(tripPlanDetailList);
 
         String result = intent.getParcelableExtra("result");
@@ -321,7 +322,7 @@ public class PlanViewActivity extends AppCompatActivity {
         // 엑셀 파일 파싱
         try {
             InputStream inputStream = getAssets().open("locations.xlsx");
-           // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
+            // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
 
             excelParser.parseExcelFile(inputStream);
             //Log.d("PlanViewActivity", "Excel file parsed successfully"); // 로그 추가
@@ -355,22 +356,6 @@ public class PlanViewActivity extends AppCompatActivity {
         // 여행 장소 RecyclerView 설정
         placesRecyclerView = findViewById(R.id.placesRecyclerView);
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        // 예시로 각 일차별 장소 데이터를 추가합니다.
-//        placesMap = new HashMap<>();
-//        for(int index = 0; index < tripPlanDetailList.size(); index++) {
-//            if (tripPlanDetailList.get(index).getDay() == index+1) {
-//
-//            }
-//
-//        }
-//        for (int i = 1; i <= 7; i++) {
-//            List<Place> placesList = new ArrayList<>();
-//            placesList.add(new Place("장소 " + i + "-1", "주소 " + i + "-1"));
-//            placesList.add(new Place("장소 " + i + "-2", "주소 " + i + "-2"));
-//            placesList.add(new Place("장소 " + i + "-3", "주소 " + i + "-3"));
-//            placesMap.put(i - 1, placesList);
-//        }
 
         // 처음에 1일차의 장소를 표시
         updatePlacesList(0); // 1일차 데이터를 로드
@@ -505,7 +490,6 @@ public class PlanViewActivity extends AppCompatActivity {
             String userId = userManager.getUserId();
 
             String url = "https://api.tourrand.com/confirmed";
-//            String data = "{ \"user_id\" : \""+userId+"\", \"tour_name\" : \""+tripPlanDetailList.get(0).getTripName()+"\" , \"planDate\" : \""+tripPlanDetailList.get(0).getPlanDate()+"\", \"schedules\" : [{\""+tripPlanDetailList+"\"}] }";
 
             // JSON 문자열을 구성하기 위한 StringBuilder 사용
             StringBuilder data = new StringBuilder();
@@ -550,11 +534,6 @@ public class PlanViewActivity extends AppCompatActivity {
                 });
             }).start();
 
-//            Intent homeIntent = new Intent(PlanViewActivity.this, HomeFragment1.class);
-//            startActivity(homeIntent);
-//            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-//            finish();
-
             Intent homeIntent = new Intent(PlanViewActivity.this, HomeActivity.class);
             homeIntent.putExtra("fragmentToLoad", "homeFragment1");
             startActivity(homeIntent);
@@ -571,77 +550,6 @@ public class PlanViewActivity extends AppCompatActivity {
 
     }
 
-//    private void setMapPlaces(ArrayList<Location> locationArrayList, KakaoMap kakaoMap) {
-//
-//
-//        LabelStyles styles = kakaoMap.getLabelManager()
-//                .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-//
-//        for (int i=0; i<locationArrayList.size(); i++) {
-//
-//            LabelOptions options = LabelOptions.from(LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude()))
-//                    .setStyles(styles);
-//            labelLayer = kakaoMap.getLabelManager().getLayer();
-//            labelLayer.addLabel(options);
-//
-//            Log.d("setMapPlaces", "label added : " + locationArrayList.get(i).getName());
-//            if (labelLayer != null) {
-//                Log.d("setMapPlaces", "LabelLayer is not null.");
-//            } else {
-//                Log.e("setMapPlaces", "LabelLayer is null.");
-//            }
-//
-//            if (i > 0) {
-//                kakaoMap.getRouteLineManager();
-//                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
-//
-//                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
-//                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-//                                LatLng.from(locationArrayList.get(i-1).getLatitude(), locationArrayList.get(i-1).getLongitude()),
-//                                LatLng.from(locationArrayList.get(i).getLatitude(), locationArrayList.get(i).getLongitude())))
-//                        .setStyles(stylesSet.getStyles(0));
-//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-//                        .setStylesSet(stylesSet);
-//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
-//            }
-//        }
-//    }
-
-//    private void rerollSchedule() {
-//        // 서버에서 랜덤 일정 데이터 받아오기
-//        apiService.getRandomSchedule().enqueue(new Callback<ScheduleResponse>() {
-//            @Override
-//            public void onResponse(Call<ScheduleResponse> call, Response<ScheduleResponse> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    ScheduleResponse scheduleResponse = response.body();
-//
-//                    // 새로운 일정 저장
-//                    String newTheme = withAnimal ? "반려동물" : generateRandomTheme();
-//                    Schedule newSchedule = new Schedule(newTheme, scheduleResponse.destination, scheduleResponse.placesMap);
-//                    savedTripPlans.add(newSchedule);
-//                    rerollCount++;
-//
-//                    // 새로운 일정 데이터로 업데이트
-//                    updatePlanView(newSchedule);
-//                } else {
-//                    Toast.makeText(PlanViewActivity.this, "일정을 받아오는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ScheduleResponse> call, Throwable t) {
-//                Toast.makeText(PlanViewActivity.this, "서버와 통신하는 데 실패했습니다.", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-
-//    private String generateRandomTheme() {
-//        Random random = new Random();
-//        int index = random.nextInt(THEMES.length);
-//        return THEMES[index];
-//    }
-
     public String chooseTheme(){
         String [] theme = {"레저","역사","문화","자연","힐링"}; //캠핑, 생태관광, 반려동물 미포함
 
@@ -655,18 +563,6 @@ public class PlanViewActivity extends AppCompatActivity {
         return mainTheme;
     }
 
-//    private void updateThemeText(String theme) {
-//
-//        if(withAnimal == true)
-//            theme = "반려동물";
-//
-//        if(theme == null || theme == "null") {
-//            theme = "반려동물";
-//        }
-//        TextView themaText = findViewById(R.id.themaText);
-//        themaText.setText("이번 여행의 테마는 " + theme + "입니다!");
-//        setThemeText(theme, semiTheme);
-//    }
     private void updateThemeText(String theme) {
 
         if(withAnimal == true)
@@ -680,21 +576,6 @@ public class PlanViewActivity extends AppCompatActivity {
         Log.d("updateThemeText내의 setThemeText","실행완");
         setThemeText(theme, semiTheme);
     }
-
-//    private void updatePlanView(Schedule schedule) {
-//        // 테마와 목적지를 업데이트
-//        TextView themaText = findViewById(R.id.themaText);
-//        themaText.setText("이번 여행의 테마는 " + schedule.theme + "입니다!");
-//
-//
-//        // 목적지를 업데이트
-//        this.destination = schedule.destination;
-//
-//        // 여행 장소를 업데이트
-//        this.placesMap = new HashMap<>(schedule.placesMap);
-//        updatePlacesList(0); // 첫 번째 일차 데이터를 로드
-//    }
-
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
         TextView themaText = findViewById(R.id.themaText);
@@ -703,8 +584,6 @@ public class PlanViewActivity extends AppCompatActivity {
             themaText.setText("이번 여행의 테마는 " + tripPlanDetailList.get(0).getTheme() + "입니다!");
             Log.d("다시 돌리기 테마 확인",tripPlanDetailList.get(0).getTheme() );
             setThemeText(tripPlanDetailList.get(0).getTheme(), semiTheme);
-        }else{
-            setThemeText(getTheme, semiTheme);
         }
         Log.d("setDataWith어쩌구의 setThemeText","실행완");
         Log.d("getTheme 확인", getTheme);
@@ -832,6 +711,7 @@ public class PlanViewActivity extends AppCompatActivity {
         if (index < savedTripPlans.size()) {
             ArrayList<TripPlanDetail> TripPlanDetailList = savedTripPlans.get(index);
 
+            updateThemeText(TripPlanDetailList.get(0).getTheme());
             displaySchedule(TripPlanDetailList);
         } else {
             Toast.makeText(this, "해당 일정이 없습니다.", Toast.LENGTH_SHORT).show();
@@ -1093,7 +973,7 @@ public class PlanViewActivity extends AppCompatActivity {
             handler.post(() -> {seeNetworkResult(result);
                 if(result != null && !result.isEmpty())
                     tripPlanDetailList = parseTripPlanDetail(result);
-                    newTripPlanDetailList = parseTripPlanDetail(result);
+                newTripPlanDetailList = parseTripPlanDetail(result);
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
@@ -1195,10 +1075,14 @@ public class PlanViewActivity extends AppCompatActivity {
             // 로딩 다이얼로그 종료
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
+                newTripPlanDetailList.get(0).setTheme(getTheme);
 
+                setThemeText(getTheme, semiTheme);
+                Log.d("다시돌리기",getTheme);
                 displaySchedule(newTripPlanDetailList);
 
                 savedTripPlans.add(newTripPlanDetailList);
+
                 rerollCount++;
             }
         }
@@ -1271,6 +1155,7 @@ public class PlanViewActivity extends AppCompatActivity {
 
         semiTheme = findViewById(R.id.themaSemiText);
 
+        Log.d("setThemeText 테마 확인",getTheme);
         if(getTheme == null) {
             Log.d("setThemeText", "getTheme is null");
             semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함께 색다른 여행을 떠나보세요!");
