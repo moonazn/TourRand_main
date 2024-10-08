@@ -1,5 +1,6 @@
 package com.tourbus.tourrand;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -50,6 +51,11 @@ public class TripPlanAdapter extends RecyclerView.Adapter<TripPlanViewHolder> {
             Intent intent = new Intent(context, PlanEditActivity.class);
             intent.putExtra("tripPlan", tripPlan);
             context.startActivity(intent);
+
+            // HomeFragment1의 Activity를 종료
+            if (context instanceof Activity) {
+                ((Activity) context).finish(); // HomeFragment1이 속한 Activity 종료
+            }
         });
 
         if (holder.getAdapterPosition() > lastPosition) {

@@ -16,33 +16,6 @@
         android:layout_marginTop="50dp"
         android:layout_marginLeft="15dp" />
 
-    <ImageView
-        android:id="@+id/noticeBtn"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/notice"
-        android:layout_marginTop="15dp"
-        android:layout_marginRight="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <TextView
-        android:id="@+id/noticeTxt"
-        android:layout_width="270dp"
-        android:layout_height="60dp"
-        android:textColor="@color/black"
-        android:background="@drawable/speechback"
-        android:layout_marginRight="17dp"
-        android:text="여행지 후보 입력 시 지명으로 입력해주세요! \n ex) 서울, 양양, 강릉, 광주광역시 등 "
-        android:fontFamily="@font/pyeongchang_regular"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@+id/noticeBtn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
     <LinearLayout
         android:id="@+id/linearBack"
         android:layout_width="match_parent"

@@ -51,7 +51,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 public class HomeFragment1 extends Fragment {
-
+    private long lastTimeBackPressed; //뒤로가기 버튼이 클릭된 시간
     private RecyclerView recyclerView;
     private TripPlanAdapter adapter;
     private List<TripPlan> tripPlans;
@@ -154,6 +154,7 @@ public class HomeFragment1 extends Fragment {
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), MyPageActivity.class);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -163,6 +164,7 @@ public class HomeFragment1 extends Fragment {
                 Intent intent = new Intent(getActivity(), QuestionActivity.class);
 //                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -514,4 +516,12 @@ public class HomeFragment1 extends Fragment {
 //        }
 //    });
 //}
+//    public void onBackPressed(){
+//        if(System.currentTimeMillis()-lastTimeBackPressed <2000){
+//            getActivity().finish();
+//            return;
+//        }
+//        Toast.makeText(getContext(), "\'뒤로\'버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+//        lastTimeBackPressed = System.currentTimeMillis();
+//    }
 }

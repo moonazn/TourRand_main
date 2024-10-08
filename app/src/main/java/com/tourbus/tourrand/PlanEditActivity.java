@@ -191,97 +191,6 @@ public class PlanEditActivity extends AppCompatActivity {
 // jsonData를 서버에 전송
         new ServerCommunicationTask().execute();
 
-//        new Thread(() -> {
-//            String result = httpPostBodyConnection(url, jsonData);
-//
-//            if (handler != null) {
-//                handler.post(() -> {
-//                    seeNetworkResult(result);
-//                    Log.d("Result", result);
-//
-//                    // 서버에서 받은 결과에 따라 idChecked 값 설정
-//                    idChecked = Boolean.parseBoolean(result);
-//                    Log.d("JoinActivity", String.valueOf(idChecked));
-//                    // UI 업데이트는 UI 스레드에서 수행
-//                    if(idChecked == true) {
-//                        idCheckInfo.setText("사용 가능한 아이디입니다.");
-//                        idCheckInfo.setTextColor(getResources().getColor(R.color.blue)); // blue 컬러를 정의하세요
-//                    } else {
-//                        idCheckInfo.setText("중복된 아이디입니다.");
-//                        idCheckInfo.setTextColor(getResources().getColor(R.color.red)); // red 컬러를 정의하세요
-//                    }
-//                    idCheckInfo.setVisibility(View.VISIBLE);
-//                });
-//            } else {
-//                // handler가 null일 경우의 예외 처리
-//                Log.e("JoinActivity", "Handler is null and cannot post Runnable.");
-//            }
-//        }).start();
-
-//        mapView.start(new MapLifeCycleCallback() {
-//            @Override
-//            public void onMapDestroy() {
-//                // 지도 API가 정상적으로 종료될 때 호출됨
-//            }
-//
-//            @Override
-//            public void onMapError(Exception error) {
-//                // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
-//            }
-//        }, new KakaoMapReadyCallback() {
-//            @Override
-//            public void onMapReady(KakaoMap kakaoMap) {
-//                // 인증 후 API가 정상적으로 실행될 때 호출됨
-//                LabelStyles styles = kakaoMap.getLabelManager()
-//                        .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-//                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
-//                        .setStyles(styles);
-//                LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-//                Label label = layer.addLabel(options);
-//                Label centerLabel = layer.addLabel(options);
-//                LabelOptions options2 = LabelOptions.from(LatLng.from(37.5642135, 127.0016985))
-//                        .setStyles(styles);
-//                Label label2 = layer.addLabel(options2);
-//
-//                ImageView logo = findViewById(R.id.logo);
-//                logo.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        centerLabel.changeStyles(LabelStyles.from(LabelStyle.from(R.drawable.choonsik)));
-//                        centerLabel.moveTo(LatLng.from(37.5642135,
-//                                127.0016985), 8000);
-//                    }
-//                });
-//
-////                //춘식이 돌아댕기는 거
-////                LatLng pos = kakaoMap.getCameraPosition().getPosition();
-////                Label centerLabel = labelLayer.addLabel(LabelOptions.from("dotLabel", pos)
-////                        .setStyles(LabelStyle.from(R.drawable.choonsik).setAnchorPoint(0.5f, 0.5f))
-////                        .setRank(1));
-////                LatLng currentPos = centerLabel.getPosition();
-////                centerLabel.moveTo(LatLng.from(currentPos.getLatitude() + 0.0006,
-////                        currentPos.getLongitude() + 0.0006), 800);
-//
-//
-//
-//                //핀 사이 선으로 표시
-//                kakaoMap.getRouteLineManager();
-//                RouteLineLayer routelayer = kakaoMap.getRouteLineManager().getLayer();
-//
-//                RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
-//                        RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-//                                LatLng.from(37.394660, 127.111182),
-//                                LatLng.from(37.5642135, 127.0016985)))
-//                        .setStyles(stylesSet.getStyles(0));
-//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-//                        .setStylesSet(stylesSet);
-//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
-//
-//
-//            }
-//        });
-
         excelParser = new ExcelParser();
         geocodingUtils = new GeocodingUtils();
 
@@ -1179,6 +1088,14 @@ public class PlanEditActivity extends AppCompatActivity {
         }
 
         return TripPlanDetailList;
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(PlanEditActivity.this, HomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 
 
