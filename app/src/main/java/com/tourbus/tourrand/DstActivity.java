@@ -283,7 +283,158 @@ public class DstActivity extends AppCompatActivity {
             }
         }
     }
+    private class ServerCommunicationRandomTask extends AsyncTask<Void, Void, Void> {
+        ProgressDialog progressDialog;
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // 로딩 다이얼로그 표시
+//            progressDialog = new ProgressDialog(DstActivity.this);
+//            progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//            progressDialog.setCancelable(false);
+//            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            if (withAnimal == true || tripLength > 10) {
+                // 다음 화면으로 전환
+                Intent intent = new Intent(DstActivity.this, RandomPlanViewActivity.class);
+                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                intent.putExtra("withAnimal", withAnimal);
+                Log.d("withAnimal", String.valueOf(withAnimal));
+                intent.putExtra("previousActivity", previousActivity);
+                intent.putExtra("tripLength", tripLength);
+                intent.putExtra("text", "nono");
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            }
+
+            // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
+            result = httpPostBodyConnection(url, data);
+            handler.post(() -> {seeNetworkResult(result);
+                if(result != null && !result.isEmpty())
+                    TripPlanDetailList = parseNewTripPlanDetail(result);
+            });// 실제 서버 통신 코드로 대체
+            Log.d("함수 내 주소", url);
+            Log.d("보낸 데이터 확인", data);
+            conncetServerCnt++;
+            Log.d("서버 통신 횟수 in doInBackground", String.valueOf(conncetServerCnt));
+            return null;
+        }
+        public String httpPostBodyConnection(String UrlData, String ParamData) {
+            // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
+            // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
+
+            String totalUrl = "";
+            totalUrl = UrlData.trim().toString();
+
+            //http 통신을 하기위한 객체 선언 실시
+            URL url = null;
+            HttpURLConnection conn = null;
+
+            //http 통신 요청 후 응답 받은 데이터를 담기 위한 변수
+            String responseData = "";
+            BufferedReader br = null;
+            StringBuffer sb = null;
+
+            //메소드 호출 결과값을 반환하기 위한 변수
+            String returnData = "";
+
+            try {
+                //파라미터로 들어온 url을 사용해 connection 실시
+                url = null;
+                url = new URL(totalUrl);
+                conn = null;
+                conn = (HttpURLConnection) url.openConnection();
+
+                //http 요청에 필요한 타입 정의 실시
+                conn.setRequestMethod("POST");
+                conn.setRequestProperty("Content-Type", "application/json; utf-8"); //post body json으로 던지기 위함
+                conn.setRequestProperty("Accept", "application/json");
+                conn.setDoOutput(true); //OutputStream을 사용해서 post body 데이터 전송
+                try (OutputStream os = conn.getOutputStream()) {
+                    byte request_data[] = ParamData.getBytes("utf-8");
+                    Log.d("TAGGG",request_data.toString());
+                    os.write(request_data);
+                    //os.close();
+                } catch (Exception e) {
+                    Log.d("TAG3","여기다");
+                    e.printStackTrace();
+                }
+
+                //http 요청 실시
+                conn.connect();
+                System.out.println("http 요청 방식 : " + "POST BODY JSON");
+                System.out.println("http 요청 타입 : " + "application/json");
+                System.out.println("http 요청 주소 : " + UrlData);
+                System.out.println("http 요청 데이터 : " + ParamData);
+                System.out.println("");
+
+                //http 요청 후 응답 받은 데이터를 버퍼에 쌓는다
+                br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+                sb = new StringBuffer();
+                while ((responseData = br.readLine()) != null) {
+                    sb.append(responseData); //StringBuffer에 응답받은 데이터 순차적으로 저장 실시
+                }
+
+                //메소드 호출 완료 시 반환하는 변수에 버퍼 데이터 삽입 실시
+                returnData = sb.toString();
+                Log.d("TAG2", returnData);
+                //http 요청 응답 코드 확인 실시
+                String responseCode = String.valueOf(conn.getResponseCode());
+                System.out.println("http 응답 코드 : " + responseCode);
+                System.out.println("http 응답 데이터 : " + returnData);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                //http 요청 및 응답 완료 후 BufferedReader를 닫아줍니다
+                try {
+                    if (br != null) {
+                        br.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Log.d("진짜 받은 거", returnData.toString());
+
+            return returnData; // 네트워크 요청 결과를 반환
+        }
+        public void seeNetworkResult(String result) {
+            // 네트워크 작업 완료 후
+            Log.d("network",result);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            // 로딩 다이얼로그 종료
+            if (!result.equals("[]")) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                // 다음 화면으로 전환
+                Intent intent = new Intent(DstActivity.this, RandomPlanViewActivity.class);
+                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                intent.putExtra("withAnimal", withAnimal);
+                Log.d("withAnimal", String.valueOf(withAnimal));
+                intent.putExtra("previousActivity", previousActivity);
+                intent.putExtra("tripLength", tripLength);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            } else {
+                new ServerCommunicationRandomTask().execute();
+            }
+        }
+    }
 
     private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
         ProgressDialog progressDialog;
@@ -421,12 +572,77 @@ public class DstActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
+            } else if (result.equals("장소부족")) {
+                url = "https://api.tourrand.com/second_route";
+                data = "{\"day\" : \""+tripLength + "\" }";
+
+                // 새 주소로 다시 통신하는 코드~
+                new ServerCommunicationRandomTask().execute();
             } else {
                 new ServerCommunicationTask().execute();
             }
         }
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
+        ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
+
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                int day = 0;
+                String location = null;
+                String address = null;
+                double latitude = 0.0;
+                double longitude = 0.0;
+
+                if (jsonObject.has("day")) {
+                    day = jsonObject.getInt("day");
+                    Log.d("몇일차", String.valueOf(day));
+                }
+
+                if (jsonObject.has("location")) {
+                    location = jsonObject.getString("location").toString();
+                    Log.d("장소", location);
+                }
+
+                if (jsonObject.has("address")) {
+                    address = jsonObject.getString("address").toString();
+                    Log.d("주소", address);
+                }
+                if (jsonObject.has("latitude")) {
+                    latitude = jsonObject.getDouble("latitude");
+                    Log.d("위도", String.valueOf(latitude));
+                }
+                if (jsonObject.has("longitude")) {
+                    longitude = jsonObject.getDouble("longitude");
+                    Log.d("경도", String.valueOf(longitude));
+                }
+
+                if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
+                    TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, day, planDate, location, address,latitude,longitude);
+                    TripPlanDetail.setTheme(mainTheme);
+                    TripPlanDetailList.add(TripPlanDetail);
+
+//                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+//                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                    //Log.d("맞나?", TripPlanDetailList.toString());
+                } else {
+                    Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return TripPlanDetailList;
+    }
+
+    public ArrayList<TripPlanDetail> parseNewTripPlanDetail(String json) {
         ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
 
         try {
