@@ -74,6 +74,7 @@ public class TeamActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager layoutManager;
     private List<TeamItem> teamItem;
+    TripPlan tripPlan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,7 +88,7 @@ public class TeamActivity extends AppCompatActivity {
         teamRecyclerView.setLayoutManager(layoutManager);
 
         //친구 불러오기 할 때만 주석하기
-        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         planDate = tripPlan.getTravelDate();
         tour_name = tripPlan.getTripName();
         tourId = tripPlan.getTourId();
@@ -491,6 +492,15 @@ public class TeamActivity extends AppCompatActivity {
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
         Log.d("network",result );
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, PlanEditActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 
 }

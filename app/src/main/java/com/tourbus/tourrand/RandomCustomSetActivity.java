@@ -57,7 +57,7 @@ public class RandomCustomSetActivity extends AppCompatActivity {
 
     private void addElementField() {
         EditText editText = new EditText(this);
-        editText.setHint("여행지 후보 입력");
+        editText.setHint("후보 입력");
         elementContainer.addView(editText);
     }
 
@@ -78,6 +78,15 @@ public class RandomCustomSetActivity extends AppCompatActivity {
         intent.putExtra("tripPlan",tripPlan);
         startActivity(intent);
         overridePendingTransition(0, 0);
+        finish();
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, RandomActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         finish();
     }
 }

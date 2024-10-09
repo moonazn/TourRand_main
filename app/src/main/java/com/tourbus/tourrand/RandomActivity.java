@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class RandomActivity extends AppCompatActivity {
-
+    TripPlan tripPlan;
     String planDate;
     String tour_name;
     int tourId;
@@ -33,7 +33,7 @@ public class RandomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_random);
 
-        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         planDate = tripPlan.getTravelDate();
         tour_name = tripPlan.getTripName();
         tourId = tripPlan.getTourId();
@@ -190,6 +190,15 @@ public class RandomActivity extends AppCompatActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(RandomActivity.this, PlanEditActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 
 

@@ -39,14 +39,14 @@ public class RouletteMemberActivity extends AppCompatActivity {
     private List<RMItem> rmItemList;
     private ConstraintLayout backLayout;
     ImageView back;
-
+    TripPlan tripPlan;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roulette_member);
 
-        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         tourId = tripPlan.getTourId();
         backLayout = findViewById(R.id.backLayout);
         back = findViewById(R.id.back);
@@ -229,5 +229,14 @@ public class RouletteMemberActivity extends AppCompatActivity {
 
         // 어댑터에 데이터 변경을 알림
         adapter.notifyDataSetChanged();
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(RouletteMemberActivity.this, RandomActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 }

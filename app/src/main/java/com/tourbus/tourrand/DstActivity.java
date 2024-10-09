@@ -51,13 +51,15 @@ public class DstActivity extends AppCompatActivity {
     Place departureDocument;
     boolean withAnimal;
     public String withAnimaltoString, mainTheme;
-    private String result,data;
+    private String result;
+    private String data;
     String previousActivity = "CustomRouletteActivity";
     private String url;
     private Handler handler = new Handler(Looper.getMainLooper());
     public ArrayList<TripPlanDetail> TripPlanDetailList ;
     String planDate;
     int tripLength;
+    int conncetServerCnt = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,80 +127,7 @@ public class DstActivity extends AppCompatActivity {
                     noanswer.startAnimation(shake);
 
                 } else {
-                    //반려동물이랑 같이 갈 때
-                    if(withAnimaltoString.equals("반려동물")){
-                        //플랜뷰액티비티에서 반려동물일 때 테마 수정해야함
-                        Log.d("반려동물 동반 여부", withAnimaltoString);
-                        url = "https://api.tourrand.com/pet";
-                        data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
-
-                    } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
-                            selectedLocation.equals("시흥") || selectedLocation.equals("가평") || selectedLocation.equals("남양주") || selectedLocation.equals("연천") || selectedLocation.equals("평창") ||
-                            selectedLocation.equals("속초") || selectedLocation.equals("태백") || selectedLocation.equals("원주") || selectedLocation.equals("양구") || selectedLocation.equals("포천") ||
-                            selectedLocation.equals("강릉") || selectedLocation.equals("홍천") || selectedLocation.equals("정선") || selectedLocation.equals("삼척") || selectedLocation.equals("울산") ||
-                            selectedLocation.equals("부산") || selectedLocation.equals("대전") || selectedLocation.equals("인천") ||selectedLocation.equals("강원도 고성")|| selectedLocation.equals("서울")  ) {
-                        String [] theme = {"레저","역사","문화","자연","힐링","생태관광"}; //생태포함
-
-                        Random random = new Random();
-                        int index = random.nextInt(theme.length);
-                        mainTheme = theme[index];
-
-                        if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
-                            selectedLocation ="강_고성";
-                            url = "https://api.tourrand.com/ecotourism";
-                            data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
-                        } else if(mainTheme.equals("생태관광")){
-                            url = "https://api.tourrand.com/ecotourism";
-                            data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
-                        } else {
-                            //위 지역임에도 불구하고 생태관광이 안 나왔을 때
-                            url = "https://api.tourrand.com/route";
-                            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                        }
-                    } else if(selectedLocation.equals("경상남도 고성")){
-                        selectedLocation = "경_고성";
-                        mainTheme = chooseTheme();
-                        url = "https://api.tourrand.com/route";
-                        data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                    }
-                    else{
-                        //반려동물 미포함
-                        if (tripLength==2){
-                            String [] theme = {"레저","역사","문화","자연","힐링","캠핑"}; //캠핑 포함
-
-                            Random random = new Random();
-                            int index = random.nextInt(theme.length);
-                            mainTheme = theme[index];
-
-                            if(mainTheme.equals("캠핑")){
-                                if(selectedLocation.equals("강원도 고성")){
-                                    selectedLocation = "강_고성";
-                                    url = "https://api.tourrand.com/camping";
-                                    data = "{\"destination\":\""+selectedLocation+"\" }";
-                                } else if (selectedLocation.equals("경상남도 고성")) {
-                                    selectedLocation = "경_고성";
-                                    url = "https://api.tourrand.com/camping";
-                                    data = "{\"destination\":\""+selectedLocation+"\" }";
-                                } else {
-                                    //고성 아닌데 캠핑인 것들
-                                    url = "https://api.tourrand.com/camping";
-                                    data = "{\"destination\":\""+selectedLocation+"\" }";
-                                }
-                            } else{
-                                //여행 이틀만 가는데 캠핑 안 나왔을 때
-                                mainTheme = chooseTheme();
-                                url = "https://api.tourrand.com/route";
-                                data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                            }
-                        } else{
-                            //반려동물 + 캠핑 미포함
-                            mainTheme = chooseTheme();
-                            url = "https://api.tourrand.com/route";
-                            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-
-                            Log.d("데이터 보낸 거", data);
-                        }
-                    }
+                    connectServer();
                     // 서버 통신을 비동기적으로 실행
                     new ServerCommunicationTask().execute();
                 }
@@ -242,13 +171,20 @@ public class DstActivity extends AppCompatActivity {
     }
     public String chooseTheme(){
         String [] theme = {"레저","역사","문화","자연","힐링"}; //캠핑, 생태관광, 반려동물 미포함
+        if(conncetServerCnt > 0){
+            String [] Sectheme ={"문화","자연"};
+            Random random = new Random();
+            int index = random.nextInt(Sectheme.length);
+            mainTheme = Sectheme[index];
+        } else{
+            Random random = new Random();
+            int index = random.nextInt(theme.length);
+            mainTheme = theme[index];
+        }
 
-        Random random = new Random();
-        int index = random.nextInt(theme.length);
-
-        mainTheme = theme[index];
-
-
+//        Random random = new Random();
+//        int index = random.nextInt(theme.length);
+//        mainTheme = theme[index];
 
         return mainTheme;
     }
@@ -262,6 +198,92 @@ public class DstActivity extends AppCompatActivity {
         selectedLocation = selectedTextView.getText().toString(); // 선택된 지역 이름 저장
         selectedTextView.setBackgroundResource(R.drawable.round_selected_rectangle); // 선택된 배경
     }
+    private void connectServer(){
+        Log.d("서버 통신 횟수 in connectServer", String.valueOf(conncetServerCnt));
+        //반려동물이랑 같이 갈 때
+        if(withAnimaltoString.equals("반려동물")){
+            //플랜뷰액티비티에서 반려동물일 때 테마 수정해야함
+            Log.d("반려동물 동반 여부", withAnimaltoString);
+            url = "https://api.tourrand.com/pet";
+            data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
+
+        } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
+                selectedLocation.equals("시흥") || selectedLocation.equals("가평") || selectedLocation.equals("남양주") || selectedLocation.equals("연천") || selectedLocation.equals("평창") ||
+                selectedLocation.equals("속초") || selectedLocation.equals("태백") || selectedLocation.equals("원주") || selectedLocation.equals("양구") || selectedLocation.equals("포천") ||
+                selectedLocation.equals("강릉") || selectedLocation.equals("홍천") || selectedLocation.equals("정선") || selectedLocation.equals("삼척") || selectedLocation.equals("울산") ||
+                selectedLocation.equals("부산") || selectedLocation.equals("대전") || selectedLocation.equals("인천") ||selectedLocation.equals("강원도 고성")|| selectedLocation.equals("서울")  ) {
+            String [] theme = {"레저","역사","문화","자연","힐링","생태관광"}; //생태포함
+
+            if(conncetServerCnt > 0){
+                String [] Sectheme ={"문화","자연"};
+                Random random = new Random();
+                int index = random.nextInt(Sectheme.length);
+                mainTheme = Sectheme[index];
+            } else{
+                Random random = new Random();
+                int index = random.nextInt(theme.length);
+                mainTheme = theme[index];
+            }
+
+
+            if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
+                selectedLocation ="강_고성";
+                url = "https://api.tourrand.com/ecotourism";
+                data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+            } else if(mainTheme.equals("생태관광")){
+                url = "https://api.tourrand.com/ecotourism";
+                data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
+            } else {
+                //위 지역임에도 불구하고 생태관광이 안 나왔을 때
+                url = "https://api.tourrand.com/route";
+                data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+            }
+        } else if(selectedLocation.equals("경상남도 고성")){
+            selectedLocation = "경_고성";
+            mainTheme = chooseTheme();
+            url = "https://api.tourrand.com/route";
+            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+        }
+        else{
+            //반려동물 미포함
+            if (tripLength==2){
+                String [] theme = {"레저","역사","문화","자연","힐링","캠핑"}; //캠핑 포함
+
+                Random random = new Random();
+                int index = random.nextInt(theme.length);
+                mainTheme = theme[index];
+
+                if(mainTheme.equals("캠핑")){
+                    if(selectedLocation.equals("강원도 고성")){
+                        selectedLocation = "강_고성";
+                        url = "https://api.tourrand.com/camping";
+                        data = "{\"destination\":\""+selectedLocation+"\" }";
+                    } else if (selectedLocation.equals("경상남도 고성")) {
+                        selectedLocation = "경_고성";
+                        url = "https://api.tourrand.com/camping";
+                        data = "{\"destination\":\""+selectedLocation+"\" }";
+                    } else {
+                        //고성 아닌데 캠핑인 것들
+                        url = "https://api.tourrand.com/camping";
+                        data = "{\"destination\":\""+selectedLocation+"\" }";
+                    }
+                } else{
+                    //여행 이틀만 가는데 캠핑 안 나왔을 때
+                    mainTheme = chooseTheme();
+                    url = "https://api.tourrand.com/route";
+                    data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+                }
+            } else{
+                //반려동물 + 캠핑 미포함
+                mainTheme = chooseTheme();
+                url = "https://api.tourrand.com/route";
+                data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
+
+                Log.d("데이터 보낸 거", data);
+            }
+        }
+    }
+
 
     private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
         ProgressDialog progressDialog;
@@ -286,6 +308,8 @@ public class DstActivity extends AppCompatActivity {
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
+            conncetServerCnt++;
+            Log.d("서버 통신 횟수 in doInBackground", String.valueOf(conncetServerCnt));
             return null;
         }
         public String httpPostBodyConnection(String UrlData, String ParamData) {
@@ -370,33 +394,36 @@ public class DstActivity extends AppCompatActivity {
         }
         public void seeNetworkResult(String result) {
             // 네트워크 작업 완료 후
-            Log.d(result, "network");
+            Log.d("network",result);
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             // 로딩 다이얼로그 종료
-            if (progressDialog != null && progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            if (!result.equals("[]")) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                // 다음 화면으로 전환
+                Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+                TripPlanDetailList.get(0).setTheme(mainTheme);
+                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                intent.putExtra("withAnimal", withAnimal);
+                Log.d("withAnimal", String.valueOf(withAnimal));
+                intent.putExtra("mainTheme", mainTheme);
+                Log.d("dst mainTheme", mainTheme);
+                intent.putExtra("selectedLocation", selectedLocation);
+                intent.putExtra("departureDocument", departureDocument);
+                intent.putExtra("previousActivity", previousActivity);
+                intent.putExtra("tripLength", tripLength);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+            } else {
+                new ServerCommunicationTask().execute();
             }
-
-            // 다음 화면으로 전환
-            Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-            TripPlanDetailList.get(0).setTheme(mainTheme);
-            intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
-
-            intent.putExtra("withAnimal", withAnimal);
-            Log.d("withAnimal", String.valueOf(withAnimal));
-            intent.putExtra("mainTheme", mainTheme);
-            Log.d("dst mainTheme", mainTheme);
-            intent.putExtra("selectedLocation", selectedLocation);
-            intent.putExtra("departureDocument", departureDocument);
-            intent.putExtra("previousActivity", previousActivity);
-            intent.putExtra("tripLength", tripLength);
-            startActivity(intent);
-            overridePendingTransition(0, 0);
-            finish();
         }
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
