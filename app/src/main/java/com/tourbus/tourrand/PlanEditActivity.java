@@ -589,7 +589,9 @@ public class PlanEditActivity extends AppCompatActivity {
         // 일정 정보를 화면에 표시하는 로직을 여기에 구현합니다.
         setDataWithTripDetailList(tripPlanDetailList);
 
+        //⭐⭐⭐⭐⭐⭐⭐여기를 바꿔야하는디
         tripTitleEditText.setText(tripPlanDetailList.get(0).getTripName());
+        Log.d("표시되는 투어네임", tripPlanDetailList.get(0).getTripName());
 
         daysList = new ArrayList<>();
 
@@ -793,7 +795,7 @@ public class PlanEditActivity extends AppCompatActivity {
 
             //메소드 호출 완료 시 반환하는 변수에 버퍼 데이터 삽입 실시
             returnData = sb.toString();
-            Log.d("TAG2", returnData);
+            Log.d("TAG2", returnData.toString());
             //http 요청 응답 코드 확인 실시
             String responseCode = String.valueOf(conn.getResponseCode());
             System.out.println("http 응답 코드 : " + responseCode);
@@ -1035,6 +1037,8 @@ public class PlanEditActivity extends AppCompatActivity {
 
             // "details" 키에 있는 JSON 배열을 추출합니다.
             JSONArray detailsArray = jsonObject.getJSONArray("details");
+            tour_name = jsonObject.getString("tour_name");
+            Log.d("파싱 코드 내 투어네임", tour_name);
 
             for (int i = 0; i < detailsArray.length(); i++) {
                 JSONObject detailObject = detailsArray.getJSONObject(i);
@@ -1078,6 +1082,7 @@ public class PlanEditActivity extends AppCompatActivity {
                     } else {
                         tripPlanDetail = new TripPlanDetail(tour_name, day, planDate, location, address, latitude, longitude);
                     }
+                    Log.d("tripPlan삽입 투어네임", tour_name);
                     TripPlanDetailList.add(tripPlanDetail);
                 } else {
                     Log.e("JSONError", "Missing key in JSON object: " + detailObject.toString());

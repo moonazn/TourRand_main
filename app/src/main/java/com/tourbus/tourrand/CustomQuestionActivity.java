@@ -3,7 +3,6 @@ package com.tourbus.tourrand;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -184,7 +183,7 @@ public class CustomQuestionActivity extends AppCompatActivity {
     }
 
     private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
-        android.app.ProgressDialog progressDialog;
+        ProgressDialog progressDialog;
 
         @Override
         protected void onPreExecute() {

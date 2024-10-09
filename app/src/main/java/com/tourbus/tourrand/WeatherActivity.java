@@ -37,6 +37,7 @@ public class WeatherActivity extends AppCompatActivity {
     Handler handler;
     String getData;
     String cloth = null;
+    TripPlan tripPlan;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +55,7 @@ public class WeatherActivity extends AppCompatActivity {
         randomPageIcon.setImageResource(R.drawable.random_off);
         groupPageIcon.setImageResource(R.drawable.group_off);
 
-        TripPlan tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
+        tripPlan = (TripPlan) getIntent().getSerializableExtra("tripPlan");
         planDate = tripPlan.getTravelDate();
         tour_name = tripPlan.getTripName();
         tourId = tripPlan.getTourId();
@@ -299,7 +300,14 @@ public class WeatherActivity extends AppCompatActivity {
 
         KeywordAdapter adapter = new KeywordAdapter(keywords);
         recyclerView.setAdapter(adapter);
-
-
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(WeatherActivity.this, PlanEditActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 }

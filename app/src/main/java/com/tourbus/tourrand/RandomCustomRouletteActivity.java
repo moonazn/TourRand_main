@@ -128,6 +128,15 @@ public class RandomCustomRouletteActivity extends AppCompatActivity {
         targetIndex = new Random().nextInt(elements.size());
         luckyWheel.rotateWheelTo(targetIndex + 1);
     }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, RandomActivity.class);
+        intent.putExtra("tripPlan",tripPlan);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
+    }
 
 //    private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
 //        ProgressDialog progressDialog;
