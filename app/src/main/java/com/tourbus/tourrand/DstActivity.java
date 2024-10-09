@@ -299,21 +299,6 @@ public class DstActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            if (withAnimal == true || tripLength > 10) {
-                // 다음 화면으로 전환
-                Intent intent = new Intent(DstActivity.this, RandomPlanViewActivity.class);
-                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
-
-                intent.putExtra("withAnimal", withAnimal);
-                Log.d("withAnimal", String.valueOf(withAnimal));
-                intent.putExtra("previousActivity", previousActivity);
-                intent.putExtra("tripLength", tripLength);
-                intent.putExtra("text", "nono");
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
-            }
-
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
             result = httpPostBodyConnection(url, data);
             handler.post(() -> {seeNetworkResult(result);
@@ -451,11 +436,36 @@ public class DstActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
+
+            if (withAnimal == true || tripLength > 10) {
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
+                // 다음 화면으로 전환
+                Intent intent = new Intent(DstActivity.this, RandomPlanViewActivity.class);
+                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                intent.putExtra("withAnimal", withAnimal);
+                Log.d("withAnimal", String.valueOf(withAnimal));
+                intent.putExtra("previousActivity", previousActivity);
+                intent.putExtra("tripLength", tripLength);
+                intent.putExtra("text", "nono");
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
+
+                return null;
+            }
+
             // 서버와 통신 (여기서는 예시로 Thread.sleep을 사용)
             result = httpPostBodyConnection(url, data);
-            handler.post(() -> {seeNetworkResult(result);
-                if(result != null && !result.isEmpty())
-                    TripPlanDetailList = parseTripPlanDetail(result);
+            handler.post(() -> {if (result != null && result.equals("장소부족")) {
+                // "장소부족"일 때는 JSONArray로 변환하지 않고 바로 처리
+                Log.d("서버 응답", "장소부족");
+            } else {
+                // 정상적인 응답은 JSONArray로 변환
+                TripPlanDetailList = parseTripPlanDetail(result);
+            }
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
@@ -552,35 +562,38 @@ public class DstActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             // 로딩 다이얼로그 종료
-            if (!result.equals("[]")) {
-                if (progressDialog != null && progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+            if(result != null) {
+                if (!result.equals("[]") && TripPlanDetailList != null && !TripPlanDetailList.isEmpty()) {
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    // 다음 화면으로 전환
+                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
+                    TripPlanDetailList.get(0).setTheme(mainTheme);
+                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+
+                    intent.putExtra("withAnimal", withAnimal);
+                    Log.d("withAnimal", String.valueOf(withAnimal));
+                    intent.putExtra("mainTheme", mainTheme);
+                    Log.d("dst mainTheme", mainTheme);
+                    intent.putExtra("selectedLocation", selectedLocation);
+                    intent.putExtra("departureDocument", departureDocument);
+                    intent.putExtra("previousActivity", previousActivity);
+                    intent.putExtra("tripLength", tripLength);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
+                    finish();
+                } else if (result.equals("장소부족")) {
+                    url = "https://api.tourrand.com/second_route";
+                    data = "{\"day\" : \""+tripLength + "\" }";
+
+                    // 새 주소로 다시 통신하는 코드~
+                    new ServerCommunicationRandomTask().execute();
+                } else {
+                    new ServerCommunicationTask().execute();
                 }
-                // 다음 화면으로 전환
-                Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-                TripPlanDetailList.get(0).setTheme(mainTheme);
-                intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
-
-                intent.putExtra("withAnimal", withAnimal);
-                Log.d("withAnimal", String.valueOf(withAnimal));
-                intent.putExtra("mainTheme", mainTheme);
-                Log.d("dst mainTheme", mainTheme);
-                intent.putExtra("selectedLocation", selectedLocation);
-                intent.putExtra("departureDocument", departureDocument);
-                intent.putExtra("previousActivity", previousActivity);
-                intent.putExtra("tripLength", tripLength);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
-            } else if (result.equals("장소부족")) {
-                url = "https://api.tourrand.com/second_route";
-                data = "{\"day\" : \""+tripLength + "\" }";
-
-                // 새 주소로 다시 통신하는 코드~
-                new ServerCommunicationRandomTask().execute();
-            } else {
-                new ServerCommunicationTask().execute();
             }
+
         }
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
@@ -643,61 +656,72 @@ public class DstActivity extends AppCompatActivity {
     }
 
     public ArrayList<TripPlanDetail> parseNewTripPlanDetail(String json) {
-        ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
+        ArrayList<TripPlanDetail> tripPlanDetailList = new ArrayList<>();
+        String destination = null;
 
         try {
-            JSONArray jsonArray = new JSONArray(json);
+            // Parse the main JSON object
+            JSONObject jsonObject = new JSONObject(json);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            // Extract the "destination" field
+            if (jsonObject.has("destination")) {
+                destination = jsonObject.getString("destination");
+                Log.d("Destination", destination);
+            } else {
+                Log.e("JSONError", "No destination found in JSON.");
+                return tripPlanDetailList; // Exit early if no destination is found
+            }
 
-                int day = 0;
-                String location = null;
-                String address = null;
-                double latitude = 0.0;
-                double longitude = 0.0;
+            // Extract the "itinerary" array
+            if (jsonObject.has("itinerary")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("itinerary");
 
-                if (jsonObject.has("day")) {
-                    day = jsonObject.getInt("day");
-                    Log.d("몇일차", String.valueOf(day));
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject itineraryObject = jsonArray.getJSONObject(i);
+
+                    int day = itineraryObject.optInt("day", 0); // Default to 0 if not found
+                    String location = itineraryObject.optString("location", null); // Default to null if not found
+                    String address = itineraryObject.optString("address", null); // Default to null if not found
+                    double latitude = itineraryObject.optDouble("latitude", 0.0); // Default to 0.0 if not found
+                    double longitude = itineraryObject.optDouble("longitude", 0.0); // Default to 0.0 if not found
+
+                    // Log values for debugging
+                    Log.d("Day", String.valueOf(day));
+                    Log.d("Location", location);
+                    Log.d("Address", address);
+                    Log.d("Latitude", String.valueOf(latitude));
+                    Log.d("Longitude", String.valueOf(longitude));
+
+                    // Ensure all necessary data is available before creating the TripPlanDetail object
+                    if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
+                        TripPlanDetail tripPlanDetail = new TripPlanDetail(
+                                destination, // Use the parsed destination here
+                                day,
+                                planDate, // Ensure planDate is set correctly
+                                location,
+                                address,
+                                latitude,
+                                longitude
+                        );
+
+                        tripPlanDetail.setTheme(destination); // Assuming mainTheme is set somewhere in your context
+                        tripPlanDetailList.add(tripPlanDetail);
+
+                        // Log the TripPlanDetailList for debugging
+                        Log.d("TripPlanDetailList", tripPlanDetailList.toString());
+                    } else {
+                        Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
+                    }
                 }
-
-                if (jsonObject.has("location")) {
-                    location = jsonObject.getString("location").toString();
-                    Log.d("장소", location);
-                }
-
-                if (jsonObject.has("address")) {
-                    address = jsonObject.getString("address").toString();
-                    Log.d("주소", address);
-                }
-                if (jsonObject.has("latitude")) {
-                    latitude = jsonObject.getDouble("latitude");
-                    Log.d("위도", String.valueOf(latitude));
-                }
-                if (jsonObject.has("longitude")) {
-                    longitude = jsonObject.getDouble("longitude");
-                    Log.d("경도", String.valueOf(longitude));
-                }
-
-                if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
-                    TripPlanDetail TripPlanDetail = new TripPlanDetail(selectedLocation, day, planDate, location, address,latitude,longitude);
-                    TripPlanDetail.setTheme(mainTheme);
-                    TripPlanDetailList.add(TripPlanDetail);
-
-//                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-//                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
-
-                    //Log.d("맞나?", TripPlanDetailList.toString());
-                } else {
-                    Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
-                }
+            } else {
+                Log.e("JSONError", "No itinerary found in JSON.");
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("JSONException", "Error parsing JSON: " + e.getMessage());
         }
 
-
-        return TripPlanDetailList;
+        return tripPlanDetailList;
     }
+
 }

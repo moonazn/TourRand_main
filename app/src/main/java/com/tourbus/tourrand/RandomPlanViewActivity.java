@@ -112,7 +112,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plan_view);
+        setContentView(R.layout.activity_random_plan_view);
 
         handler = new Handler();
         KakaoMapSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
@@ -261,17 +261,17 @@ public class RandomPlanViewActivity extends AppCompatActivity {
         excelParser = new ExcelParser();
         geocodingUtils = new GeocodingUtils();
 
-        // 엑셀 파일 파싱
-        try {
-            InputStream inputStream = getAssets().open("locations.xlsx");
-            // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
-
-            excelParser.parseExcelFile(inputStream);
-            //Log.d("PlanViewActivity", "Excel file parsed successfully"); // 로그 추가
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        // 엑셀 파일 파싱
+//        try {
+//            InputStream inputStream = getAssets().open("locations.xlsx");
+//            // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
+//
+//            excelParser.parseExcelFile(inputStream);
+//            //Log.d("PlanViewActivity", "Excel file parsed successfully"); // 로그 추가
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         saveBut = findViewById(R.id.saveBut);
         rerollBut = findViewById(R.id.rerollBut);
@@ -784,9 +784,11 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             // 서버와 통신
             result = httpPostBodyConnection(url, data);
             handler.post(() -> {seeNetworkResult(result);
-                if(result != null && !result.isEmpty())
+                if(result != null && !result.isEmpty()) {
                     tripPlanDetailList = parseTripPlanDetail(result);
-                newTripPlanDetailList = parseTripPlanDetail(result);
+                    newTripPlanDetailList = parseTripPlanDetail(result);
+                }
+
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
@@ -901,8 +903,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
         }
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
-        ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
-        String destination = null;
+        ArrayList<TripPlanDetail> tripPlanDetailList = new ArrayList<>();
 
         try {
             // Parse the main JSON object
@@ -912,73 +913,67 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             if (jsonObject.has("destination")) {
                 destination = jsonObject.getString("destination");
                 Log.d("Destination", destination);
+            } else {
+                Log.e("JSONError", "No destination found in JSON.");
+                return tripPlanDetailList; // Exit early if no destination is found
             }
 
             // Parse the "itinerary" array
-            JSONArray jsonArray = jsonObject.getJSONArray("itinerary");
+            if (jsonObject.has("itinerary")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("itinerary");
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject itineraryObject = jsonArray.getJSONObject(i);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject itineraryObject = jsonArray.getJSONObject(i);
 
-                int day = 0;
-                String location = null;
-                String address = null;
-                double latitude = 0.0;
-                double longitude = 0.0;
+                    int day = itineraryObject.optInt("day", 0); // Default to 0 if not found
+                    String location = itineraryObject.optString("location", null); // Default to null if not found
+                    String address = itineraryObject.optString("address", null); // Default to null if not found
+                    double latitude = itineraryObject.optDouble("latitude", 0.0); // Default to 0.0 if not found
+                    double longitude = itineraryObject.optDouble("longitude", 0.0); // Default to 0.0 if not found
 
-                // Check if the JSON object contains specific keys and extract the values
-                if (itineraryObject.has("day")) {
-                    day = itineraryObject.getInt("day");
+                    // Log values for debugging
                     Log.d("Day", String.valueOf(day));
-                }
-
-                if (itineraryObject.has("location")) {
-                    location = itineraryObject.getString("location");
                     Log.d("Location", location);
-                }
-
-                if (itineraryObject.has("address")) {
-                    address = itineraryObject.getString("address");
                     Log.d("Address", address);
-                }
-
-                if (itineraryObject.has("latitude")) {
-                    latitude = itineraryObject.getDouble("latitude");
                     Log.d("Latitude", String.valueOf(latitude));
-                }
-
-                if (itineraryObject.has("longitude")) {
-                    longitude = itineraryObject.getDouble("longitude");
                     Log.d("Longitude", String.valueOf(longitude));
+
+                    // Ensure all necessary data is available before creating the TripPlanDetail object
+                    if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
+                        // Ensure tripPlanDetailList is not empty and contains at least one valid entry
+                        if (!tripPlanDetailList.isEmpty()) {
+                            TripPlanDetail tripPlanDetail = new TripPlanDetail(
+                                    destination,
+                                    day,
+                                    tripPlanDetailList.get(0).getPlanDate(), // Make sure to handle this correctly
+                                    location,
+                                    address,
+                                    latitude,
+                                    longitude
+                            );
+
+                            tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
+                            tripPlanDetailList.add(tripPlanDetail);
+
+                            // Log the TripPlanDetailList for debugging
+                            Log.d("TripPlanDetailList", tripPlanDetailList.toString());
+                        } else {
+                            Log.e("JSONError", "tripPlanDetailList is empty.");
+                        }
+                    } else {
+                        Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
+                    }
                 }
-
-                // Ensure all necessary data is available before creating the TripPlanDetail object
-                if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
-                    // Assuming `selectedLocation` and `tripPlanDetailList` are available in your context
-                    TripPlanDetail tripPlanDetail = new TripPlanDetail(
-                            destination, // Use the parsed destination here
-                            day,
-                            tripPlanDetailList.get(0).getPlanDate(),
-                            location,
-                            address,
-                            latitude,
-                            longitude
-                    );
-
-                    tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
-                    TripPlanDetailList.add(tripPlanDetail);
-
-                    // Log the TripPlanDetailList for debugging
-                    Log.d("TripPlanDetailList", TripPlanDetailList.toString());
-                } else {
-                    Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
-                }
+            } else {
+                Log.e("JSONError", "No itinerary found in JSON.");
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("JSONException", "Error parsing JSON: " + e.getMessage());
         }
 
-        return TripPlanDetailList;
+        return tripPlanDetailList;
     }
+
 
 }

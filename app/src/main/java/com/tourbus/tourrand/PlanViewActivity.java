@@ -970,10 +970,20 @@ public class PlanViewActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             // 서버와 통신
             result = httpPostBodyConnection(url, data);
-            handler.post(() -> {seeNetworkResult(result);
-                if(result != null && !result.isEmpty())
-                    tripPlanDetailList = parseTripPlanDetail(result);
-                newTripPlanDetailList = parseTripPlanDetail(result);
+            handler.post(() -> {
+                if (result != null && result.equals("장소부족")) {
+                    // "장소부족"일 때는 JSONArray로 변환하지 않고 바로 처리
+                    Log.d("서버 응답", "장소부족");
+                } else {
+                    // 정상적인 응답은 JSONArray로 변환
+                    if(result != null && !result.isEmpty()) {
+                        tripPlanDetailList = parseTripPlanDetail(result);
+                        newTripPlanDetailList = parseTripPlanDetail(result);
+                    }
+
+                }
+                seeNetworkResult(result);
+
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
             Log.d("보낸 데이터 확인", data);
@@ -1075,7 +1085,8 @@ public class PlanViewActivity extends AppCompatActivity {
             // 로딩 다이얼로그 종료
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
-                newTripPlanDetailList.get(0).setTheme(getTheme);
+                if (newTripPlanDetailList != null)
+                    newTripPlanDetailList.get(0).setTheme(getTheme);
 
                 setThemeText(getTheme, semiTheme);
                 Log.d("다시돌리기",getTheme);
@@ -1084,6 +1095,12 @@ public class PlanViewActivity extends AppCompatActivity {
                 savedTripPlans.add(newTripPlanDetailList);
 
                 rerollCount++;
+            } else if (result.equals("장소부족")) {
+                // 다음 화면으로 전환
+                Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+                finish();
             }
         }
     }
