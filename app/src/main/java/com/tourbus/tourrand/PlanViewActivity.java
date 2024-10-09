@@ -949,7 +949,7 @@ public class PlanViewActivity extends AppCompatActivity {
     }
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
-        Log.d(result, "network");
+        Log.d("network", result);
     }
 
     private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
@@ -1066,7 +1066,7 @@ public class PlanViewActivity extends AppCompatActivity {
 //            savedTripPlans.add(newTripPlanDetailList);
 //            rerollCount++;
 
-            Log.d(result, "network");
+            Log.d("network", result);
         }
 
         @Override

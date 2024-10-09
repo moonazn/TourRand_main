@@ -85,7 +85,6 @@ public class RandomPlanViewActivity extends AppCompatActivity {
     private static final int MAX_REROLL_COUNT = 4;
     private ArrayList<ArrayList<TripPlanDetail>> savedTripPlans = new ArrayList<>();
     private int rerollCount = 1;
-    String location;
     String destination;
     boolean withAnimal;
 
@@ -108,7 +107,6 @@ public class RandomPlanViewActivity extends AppCompatActivity {
     int day;
     private String url;
     public ArrayList<TripPlanDetail> newTripPlanDetailList;
-    String selectedLocation;
     int tripLength;
     Place departureDocument;
     @Override
@@ -764,7 +762,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
     }
     public void seeNetworkResult(String result) {
         // 네트워크 작업 완료 후
-        Log.d(result, "network");
+        Log.d("network", result);
     }
 
     private class ServerCommunicationTask extends AsyncTask<Void, Void, Void> {
@@ -880,9 +878,9 @@ public class RandomPlanViewActivity extends AppCompatActivity {
 //
 //            savedTripPlans.add(newTripPlanDetailList);
 //            rerollCount++;
-            updateThemeText(location);
+            updateThemeText(destination);
 
-            Log.d(result, "network");
+            Log.d("network", result);
         }
 
         @Override
@@ -891,9 +889,9 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             // 로딩 다이얼로그 종료
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
-                newTripPlanDetailList.get(0).setTheme(location);
+                newTripPlanDetailList.get(0).setTheme(destination);
 
-                Log.d("다시돌리기", location);
+                Log.d("다시돌리기", destination);
                 displaySchedule(newTripPlanDetailList);
 
                 savedTripPlans.add(newTripPlanDetailList);
@@ -904,66 +902,83 @@ public class RandomPlanViewActivity extends AppCompatActivity {
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
         ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
+        String destination = null;
 
         try {
-            JSONArray jsonArray = new JSONArray(json);
+            // Parse the main JSON object
+            JSONObject jsonObject = new JSONObject(json);
+
+            // Extract the "destination" field
+            if (jsonObject.has("destination")) {
+                destination = jsonObject.getString("destination");
+                Log.d("Destination", destination);
+            }
+
+            // Parse the "itinerary" array
+            JSONArray jsonArray = jsonObject.getJSONArray("itinerary");
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                JSONObject itineraryObject = jsonArray.getJSONObject(i);
 
                 int day = 0;
                 String location = null;
-                String getLocation = null;
                 String address = null;
                 double latitude = 0.0;
                 double longitude = 0.0;
 
-                if (jsonObject.has("day")) {
-                    day = jsonObject.getInt("day");
-                    Log.d("몇일차", String.valueOf(day));
+                // Check if the JSON object contains specific keys and extract the values
+                if (itineraryObject.has("day")) {
+                    day = itineraryObject.getInt("day");
+                    Log.d("Day", String.valueOf(day));
                 }
 
-                if (jsonObject.has("location")) {
-                    location = jsonObject.getString("location").toString();
-                    Log.d("장소", location);
+                if (itineraryObject.has("location")) {
+                    location = itineraryObject.getString("location");
+                    Log.d("Location", location);
                 }
 
-                if (jsonObject.has("address")) {
-                    address = jsonObject.getString("address").toString();
-                    Log.d("주소", address);
-                }
-                if (jsonObject.has("latitude")) {
-                    latitude = jsonObject.getDouble("latitude");
-                    Log.d("위도", String.valueOf(latitude));
-                }
-                if (jsonObject.has("longitude")) {
-                    longitude = jsonObject.getDouble("longitude");
-                    Log.d("경도", String.valueOf(longitude));
+                if (itineraryObject.has("address")) {
+                    address = itineraryObject.getString("address");
+                    Log.d("Address", address);
                 }
 
-                TripPlanDetail TripPlanDetail;
-                if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
-                    if (departureDocument == null) {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
-                    } else {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
-                    }
-                    TripPlanDetail.setTheme(getLocation);
-                    TripPlanDetailList.add(TripPlanDetail);
+                if (itineraryObject.has("latitude")) {
+                    latitude = itineraryObject.getDouble("latitude");
+                    Log.d("Latitude", String.valueOf(latitude));
+                }
 
-//                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-//                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
+                if (itineraryObject.has("longitude")) {
+                    longitude = itineraryObject.getDouble("longitude");
+                    Log.d("Longitude", String.valueOf(longitude));
+                }
 
-                    //Log.d("맞나?", TripPlanDetailList.toString());
+                // Ensure all necessary data is available before creating the TripPlanDetail object
+                if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
+                    // Assuming `selectedLocation` and `tripPlanDetailList` are available in your context
+                    TripPlanDetail tripPlanDetail = new TripPlanDetail(
+                            destination, // Use the parsed destination here
+                            day,
+                            tripPlanDetailList.get(0).getPlanDate(),
+                            location,
+                            address,
+                            latitude,
+                            longitude
+                    );
+
+                    tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
+                    TripPlanDetailList.add(tripPlanDetail);
+
+                    // Log the TripPlanDetailList for debugging
+                    Log.d("TripPlanDetailList", TripPlanDetailList.toString());
                 } else {
-                    Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
+                    Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-
         return TripPlanDetailList;
     }
+
 }
