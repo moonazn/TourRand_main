@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PlanViewActivity"
+    android:background="#F0F4F8">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/logo"/>
+
+    <ImageView
+        android:id="@+id/tooltipback"
+        android:layout_width="320dp"
+        android:layout_height="110dp"
+        android:src="@drawable/tooltip"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        android:scaleType="fitXY"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:id="@+id/themaText"
+        android:layout_width="290dp"
+        android:layout_height="wrap_content"
+        android:text="이번 여행의 테마는 힐링입니다!"
+        app:layout_constraintTop_toTopOf="@id/tooltipback"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/themaSemiText"
+        android:layout_width="260dp"
+        android:layout_height="wrap_content"
+        android:text="이번 여행은 마음을 편안하게 만들어줄 것입니다. 강릉의 푸르른 자연과 아름다운 풍경을 만끽하며 즐거운 여행을 떠나보세요!"
+        app:layout_constraintTop_toBottomOf="@id/themaText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:textSize="14sp"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/idea"
+        app:layout_constraintTop_toBottomOf="@id/logo"
+        android:layout_marginTop="30dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="25dp"/>
+
+    <!--<View
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="#C3CEE5"
+        app:layout_constraintTop_toBottomOf="@id/tooltipback"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp"
+        android:tooltipText="map"/>-->
+    <com.kakao.vectormap.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        app:layout_constraintTop_toBottomOf="@id/tooltipback"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/fromSrcToDst"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/map"
+        android:layout_marginTop="15dp"
+        android:text="출발지에서 도착지까지 (클릭)"
+        android:textColor="#5858FA"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:gravity="center"
+        android:textSize="15sp"/>
+
+    <!-- 여행 일수 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/daysRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/fromSrcToDst"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp" />
+
+            <!-- 여행 장소 RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/placesRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/daysRecyclerView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/butLinear"
+        android:layout_marginTop="16dp"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="16dp"/>
+
+    <LinearLayout
+        android:id="@+id/butLinear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="30dp">
+
+        <android.widget.Button
+            android:id="@+id/rerollBut"
+            android:layout_width="170dp"
+            android:layout_height="44dp"
+            android:background="@drawable/rounded_filled_square_orange"
+            android:text="다시 돌리기 (1/3)"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_bold"/>
+
+        <ImageView
+            android:id="@+id/scheduleList"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/list"
+            android:layout_gravity="center"
+            android:layout_marginRight="10dp"/>
+
+        <android.widget.Button
+            android:id="@+id/saveBut"
+            android:layout_width="170dp"
+            android:layout_height="44dp"
+            android:background="@drawable/rounded_filled_square"
+            android:text="완료"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_marginRight="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_bold"/>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

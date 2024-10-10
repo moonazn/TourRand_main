@@ -8,18 +8,21 @@
 
 
     <TextView
+        android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:background="#5E6881"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:gravity="center"
         android:text="마이페이지"
         android:textColor="@color/white"
-        android:background="#5E6881"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:textSize="16sp"
-        android:gravity="center"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/backToHomeBtn"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/home_white"
@@ -52,7 +55,8 @@
         app:layout_constraintLeft_toRightOf="@+id/profileImg"
         android:layout_marginLeft="25dp"
         android:textSize="22sp"
-        android:layout_marginTop="17dp"/>
+        android:layout_marginTop="17dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <TextView
         android:id="@+id/email"
@@ -64,7 +68,8 @@
         app:layout_constraintLeft_toRightOf="@+id/profileImg"
         android:layout_marginLeft="15dp"
         android:textSize="16sp"
-        android:layout_marginTop="5dp"/>
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
     <TextView
         android:id="@+id/logout"
@@ -75,6 +80,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:text="로그아웃"
         android:textColor="#5858FA"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
+
+    <TextView
+        android:id="@+id/resign"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:textColor="@color/red"
+        android:gravity="right"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:text="탈퇴하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

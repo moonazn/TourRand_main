@@ -9,16 +9,38 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    dexOptions {
-        javaMaxHeapSize "4g"
+
+    signingConfigs {
+        config {
+            keyAlias "key0"
+            keyPassword "toqlqjs21"
+            storeFile file("tourrand_key")
+            storePassword "toqlqjs21"
+        }
     }
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//    }
+    lintOptions {
+        abortOnError false // Lint 오류가 있어도 빌드를 중단하지 않음
+        disable 'MissingTranslation' // 특정 Lint 오류 무시 (예: 다국어 미지원 관련 오류)
+    }
+    allprojects {
+        configurations.all {
+            resolutionStrategy {
+                // 중복된 라이브러리 버전 강제로 통일
+                force 'com.github.devsideal:VectorChildFinder:1.0.0'  // 올바른 버전으로 설정
+            }
+        }
+    }
+
 
     defaultConfig {
         applicationId "com.tourbus.tourrand"
-        minSdk 24
+        minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0"
 
         multiDexEnabled = true
 
@@ -29,7 +51,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
@@ -47,22 +70,56 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    implementation "com.kakao.sdk:v2-all:2.20.1" // 전체 모듈 설치, 2.11.0 버전부터 지원
+//    implementation "com.kakao.sdk:v2-all:2.20.1" // 전체 모듈 설치, 2.11.0 버전부터 지원
 //    implementation "com.kakao.sdk:v2-user:2.20.1" // 카카오 로그인 API 모듈
-    implementation "com.kakao.sdk:v2-share:2.20.1" // 카카오톡 공유 API 모듈
-    implementation "com.kakao.sdk:v2-talk:2.20.1" // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
-    implementation "com.kakao.sdk:v2-friend:2.20.1" // 피커 API 모듈
-    implementation "com.kakao.sdk:v2-navi:2.20.1" // 카카오내비 API 모듈
-    implementation "com.kakao.sdk:v2-cert:2.20.1" // 카카오톡 인증 서비스 API 모듈
+//    implementation "com.kakao.sdk:v2-share:2.20.1" // 카카오톡 공유 API 모듈
+//    implementation "com.kakao.sdk:v2-talk:2.20.1" // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+//    implementation "com.kakao.sdk:v2-friend:2.20.1" // 피커 API 모듈
+//    implementation "com.kakao.sdk:v2-navi:2.20.1" // 카카오내비 API 모듈
+//    implementation "com.kakao.sdk:v2-cert:2.20.1" // 카카오톡 인증 서비스 API 모듈
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation "com.kakao.sdk:v2-user:2.10.0" //카카오 sdk 추가
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation "com.github.bumptech.glide:glide:4.11.0" //카카오 이미지추가 시
 
+    implementation "com.kakao.sdk:v2-all:2.20.6" // 전체 모듈 설치, 2.11.0 버전부터 지원
+    implementation "com.kakao.sdk:v2-user:2.20.6" // 카카오 로그인 API 모듈
+    implementation "com.kakao.sdk:v2-share:2.20.6" // 카카오톡 공유 API 모듈
+    implementation "com.kakao.sdk:v2-talk:2.20.6" // 카카오톡 채널, 카카오톡 소셜, 카카오톡 메시지 API 모듈
+    implementation "com.kakao.sdk:v2-friend:2.20.6" // 피커 API 모듈
+    implementation "com.kakao.sdk:v2-navi:2.20.6" // 카카오내비 API 모듈
+    implementation "com.kakao.sdk:v2-cert:2.20.6" // 카카오톡 인증 서비스 API 모듈
+
+
+
     implementation 'com.github.devsideal:VectorChildFinder:1.0.0'
-    implementation project(':vectorchildfinder')
+//    implementation project(':vectorchildfinder')
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation 'com.nex3z:toggle-button-group:1.2.3'
+
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    //implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    implementation 'com.kakao.maps.open:android:2.9.5' //카카오맵
+
+    implementation 'org.apache.poi:poi:5.3.0'
+    implementation 'org.apache.poi:poi-ooxml:5.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.1'
+
+    implementation 'com.github.mmoamenn:LuckyWheel_Android:0.3.0'
+   // implementation 'com.github.mmoamenn:LuckyWheel_Android:0.3.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.11.0'
+    implementation group: 'com.squareup.okhttp3', name: 'logging-interceptor', version: '5.0.0-alpha.14'
+
+
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
+
+    implementation 'nl.dionsegijn:konfetti-compose:2.0.4'
+
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
 
 }

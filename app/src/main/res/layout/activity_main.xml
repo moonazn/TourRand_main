@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/background"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".MainActivity">
 
     <ImageView
         android:id="@+id/icon"
         android:layout_width="80dp"
         android:layout_height="80dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="278dp"
+        android:layout_marginTop="178dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginLeft="50dp"
         android:src="@drawable/logo_colorback"/>
@@ -24,8 +29,8 @@
         android:src="@drawable/logindesign2"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:layout_marginTop="230dp"
-        android:layout_marginLeft="145dp"/>
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="145dp" />
 
     <TextView
         android:id="@+id/mainText"
@@ -39,17 +44,97 @@
         android:text="룰렛에 운명을 맡겨보세요!"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:textSize="20dp"/>
+        android:textSize="20dp"
+        android:fontFamily="@font/pyeongchang_regular"/>
+
+    <TextView
+        android:id="@+id/loginCheckInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/mainText"
+        android:gravity="center"
+        android:text="유효하지 않은 로그인 정보입니다."
+        android:fontFamily="@font/pyeongchang_regular"
+        android:textSize="15sp"
+        android:layout_marginTop="18dp"
+        android:textColor="@color/red"
+        android:visibility="gone"/>
+
+    <EditText
+        android:id="@+id/idEditText"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/mainText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/rounded_corner_background"
+        android:hint="id"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:gravity="center"/>
+
+    <EditText
+        android:id="@+id/pwEditText"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toBottomOf="@id/idEditText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/rounded_corner_background"
+        android:hint="password"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:gravity="center"
+        android:inputType="textPassword"/>
+
+    <android.widget.Button
+        android:id="@+id/loginBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        app:layout_constraintTop_toBottomOf="@id/pwEditText"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:background="@drawable/rounded_filled_square"/>
+
+    <TextView
+        android:id="@+id/join"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="회원가입"
+        app:layout_constraintTop_toBottomOf="@id/loginBtn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:textSize="16sp"
+        android:textColor="#5858FA"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/join"
+        android:layout_marginTop="45dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:text="* 카카오 로그인 시 팀원들과 일정을 공유할 수 있어요!"/>
 
     <ImageView
         android:id="@+id/btn_kakao_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/kakao_login_medium_wide"
-        app:layout_constraintTop_toBottomOf="@id/mainText"
+        app:layout_constraintTop_toBottomOf="@id/info"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="125dp"/>
+        android:layout_marginTop="10dp"/>
 
 <!--    <Button-->
 <!--        android:id="@+id/logout"-->
@@ -71,6 +156,7 @@
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        android:fontFamily="@font/pyeongchang_regular" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,7 +2,10 @@ package com.tourbus.tourrand;
 
 import static android.util.Base64.encodeToString;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,15 +18,24 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kakao.sdk.auth.model.OAuthToken;
 import com.kakao.sdk.user.UserApiClient;
 import com.kakao.sdk.user.model.User;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,21 +50,29 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 
-
-
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private ImageView kakaoLoginButton;
     private Handler handler;
-
     private  String inputText;
 
+    private EditText idEditText, pwEditText;
+    private Button loginBtn;
+    private TextView join;
+    private UserManager userManager;
+    boolean isLoginFinish = true;
+    private String inviteTourName;
+    private int inviteTourId;
+    private String isInviteCheck;
+    private String inviteNickname;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("getKeyHash", ""+getKeyHash(MainActivity.this));
 
         kakaoLoginButton = findViewById(R.id.btn_kakao_login);
 
@@ -101,35 +121,168 @@ public class MainActivity extends AppCompatActivity {
         kakaoLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                finish();
-//                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
-//                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
-//                        @Override
-//                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
-//                            if (oAuthToken != null) {
-//                                // 로그인 성공
-//                                updateKakaoLoginUi();
-//                            } else {
-//                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
-//                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
-//                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
-//                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                            }
-//                            return null;
-//                        }
-//                    });
-//                } else {
-//                    // 카카오톡이 설치되어 있지 않다면
-//                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
-//                }
+//                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                startActivity(intent);
+//                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                finish();
+                if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(MainActivity.this)) {
+                    UserApiClient.getInstance().loginWithKakaoTalk(MainActivity.this, new Function2<OAuthToken, Throwable, Unit>() {
+                        @Override
+                        public Unit invoke(OAuthToken oAuthToken, Throwable throwable) {
+                            if (oAuthToken != null) {
+                                // 로그인 성공
+                                updateKakaoLoginUi();
+                            } else {
+                                // 카카오톡 로그인 실패 시, 카카오 계정 로그인을 시도
+                                String errorMessage = throwable != null ? throwable.getMessage() : "Unknown error";
+                                Log.e(TAG, "KakaoTalk login failed: " + errorMessage);
+                                UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                            }
+                            return null;
+                        }
+                    });
+                } else {
+                    // 카카오톡이 설치되어 있지 않다면
+                    UserApiClient.getInstance().loginWithKakaoAccount(MainActivity.this, callback);
+                }
             }
         });
 
 
+        idEditText = findViewById(R.id.idEditText);
+        pwEditText = findViewById(R.id.pwEditText);
+        loginBtn = findViewById(R.id.loginBtn);
+        join = findViewById(R.id.join);
+
+        TextView loginInfoText = findViewById(R.id.loginCheckInfo);
+
+//        loginBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                String id = idEditText.getText().toString();
+//                String pw = pwEditText.getText().toString();
+//
+//                if(isLoginValid(id, pw)) {
+//
+//                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                    startActivity(intent);
+//                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+//                    finish();
+//
+//                } else {
+//                    loginInfoText.setVisibility(View.VISIBLE);
+//                    Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+//                    loginInfoText.startAnimation(shake);
+//                }
+//            }
+//        });
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String id = idEditText.getText().toString().trim();
+                String pw = pwEditText.getText().toString().trim();
+
+                String url = "https://api.tourrand.com/login";
+                String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
+
+
+                new Thread(() -> {
+                    String result = httpPostBodyConnection(url, data);
+                    // 처리 결과 확인
+                    handler.post(() -> {
+                        seeNetworkResult(result);
+                        try {
+                            // JSON 문자열을 JSONObject로 변환
+                            JSONObject jsonObject = new JSONObject(result);
+
+                            // "userId" 키에 해당하는 값 추출
+                            String userId = jsonObject.getString("id");
+
+                            if(userId.equals("로그인 실패")){
+                                loginInfoText.setVisibility(View.VISIBLE);
+                                Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                                loginInfoText.startAnimation(shake);
+                            }else if(userId.equals("사용자가 존재하지 않음")){
+                                loginInfoText.setVisibility(View.VISIBLE);
+                                Animation shake = AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake_fast);
+                                loginInfoText.startAnimation(shake);
+                            }else {
+                                // 싱글톤 인스턴스 가져오기
+                                userManager = UserManager.getInstance();
+
+                                Toast.makeText(MainActivity.this, userId+"님, 환영합니다!", Toast.LENGTH_SHORT).show();
+                                // 값 저장하기
+                                userManager.setUserId(userId);
+                                userManager.setUserNickname(userId);
+                                Log.d("userId",userId);
+
+                                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            }
+
+                            // 추출한 userId 출력
+                            System.out.println("User ID: " + userId);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }).start();
+            }
+        });
+
+        join.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, JoinActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+            }
+        });
+
+        ConstraintLayout background = findViewById(R.id.background);
+        background.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    hideKeyboard(); // 터치 시 키보드를 숨김
+                }
+                return true; // 이벤트 처리 완료
+            }
+        });
+
     }
+
+//    private boolean isLoginValid(String id, String pw){
+//
+//        //url 자체로그인 버전으로 바꾸기⭐️⭐️⭐️
+//        String url = "http://13.209.33.141:4000/login";
+//        String data = "{ \"id\" : \""+id+"\",\"password\" : \""+pw+"\" }"; //json 형식 데이터
+//        new Thread(() -> {
+//            String result = httpPostBodyConnection(url, data);
+//            // 처리 결과 확인
+//            handler.post(() -> appLoginNetworkResult(result));
+//            try {
+//                // JSON 문자열을 JSONObject로 변환
+//                JSONObject jsonObject = new JSONObject(result);
+//
+//                // "userId" 키에 해당하는 값 추출
+//                String userId = jsonObject.getString("id");
+//
+//                if (userId.equals("로그인 실패")) {
+//                    return false;
+//                } else {
+//                    return true;
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }).start();
+//
+//    }
 
     private void showLoginFailedDialog(String message) {
         new AlertDialog.Builder(this)
@@ -169,17 +322,68 @@ public class MainActivity extends AppCompatActivity {
 
                     Log.d(TAG, "invoke: profile = " + user.getKakaoAccount().getProfile().getThumbnailImageUrl());
 
-                    String url = "http://13.209.33.141:5000";
+                    String url = "https://api.tourrand.com/kakao_login";
 //                    //10자리 숫자/이메일/이름/프로필 사진 주소
                     inputText = user.getId().toString()+"^^"+user.getKakaoAccount().getEmail().toString()+"^^"+
                             user.getKakaoAccount().getProfile().getNickname()+"^^"+user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
 
-                    String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
+                    userManager = UserManager.getInstance();
+                    String id = user.getId().toString();
+                    String email = user.getKakaoAccount().getEmail().toString();
+                    String nickname = user.getKakaoAccount().getProfile().getNickname();
+                    String user_img = user.getKakaoAccount().getProfile().getThumbnailImageUrl().toString();
+                    userManager.setUserId(id);
+                   // Log.d("id값", "카카오ID " + user.getId().toString());
+                    //String data = "{ \"content\" : \""+inputText+"\" }";; //json 형식 데이터
+                    String data = "{ \"id\" : \""+id+"\",\"email\" : \""+email+"\",\"nickname\":\""+nickname+"\",\"user_img\":\""+user_img+"\" }"; //json 형식 데이터
 
+                    Log.d("json 변환", data);
                     new Thread(() -> {
                         String result = httpPostBodyConnection(url, data);
                         // 처리 결과 확인
-                        handler.post(() -> seeNetworkResult(result));
+                        handler.post(() ->{
+                            try {
+                                // JSON 문자열을 JSONObject로 변환
+                                JSONObject jsonObject = new JSONObject(result);
+
+                                // 공통된 값 처리 (nickname)
+                                String get_nickname = jsonObject.getString("nickname");
+                                UserManager.getInstance().setUserNickname(get_nickname);
+                                isInviteCheck = jsonObject.getString("invite");
+                                Log.d("초대여부 체크-메", isInviteCheck);
+                                if(isInviteCheck.equals("초대 있음")){
+                                    inviteTourName = jsonObject.getString("tour_name");
+                                    inviteTourId = jsonObject.getInt("tour_id");
+                                    inviteNickname = jsonObject.getString("invite_nickname");
+                                    boolean isInviteState = jsonObject.getBoolean("isInviteState");
+
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    intent.putExtra("inviteTourName", inviteTourName);
+                                    intent.putExtra("inviteTourId", inviteTourId);
+                                    intent.putExtra("inviteNickname", inviteNickname);
+                                    intent.putExtra("isInviteState", isInviteState);
+                                    startActivity(intent);
+                                    finish();
+
+                                    Fragment fragment = new HomeFragment1();
+                                    Bundle bundle = new Bundle();
+
+                                    bundle.putString("inviteTourName", inviteTourName);
+                                    bundle.putInt("inviteTourId", inviteTourId);
+                                    bundle.putString("inviteNickname", inviteNickname);
+                                    bundle.putBoolean("isInviteState", isInviteState);
+
+                                    fragment.setArguments(bundle);
+                                }
+
+                                // 공통 처리
+                                System.out.println("Nickname: " + nickname);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            seeNetworkResult(result);
+                                });
                     }).start();
 
                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
@@ -281,6 +485,44 @@ public class MainActivity extends AppCompatActivity {
         // 네트워크 작업 완료 후
         Log.d(result, "network");
     }
+
+    public void appLoginNetworkResult(String result) {
+
+        UserManager currentUser = UserManager.getInstance();
+        currentUser.setUserNickname("realuser");
+        currentUser.setUserId("realuserid");
+
+        isLoginFinish = true;
+    }
+    public static String getKeyHash(final Context context){
+        PackageManager pm = context.getPackageManager();
+        try{
+            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
+            if(packageInfo == null)
+                return null;
+            for(Signature signature : packageInfo.signatures){
+                try {
+                    MessageDigest md = MessageDigest.getInstance("SHA");
+                    md.update(signature.toByteArray());
+                    return android.util.Base64.encodeToString(md.digest(), Base64.NO_WRAP);
+                }catch (NoSuchAlgorithmException e){
+                    e.printStackTrace();
+                }
+
+            }
+        }catch (PackageManager.NameNotFoundException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        View view = getCurrentFocus();
+        if (view != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
 }
 

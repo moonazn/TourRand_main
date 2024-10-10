@@ -4,29 +4,70 @@
     package="com.tourbus.tourrand">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/icon"
+        android:icon="@drawable/logo_colorback_text"
         android:label="@string/app_name"
         android:requestLegacyExternalStorage="true"
         android:supportsRtl="true"
         android:theme="@style/Theme.TourRand"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".RandomPlanViewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RouletteMemberActivity"
+            android:exported="false" />
+        <activity
+            android:name=".TeamActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- 처리할 URL 스킴 설정 -->
+                <data android:scheme="tourbus" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".RandomActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WeatherActivity"
+            android:exported="false" />
+        <activity
+            android:name=".JoinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CustomQuestionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PlanEditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CustomRouletteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CustomSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PlanViewActivity"
+            android:exported="true" />
         <activity
             android:name=".DstActivity"
             android:exported="false" />
         <activity
-            android:name=".MovementQActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DepartureQActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CustomSetActivity"
+            android:name=".DateQActivity"
             android:exported="false" />
         <activity
             android:name=".QuestionActivity"
@@ -36,6 +77,12 @@
             android:exported="false" />
         <activity
             android:name=".MyPageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RandomCustomSetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RandomCustomRouletteActivity"
             android:exported="false" />
         <!--
         <meta-data
@@ -77,9 +124,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="oauth"
-                    android:scheme="kakao{d71b70e03d7f7b494a72421fb46cba46}" />
+                <data android:scheme="kakaoe211572ac7a98da2054d8a998e86a28a" />
+                <data android:host="oauth" />
+                <data android:scheme="e211572ac7a98da2054d8a998e86a28a" />
+                <data android:host="vectormap" />
             </intent-filter>
 
             <!-- <intent-filter> -->

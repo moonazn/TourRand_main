@@ -34,6 +34,7 @@ public class QuestionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(QuestionActivity.this, HomeActivity.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                 finish();
             }
         });
@@ -60,5 +61,13 @@ public class QuestionActivity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(QuestionActivity.this, HomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+        finish();
     }
 }

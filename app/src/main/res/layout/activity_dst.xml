@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DstActivity"
-    android:background="@drawable/q4">
+    android:background="@drawable/q3">
 
     <ImageView
         android:id="@+id/back"
@@ -18,16 +18,116 @@
         android:layout_marginLeft="15dp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="멀리                     가까이"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:text="랜덤으로 나온 목적지 중\n가고 싶은 장소를 선택하세요!"
         android:textColor="@color/black"
         android:textStyle="bold"
-        android:textSize="22sp"
+        android:textSize="18sp"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="200dp"/>
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/pyeongchang_bold"/>
+
+
+    <TextView
+        android:id="@+id/dst1"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:text="목적지1"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/back"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="130dp"
+        android:background="@drawable/round_rectangle"
+        android:fontFamily="@font/pyeongchang_regular"/>
+
+    <TextView
+        android:id="@+id/dst2"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:text="목적지2"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/dst1"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/round_rectangle"
+        android:fontFamily="@font/pyeongchang_regular"/>
+
+    <TextView
+        android:id="@+id/dst3"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:text="목적지3"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@+id/dst2"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/round_rectangle"
+        android:fontFamily="@font/pyeongchang_regular"/>
+
+    <LinearLayout
+        android:id="@+id/btnLinear"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        app:layout_constraintTop_toBottomOf="@id/dst3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:layout_marginTop="30dp">
+
+        <android.widget.Button
+            android:id="@+id/rerollBtn"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:background="@drawable/rounded_filled_square_orange"
+            android:text="다시 돌리기"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pyeongchang_bold"/>
+
+        <android.widget.Button
+            android:id="@+id/nextBtn"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:background="@drawable/rounded_filled_square"
+            android:text="일정 생성"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="@font/pyeongchang_bold"/>
+
+    </LinearLayout>
+
+
+    <TextView
+        android:id="@+id/noAnswer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnLinear"
+        android:layout_marginTop="10dp"
+        android:textColor="#F4473F"
+        android:text="위 질문에 답해주세요"
+        android:visibility="gone"
+        android:fontFamily="@font/pyeongchang_regular"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

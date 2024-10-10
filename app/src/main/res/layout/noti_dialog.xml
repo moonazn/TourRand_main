@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="10dp"
+    android:background="@drawable/rounded_corner_background">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_marginTop="10dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/logo_colorback_text"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="📢  주의"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:textSize="25sp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="여행지 후보 입력 시 지명으로 입력해주세요!"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:textColor="@color/black"
+        android:textSize="17sp"
+        android:layout_marginTop="7dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ex) 서울, 양양, 부산, 강릉, 광주광역시 등 "
+        android:textSize="15sp"
+        android:fontFamily="@font/pyeongchang_regular"
+        android:textColor="@color/black"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/closeBtn"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:text="확인했습니다!"
+        android:fontFamily="@font/pyeongchang_bold"
+        android:background="@drawable/rounded_corner_background3"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:layout_marginTop="15dp"/>
+
+</LinearLayout>

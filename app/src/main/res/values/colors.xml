@@ -32,4 +32,22 @@
     <color name="yellow4">#FFFF7D</color>
     <color name="yellow5">#FFFF43</color>
 
+    <color name="background"> #F2F2F2 </color>
+
+    <color name="random1"> #E58F65 </color>
+    <color name="random2"> #F4F1BB </color>
+    <color name="random3"> #9BC1BC </color>
+    <color name="random4"> #E6EBE0 </color>
+    <color name="random5"> #56445D </color>
+
+    <color name="selected_day_background">#D3E4FF</color>
+
+    <color name="red"> #F4473F </color>
+    <color name="blue"> #5858FA </color>
+
+    <color name="switch_on_color">#5858FA</color> <!-- Switch 켜졌을 때 색상 -->
+    <color name="switch_off_color">#cdc9c3</color> <!-- Switch 꺼졌을 때 색상 -->
+
+
+
 </resources>
