@@ -411,6 +411,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
 
     private void updateThemeText(String location) {
 
+        Log.d("updateThemeText", "updateThemeText executed");
         TextView themaText = findViewById(R.id.themaText);
         themaText.setText("안타깝게도 선택한 지역에서 생성할 수 있는 일정이 없어요. 대신 유저님에게 더 적절한 지역을 찾았어요! "+ location + "은 어떠세요?");
         Log.d("updateThemeText내의 setThemeText","실행완");
@@ -535,7 +536,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
         if (index < savedTripPlans.size()) {
             ArrayList<TripPlanDetail> TripPlanDetailList = savedTripPlans.get(index);
 
-            updateThemeText(TripPlanDetailList.get(0).getTheme());
+            updateThemeText(TripPlanDetailList.get(index).getTheme());
             displaySchedule(TripPlanDetailList);
         } else {
             Toast.makeText(this, "해당 일정이 없습니다.", Toast.LENGTH_SHORT).show();
@@ -891,7 +892,8 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             // 로딩 다이얼로그 종료
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
-                newTripPlanDetailList.get(0).setTheme(destination);
+                if (newTripPlanDetailList != null)
+                    newTripPlanDetailList.get(rerollCount).setTheme(destination);
 
                 Log.d("다시돌리기", destination);
                 displaySchedule(newTripPlanDetailList);
