@@ -141,7 +141,10 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             });
 
         }
+        if (tripPlanDetailList != null) {
+            updateThemeText(tripPlanDetailList.get(0).getTripName());
 
+        }
         Log.d("반려동물동반여부", String.valueOf(withAnimal));
 
         mapView = findViewById(R.id.map);
@@ -894,7 +897,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
                 if (newTripPlanDetailList != null)
-                    newTripPlanDetailList.get(rerollCount).setTheme(destination);
+                    newTripPlanDetailList.get(rerollCount-1).setTheme(destination);
 
                 Log.d("다시돌리기", destination);
                 displaySchedule(newTripPlanDetailList);
@@ -902,6 +905,8 @@ public class RandomPlanViewActivity extends AppCompatActivity {
                 savedTripPlans.add(newTripPlanDetailList);
 
                 rerollCount++;
+            } else {
+                new ServerCommunicationTask().execute();
             }
         }
     }
