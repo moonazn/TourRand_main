@@ -1096,7 +1096,13 @@ public class PlanViewActivity extends AppCompatActivity {
 
                 rerollCount++;
             } else if (result.equals("장소부족")) {
+                
+                Log.d("장소부족 intent if문", "들어옴");
+                
                 // 다음 화면으로 전환
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
