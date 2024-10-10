@@ -134,8 +134,10 @@ public class PlanViewActivity extends AppCompatActivity {
         tripPlanDetailList = getIntent().getParcelableArrayListExtra("TripPlanDetailList");
         getTheme = getIntent().getStringExtra("mainTheme");
         Log.d("planView getTheme",getTheme);
-        updateThemeText(getTheme);
+
         selectedLocation = getIntent().getStringExtra("selectedLocation");
+        updateThemeText(getTheme);
+        Log.d("장소 확인 onCreate", selectedLocation);
         String tour_name = selectedLocation + getTheme + "여행";
         tripLength = getIntent().getIntExtra("tripLength", 1);
 
@@ -1107,6 +1109,9 @@ public class PlanViewActivity extends AppCompatActivity {
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
+            } else if (result.equals("[]")) {
+                Log.d("빈 리스트",result);
+                new ServerCommunicationTask().execute();
             }
         }
     }
@@ -1176,6 +1181,7 @@ public class PlanViewActivity extends AppCompatActivity {
 
     private void setThemeText(String getTheme, TextView semiTheme) {
 
+        Log.d("장소 확인 setThemeText", selectedLocation);
         semiTheme = findViewById(R.id.themaSemiText);
 
         Log.d("setThemeText 테마 확인",getTheme);

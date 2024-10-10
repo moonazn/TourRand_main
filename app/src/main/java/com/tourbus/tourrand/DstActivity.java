@@ -412,6 +412,9 @@ public class DstActivity extends AppCompatActivity {
                 Log.d("withAnimal", String.valueOf(withAnimal));
                 intent.putExtra("previousActivity", previousActivity);
                 intent.putExtra("tripLength", tripLength);
+                if (progressDialog != null && progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
                 startActivity(intent);
                 overridePendingTransition(0, 0);
                 finish();
