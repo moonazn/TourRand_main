@@ -792,6 +792,10 @@ public class RandomPlanViewActivity extends AppCompatActivity {
 //                    tripPlanDetailList = parseTripPlanDetail(result);
                     newTripPlanDetailList = parseTripPlanDetail(result);
                     updateThemeText(destination);
+
+                    displaySchedule(newTripPlanDetailList);
+
+                    savedTripPlans.add(newTripPlanDetailList);
                 }
 
             });// 실제 서버 통신 코드로 대체
@@ -900,9 +904,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
                     newTripPlanDetailList.get(rerollCount-1).setTheme(destination);
 
                 Log.d("다시돌리기", destination);
-                displaySchedule(newTripPlanDetailList);
 
-                savedTripPlans.add(newTripPlanDetailList);
 
                 rerollCount++;
             } else {
@@ -949,25 +951,22 @@ public class RandomPlanViewActivity extends AppCompatActivity {
                     // Ensure all necessary data is available before creating the TripPlanDetail object
                     if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
                         // Ensure tripPlanDetailList is not empty and contains at least one valid entry
-                        if (!tripPlanDetailList.isEmpty()) {
-                            TripPlanDetail tripPlanDetail = new TripPlanDetail(
-                                    destination,
-                                    day,
-                                    tripPlanDetailList.get(0).getPlanDate(), // Make sure to handle this correctly
-                                    location,
-                                    address,
-                                    latitude,
-                                    longitude
-                            );
 
-                            tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
-                            tripPlanDetailList.add(tripPlanDetail);
+                        TripPlanDetail tripPlanDetail = new TripPlanDetail(
+                                destination,
+                                day,
+                                savedTripPlans.get(0).get(0).getPlanDate(), // Make sure to handle this correctly
+                                location,
+                                address,
+                                latitude,
+                                longitude
+                        );
+                        tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
+                        tripPlanDetailList.add(tripPlanDetail);
 
                             // Log the TripPlanDetailList for debugging
-                            Log.d("TripPlanDetailList", tripPlanDetailList.toString());
-                        } else {
-                            Log.e("JSONError", "tripPlanDetailList is empty.");
-                        }
+                        Log.d("TripPlanDetailList", tripPlanDetailList.toString());
+
                     } else {
                         Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
                     }
