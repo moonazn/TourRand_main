@@ -114,6 +114,17 @@ public class RandomPlanViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_random_plan_view);
 
+        ImageView logo = findViewById(R.id.logo);
+        logo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RandomPlanViewActivity.this, HomeActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                finish();
+            }
+        });
+
         handler = new Handler();
         KakaoMapSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
 

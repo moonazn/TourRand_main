@@ -987,6 +987,16 @@ public class PlanViewActivity extends AppCompatActivity {
                 if (result != null && result.equals("장소부족")) {
                     // "장소부족"일 때는 JSONArray로 변환하지 않고 바로 처리
                     Log.d("서버 응답", "장소부족");
+                    // 다음 화면으로 전환
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+//                    Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
+//                    startActivity(intent);
+//                    overridePendingTransition(0, 0);
+//                    finish();
+//                    StopPlanDialog dialog = new StopPlanDialog(PlanViewActivity.this);
+//                    dialog.show();
                 } else {
                     // 정상적인 응답은 JSONArray로 변환
                     if(result != null && !result.isEmpty()) {
@@ -1110,21 +1120,28 @@ public class PlanViewActivity extends AppCompatActivity {
                 rerollCount++;
             } else if (result.equals("장소부족")) {
                 
-                Log.d("장소부족 intent if문", "들어옴");
+                Log.d("장소부족 intent if문", "onPostExecute");
                 
                 // 다음 화면으로 전환
                 if (progressDialog != null && progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
+//                Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
+//                intent.putExtra("previousActivity", "PlanViewActivity");
+//                startActivity(intent);
+//                overridePendingTransition(0, 0);
+//                finish();
+                StopPlanDialog dialog = new StopPlanDialog(PlanViewActivity.this);
+                dialog.show();
             } else if (result.equals("[]")) {
                 Log.d("빈 리스트",result);
                 new ServerCommunicationTask().execute();
             }
         }
+    }
+    // rerollBut의 상태를 변경하는 메서드
+    public void hideRerollButton() {
+        rerollBut.setVisibility(View.GONE);
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
         ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
