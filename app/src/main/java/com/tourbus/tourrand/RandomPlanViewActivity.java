@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,13 +31,10 @@ import com.kakao.vectormap.MapLifeCycleCallback;
 import com.kakao.vectormap.MapView;
 import com.kakao.vectormap.camera.CameraUpdate;
 import com.kakao.vectormap.camera.CameraUpdateFactory;
-import com.kakao.vectormap.label.Label;
 import com.kakao.vectormap.label.LabelLayer;
-import com.kakao.vectormap.label.LabelManager;
 import com.kakao.vectormap.label.LabelOptions;
 import com.kakao.vectormap.label.LabelStyle;
 import com.kakao.vectormap.label.LabelStyles;
-import com.kakao.vectormap.route.RouteLine;
 import com.kakao.vectormap.route.RouteLineLayer;
 import com.kakao.vectormap.route.RouteLineOptions;
 import com.kakao.vectormap.route.RouteLineSegment;
@@ -47,7 +45,6 @@ import com.kakao.vectormap.route.RouteLineStylesSet;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,14 +58,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.http.GET;
 
-public class PlanViewActivity extends AppCompatActivity {
+public class RandomPlanViewActivity extends AppCompatActivity {
     private LabelLayer labelLayer;
     String getData;
 
@@ -81,7 +75,6 @@ public class PlanViewActivity extends AppCompatActivity {
     private Button saveBut, rerollBut;
     private KakaoMap map;
     private MapView mapView;
-    private LabelManager labelManager;
 
     private ExcelParser excelParser;
     private GeocodingUtils geocodingUtils;
@@ -92,11 +85,8 @@ public class PlanViewActivity extends AppCompatActivity {
     private static final int MAX_REROLL_COUNT = 4;
     private ArrayList<ArrayList<TripPlanDetail>> savedTripPlans = new ArrayList<>();
     private int rerollCount = 1;
-    String getTheme;
-    //String theme, getTheme;
     String destination;
     boolean withAnimal;
-    private static final String[] THEMES = {"레저", "역사", "캠핑", "문화", "자연", "힐링", "생태관광", "쇼핑"};
 
     private ApiService apiService;
 
@@ -117,35 +107,42 @@ public class PlanViewActivity extends AppCompatActivity {
     int day;
     private String url;
     public ArrayList<TripPlanDetail> newTripPlanDetailList;
-    String selectedLocation;
     int tripLength;
-    String mainTheme;
     Place departureDocument;
-    TextView semiTheme;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_plan_view);
+        setContentView(R.layout.activity_random_plan_view);
 
         handler = new Handler();
         KakaoMapSdk.init(this, "e211572ac7a98da2054d8a998e86a28a");
 
         Intent intent = getIntent();
         tripPlanDetailList = getIntent().getParcelableArrayListExtra("TripPlanDetailList");
-        getTheme = getIntent().getStringExtra("mainTheme");
-        Log.d("planView getTheme",getTheme);
-        updateThemeText(getTheme);
-        selectedLocation = getIntent().getStringExtra("selectedLocation");
-        String tour_name = selectedLocation + getTheme + "여행";
         tripLength = getIntent().getIntExtra("tripLength", 1);
 
         withAnimal = getIntent().getBooleanExtra("withAnimal",withAnimal);
 
-        Log.d("반려동물동반여부", String.valueOf(withAnimal));
-        semiTheme = findViewById(R.id.themaSemiText);
+        if(tripLength > 10 || withAnimal == true) {
+            ConstraintLayout constraintLayout = findViewById(R.id.nono);
 
-//        Log.d("onCreate에서 getTheme","실행완");
-//        setThemeText(getTheme, semiTheme);
+            constraintLayout.setVisibility(View.VISIBLE);
+
+            TextView toMainTextView = findViewById(R.id.toMain);
+
+            toMainTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(RandomPlanViewActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    finish();
+                }
+            });
+
+        }
+
+        Log.d("반려동물동반여부", String.valueOf(withAnimal));
 
         mapView = findViewById(R.id.map);
         mapView.start(new MapLifeCycleCallback() {
@@ -169,11 +166,8 @@ public class PlanViewActivity extends AppCompatActivity {
                 // 인증 후 API가 정상적으로 실행될 때 호출됨
                 LabelStyles styles = kakaoMap.getLabelManager()
                         .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.marker)));
-//                LabelOptions options = LabelOptions.from(LatLng.from(37.394660, 127.111182))
-//                        .setStyles(styles);
                 LabelOptions options;
                 LabelLayer layer = kakaoMap.getLabelManager().getLayer();
-//                Label label = layer.addLabel(options);
 
 
                 //핀 사이 선으로 표시
@@ -182,13 +176,6 @@ public class PlanViewActivity extends AppCompatActivity {
 
                 RouteLineStylesSet stylesSet = RouteLineStylesSet.from("blueStyles",
                         RouteLineStyles.from(RouteLineStyle.from(10, Color.BLUE)));
-//                RouteLineSegment segment = RouteLineSegment.from(Arrays.asList(
-//                                LatLng.from(37.394660, 127.111182),
-//                                LatLng.from(37.5642135, 127.0016985)))
-//                        .setStyles(stylesSet.getStyles(0));
-//                RouteLineOptions routeoptions = RouteLineOptions.from(segment)
-//                        .setStylesSet(stylesSet);
-//                RouteLine routeLine = routelayer.addRouteLine(routeoptions);
 
                 RouteLineSegment segment;
                 RouteLineOptions routeoptions;
@@ -260,76 +247,31 @@ public class PlanViewActivity extends AppCompatActivity {
         });
 
         //000000
-        //이자식 머임??? 얘 땜시 테마 하는 거 두번 실행되는데 그래서 널
         setDataWithTripDetailList(tripPlanDetailList);
 
-        tripPlanDetailList.get(0).setTheme(getTheme);
         savedTripPlans.add(tripPlanDetailList);
 
         String result = intent.getParcelableExtra("result");
 
-        //semiTheme.setText(result.toString());
-
         String previousActivity = intent.getStringExtra("previousActivity");
         Log.d("previousActivity", previousActivity);
-
-        if ("CustomRouletteActivity".equals(previousActivity)) {
-            destination = intent.getStringExtra("selectedLocation");
-            // NavigateTextView 숨기기
-            navigateTextView = findViewById(R.id.fromSrcToDst);
-            navigateTextView.setVisibility(View.GONE);
-        } else {
-            withAnimal = intent.getBooleanExtra("withAnimal", false);
-            departureDocument = intent.getParcelableExtra("departureDocument");
-            destination = intent.getStringExtra("selectedLocation");
-
-            if (withAnimal) {
-                mainTheme = "반려동물";
-            } else {
-                mainTheme = chooseTheme();
-            }
-
-            navigateTextView = findViewById(R.id.fromSrcToDst);
-            navigateTextView.setOnClickListener(v -> {
-                String startAddress = departureDocument.getAddress();
-                ExcelParser.Location endLocation = excelParser.getLocation(destination);
-
-                Log.d("PlanViewActivity", "Start Address: " + startAddress);
-                Log.d("PlanViewActivity", "Destination: " + destination);
-                Log.d("PlanViewActivity", "End Location: " + (endLocation != null ? endLocation.latitude + ", " + endLocation.longitude : "null"));
-
-                geocodingUtils.geocodeAsync(startAddress).thenAccept(startLocation -> {
-                    if (startLocation != null && endLocation != null) {
-                        Log.d("PlanViewActivity", "Start Location: " + startLocation.getLatitude() + ", " + startLocation.getLongitude());
-
-                        runOnUiThread(() -> {
-                            MapUtils.showRoute(PlanViewActivity.this, startLocation, endLocation);
-                        });
-                    } else {
-                        runOnUiThread(() -> {
-                            Log.e("PlanViewActivity", "Geocoding failed or end location is null.");
-                        });
-                    }
-                });
-            });
-        }
 
         scheduleList = findViewById(R.id.scheduleList);
 
         excelParser = new ExcelParser();
         geocodingUtils = new GeocodingUtils();
 
-        // 엑셀 파일 파싱
-        try {
-            InputStream inputStream = getAssets().open("locations.xlsx");
-            // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
-
-            excelParser.parseExcelFile(inputStream);
-            //Log.d("PlanViewActivity", "Excel file parsed successfully"); // 로그 추가
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        // 엑셀 파일 파싱
+//        try {
+//            InputStream inputStream = getAssets().open("locations.xlsx");
+//            // Log.d("PlanViewActivity", "Excel file found and opened"); // 로그 추가
+//
+//            excelParser.parseExcelFile(inputStream);
+//            //Log.d("PlanViewActivity", "Excel file parsed successfully"); // 로그 추가
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         saveBut = findViewById(R.id.saveBut);
         rerollBut = findViewById(R.id.rerollBut);
@@ -390,97 +332,14 @@ public class PlanViewActivity extends AppCompatActivity {
                 Log.d("testsibal", String.valueOf(tripPlanDetailList.get(0).getDay()));
                 Log.d("testsibal", String.valueOf(tripLength));
 
-                //반려동물이랑 같이 갈 때
-                if(withAnimal == true){
-                    getTheme = mainTheme;
-                    Log.d("반려동물 동반 여부", "반려동물");
-                    url = "https://api.tourrand.com/pet";
-                    data = "{\"day\" : \""+tripLength+"\",\"destination\":\"" + selectedLocation+"\" }";; //json 형식 데이터
+                url = "https://api.tourrand.com/second_route";
+                data = "{\"day\" : \""+tripLength + "\" }";
 
-                } else if (selectedLocation .equals("안산") || selectedLocation.equals("파주") || selectedLocation.equals("광주") || selectedLocation.equals("안양") || selectedLocation.equals("의왕") ||
-                        selectedLocation.equals("시흥") || selectedLocation.equals("가평") || selectedLocation.equals("남양주") || selectedLocation.equals("연천") || selectedLocation.equals("평창") ||
-                        selectedLocation.equals("속초") || selectedLocation.equals("태백") || selectedLocation.equals("원주") || selectedLocation.equals("양구") || selectedLocation.equals("포천") ||
-                        selectedLocation.equals("강릉") || selectedLocation.equals("홍천") || selectedLocation.equals("정선") || selectedLocation.equals("삼척") || selectedLocation.equals("울산") ||
-                        selectedLocation.equals("부산") || selectedLocation.equals("대전") || selectedLocation.equals("인천") ||selectedLocation.equals("강원도 고성")|| selectedLocation.equals("서울")  ) {
-                    String [] theme = {"레저","역사","문화","자연","힐링","생태관광"}; //생태포함
-
-                    Random random = new Random();
-                    int index = random.nextInt(theme.length);
-                    mainTheme = theme[index];
-                    getTheme = mainTheme;
-
-                    if(selectedLocation.equals("강원도 고성") && mainTheme.equals("생태관광")){
-                        selectedLocation ="강_고성";
-                        url = "https://api.tourrand.com/ecotourism";
-                        data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
-                    } else if(mainTheme.equals("생태관광")){
-                        url = "https://api.tourrand.com/ecotourism";
-                        data = "{\"day\" : \""+tripLength+"\",\"destination\":\""+selectedLocation+"\" }";
-                    } else {
-                        //위 지역임에도 불구하고 생태관광이 안 나왔을 때
-                        url = "https://api.tourrand.com/route";
-                        data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                    }
-                } else if(selectedLocation.equals("경상남도 고성")){
-                    selectedLocation = "경_고성";
-                    mainTheme = chooseTheme();
-                    getTheme = mainTheme;
-                    url = "https://api.tourrand.com/route";
-                    data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                }
-                else{
-                    //반려동물 미포함
-                    if (tripLength==2){
-                        String [] theme = {"레저","역사","문화","자연","힐링","캠핑"}; //캠핑 포함
-
-                        Random random = new Random();
-                        int index = random.nextInt(theme.length);
-                        mainTheme = theme[index];
-                        getTheme = mainTheme;
-
-                        if(mainTheme.equals("캠핑")){
-                            if(selectedLocation.equals("강원도 고성")){
-                                selectedLocation = "강_고성";
-                                url = "https://api.tourrand.com/camping";
-                                data = "{\"destination\":\""+selectedLocation+"\" }";
-                            } else if (selectedLocation.equals("경상남도 고성")) {
-                                selectedLocation = "경_고성";
-                                url = "https://api.tourrand.com/camping";
-                                data = "{\"destination\":\""+selectedLocation+"\" }";
-                            } else {
-                                //고성 아닌데 캠핑인 것들
-                                url = "https://api.tourrand.com/camping";
-                                data = "{\"destination\":\""+selectedLocation+"\" }";
-                            }
-                        } else{
-                            //여행 이틀만 가는데 캠핑 안 나왔을 때
-                            mainTheme = chooseTheme();
-                            getTheme = mainTheme;
-                            url = "https://api.tourrand.com/route";
-                            data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                        }
-                    }
-                    //반려동물 + 캠핑 미포함
-                    mainTheme = chooseTheme();
-                    getTheme = mainTheme;
-                    url = "https://api.tourrand.com/route";
-                    data = "{\"day\" : \""+tripLength+"\",\"mainTheme\" : \""+mainTheme+"\",\"destination\":\""+selectedLocation+"\" }";
-                    //data = "{\"planDate\" : \""+tripLength+"\",\"mainTheme\" : \"문화\",\"destination\":\""+selectedLocation+"\" }";
-
-                    Log.d("데이터 보낸 거", data);
-
-
-                }
                 // 서버 통신을 비동기적으로 실행
                 new ServerCommunicationTask().execute();
 
-//                if (!withAnimal) {
-//                    theme = generateRandomTheme();
-//                }
-//                rerollSchedule();
-                updateThemeText(getTheme);
             } else {
-                Toast.makeText(PlanViewActivity.this, "다시 돌리기 횟수를 초과했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RandomPlanViewActivity.this, "다시 돌리기 횟수를 초과했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -534,7 +393,7 @@ public class PlanViewActivity extends AppCompatActivity {
                 });
             }).start();
 
-            Intent homeIntent = new Intent(PlanViewActivity.this, HomeActivity.class);
+            Intent homeIntent = new Intent(RandomPlanViewActivity.this, HomeActivity.class);
             homeIntent.putExtra("fragmentToLoad", "homeFragment1");
             startActivity(homeIntent);
             overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
@@ -550,49 +409,14 @@ public class PlanViewActivity extends AppCompatActivity {
 
     }
 
-    public String chooseTheme(){
-        String [] theme = {"레저","역사","문화","자연","힐링"}; //캠핑, 생태관광, 반려동물 미포함
+    private void updateThemeText(String location) {
 
-        Random random = new Random();
-        int index = random.nextInt(theme.length);
-
-        mainTheme = theme[index];
-
-
-
-        return mainTheme;
-    }
-
-    private void updateThemeText(String theme) {
-
-        if(withAnimal == true)
-            theme = "반려동물";
-
-        if(theme == null || theme == "null") {
-            theme = "반려동물";
-        }
         TextView themaText = findViewById(R.id.themaText);
-        themaText.setText("이번 여행의 테마는 " + theme + "입니다!");
+        themaText.setText("안타깝게도 선택한 지역에서 생성할 수 있는 일정이 없어요. 대신 유저님에게 더 적절한 지역을 찾았어요! "+ location + "은 어떠세요?");
         Log.d("updateThemeText내의 setThemeText","실행완");
-        setThemeText(theme, semiTheme);
     }
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
-        TextView themaText = findViewById(R.id.themaText);
-        if(themaText.getText() == "이번 여행의 테마는 null입니다!") {
-            //⭐⭐⭐⭐⭐다시 돌리기를 하든 뭘 하든 여기를 안 들어감
-            themaText.setText("이번 여행의 테마는 " + tripPlanDetailList.get(0).getTheme() + "입니다!");
-            Log.d("다시 돌리기 테마 확인",tripPlanDetailList.get(0).getTheme() );
-            setThemeText(tripPlanDetailList.get(0).getTheme(), semiTheme);
-        }
-        Log.d("setDataWith어쩌구의 setThemeText","실행완");
-        Log.d("getTheme 확인", getTheme);
-//        if(getTheme.equals("끝")){
-//            setThemeText(tripPlanDetailList.get(0).getTheme(), semiTheme);
-//        } else {
-//            setThemeText(getTheme, semiTheme);
-//        }
-
 
         placesMap = new HashMap<>();
         locationArrayList.clear();
@@ -856,17 +680,6 @@ public class PlanViewActivity extends AppCompatActivity {
         });
     }
 
-    public static class Schedule {
-        String theme;
-        String destination;
-        Map<Integer, List<Place>> placesMap;
-
-        public Schedule(String theme, String destination, Map<Integer, List<Place>> placesMap) {
-            this.theme = theme;
-            this.destination = destination;
-            this.placesMap = new HashMap<>(placesMap); // 깊은 복사
-        }
-    }
     public String httpPostBodyConnection(String UrlData, String ParamData) {
         // 이전과 동일한 네트워크 연결 코드를 그대로 사용합니다.
         // 백그라운드 스레드에서 실행되기 때문에 메인 스레드에서는 문제가 없습니다.
@@ -959,7 +772,7 @@ public class PlanViewActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             // 로딩 다이얼로그 표시
-            progressDialog = new ProgressDialog(PlanViewActivity.this);
+            progressDialog = new ProgressDialog(RandomPlanViewActivity.this);
             progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             progressDialog.setCancelable(false);
             progressDialog.show();
@@ -970,19 +783,11 @@ public class PlanViewActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             // 서버와 통신
             result = httpPostBodyConnection(url, data);
-            handler.post(() -> {
-                if (result != null && result.equals("장소부족")) {
-                    // "장소부족"일 때는 JSONArray로 변환하지 않고 바로 처리
-                    Log.d("서버 응답", "장소부족");
-                } else {
-                    // 정상적인 응답은 JSONArray로 변환
-                    if(result != null && !result.isEmpty()) {
-                        tripPlanDetailList = parseTripPlanDetail(result);
-                        newTripPlanDetailList = parseTripPlanDetail(result);
-                    }
-
+            handler.post(() -> {seeNetworkResult(result);
+                if(result != null && !result.isEmpty()) {
+                    tripPlanDetailList = parseTripPlanDetail(result);
+                    newTripPlanDetailList = parseTripPlanDetail(result);
                 }
-                seeNetworkResult(result);
 
             });// 실제 서버 통신 코드로 대체
             Log.d("함수 내 주소", url);
@@ -1075,6 +880,7 @@ public class PlanViewActivity extends AppCompatActivity {
 //
 //            savedTripPlans.add(newTripPlanDetailList);
 //            rerollCount++;
+            updateThemeText(destination);
 
             Log.d("network", result);
         }
@@ -1085,138 +891,89 @@ public class PlanViewActivity extends AppCompatActivity {
             // 로딩 다이얼로그 종료
             if (progressDialog != null && progressDialog.isShowing()) {
                 progressDialog.dismiss();
-                if (newTripPlanDetailList != null)
-                    newTripPlanDetailList.get(0).setTheme(getTheme);
+                newTripPlanDetailList.get(0).setTheme(destination);
 
-                setThemeText(getTheme, semiTheme);
-                Log.d("다시돌리기",getTheme);
+                Log.d("다시돌리기", destination);
                 displaySchedule(newTripPlanDetailList);
 
                 savedTripPlans.add(newTripPlanDetailList);
 
                 rerollCount++;
-            } else if (result.equals("장소부족")) {
-                // 다음 화면으로 전환
-                Intent intent = new Intent(PlanViewActivity.this, RandomPlanViewActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-                finish();
             }
         }
     }
     public ArrayList<TripPlanDetail> parseTripPlanDetail(String json) {
-        ArrayList<TripPlanDetail> TripPlanDetailList = new ArrayList<>();
+        ArrayList<TripPlanDetail> tripPlanDetailList = new ArrayList<>();
 
         try {
-            JSONArray jsonArray = new JSONArray(json);
+            // Parse the main JSON object
+            JSONObject jsonObject = new JSONObject(json);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
+            // Extract the "destination" field
+            if (jsonObject.has("destination")) {
+                destination = jsonObject.getString("destination");
+                Log.d("Destination", destination);
+            } else {
+                Log.e("JSONError", "No destination found in JSON.");
+                return tripPlanDetailList; // Exit early if no destination is found
+            }
 
-                int day = 0;
-                String location = null;
-                String address = null;
-                double latitude = 0.0;
-                double longitude = 0.0;
+            // Parse the "itinerary" array
+            if (jsonObject.has("itinerary")) {
+                JSONArray jsonArray = jsonObject.getJSONArray("itinerary");
 
-                if (jsonObject.has("day")) {
-                    day = jsonObject.getInt("day");
-                    Log.d("몇일차", String.valueOf(day));
-                }
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject itineraryObject = jsonArray.getJSONObject(i);
 
-                if (jsonObject.has("location")) {
-                    location = jsonObject.getString("location").toString();
-                    Log.d("장소", location);
-                }
+                    int day = itineraryObject.optInt("day", 0); // Default to 0 if not found
+                    String location = itineraryObject.optString("location", null); // Default to null if not found
+                    String address = itineraryObject.optString("address", null); // Default to null if not found
+                    double latitude = itineraryObject.optDouble("latitude", 0.0); // Default to 0.0 if not found
+                    double longitude = itineraryObject.optDouble("longitude", 0.0); // Default to 0.0 if not found
 
-                if (jsonObject.has("address")) {
-                    address = jsonObject.getString("address").toString();
-                    Log.d("주소", address);
-                }
-                if (jsonObject.has("latitude")) {
-                    latitude = jsonObject.getDouble("latitude");
-                    Log.d("위도", String.valueOf(latitude));
-                }
-                if (jsonObject.has("longitude")) {
-                    longitude = jsonObject.getDouble("longitude");
-                    Log.d("경도", String.valueOf(longitude));
-                }
+                    // Log values for debugging
+                    Log.d("Day", String.valueOf(day));
+                    Log.d("Location", location);
+                    Log.d("Address", address);
+                    Log.d("Latitude", String.valueOf(latitude));
+                    Log.d("Longitude", String.valueOf(longitude));
 
-                TripPlanDetail TripPlanDetail;
-                if (day != 0 && location != null && address != null && latitude !=0 && longitude !=0) {
-                    if (departureDocument == null) {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
+                    // Ensure all necessary data is available before creating the TripPlanDetail object
+                    if (day != 0 && location != null && address != null && latitude != 0 && longitude != 0) {
+                        // Ensure tripPlanDetailList is not empty and contains at least one valid entry
+                        if (!tripPlanDetailList.isEmpty()) {
+                            TripPlanDetail tripPlanDetail = new TripPlanDetail(
+                                    destination,
+                                    day,
+                                    tripPlanDetailList.get(0).getPlanDate(), // Make sure to handle this correctly
+                                    location,
+                                    address,
+                                    latitude,
+                                    longitude
+                            );
+
+                            tripPlanDetail.setTheme(destination); // Assuming theme is set based on location
+                            tripPlanDetailList.add(tripPlanDetail);
+
+                            // Log the TripPlanDetailList for debugging
+                            Log.d("TripPlanDetailList", tripPlanDetailList.toString());
+                        } else {
+                            Log.e("JSONError", "tripPlanDetailList is empty.");
+                        }
                     } else {
-                        TripPlanDetail = new TripPlanDetail(selectedLocation, day, tripPlanDetailList.get(0).getPlanDate(), location, address,latitude,longitude);
+                        Log.e("JSONError", "Missing key in JSON object: " + itineraryObject.toString());
                     }
-                    TripPlanDetail.setTheme(mainTheme);
-                    TripPlanDetailList.add(TripPlanDetail);
-
-//                    Intent intent = new Intent(DstActivity.this, PlanViewActivity.class);
-//                    intent.putParcelableArrayListExtra("TripPlanDetailList", TripPlanDetailList);
-
-                    //Log.d("맞나?", TripPlanDetailList.toString());
-                } else {
-                    Log.e("JSONError", "Missing key in JSON object: " + jsonObject.toString());
                 }
+            } else {
+                Log.e("JSONError", "No itinerary found in JSON.");
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            Log.e("JSONException", "Error parsing JSON: " + e.getMessage());
         }
 
-
-        return TripPlanDetailList;
+        return tripPlanDetailList;
     }
 
-    private void setThemeText(String getTheme, TextView semiTheme) {
 
-        semiTheme = findViewById(R.id.themaSemiText);
-
-        Log.d("setThemeText 테마 확인",getTheme);
-        if(getTheme == null) {
-            Log.d("setThemeText", "getTheme is null");
-            semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함께 색다른 여행을 떠나보세요!");
-            return;
-        } else if (semiTheme == null) {
-            Log.d("setThemeText", "semiTheme is null");
-        }
-
-        switch (getTheme){
-            case "힐링":
-                semiTheme.setText("이번 여행은 마음을 편안하게 만들어줄 것입니다. "+selectedLocation+"의 푸르른 자연과 아름다운 풍경을 만끽하며 즐거운 여행을 떠나보세요!");
-                getTheme = "끝";
-                break;
-            case "레저":
-                semiTheme.setText("굳어있던 몸을 움직일 시간입니다😄 다양한 액티비티를 즐기며, 몸과 마음을 재충전해보세요!");
-                getTheme = "끝";
-                break;
-            case "역사":
-                semiTheme.setText("역사를 잊은 민족에게 미래란 없다! 과거의 이야기가 숨 쉬는 이곳에서, 역사의 발자취를 따라 여행하며 시간을 거슬러 올라가 보세요.");
-                getTheme = "끝";
-                break;
-            case "문화":
-                semiTheme.setText("다채로운 문화가 어우러진 "+selectedLocation+"에서, 지역 특유의 전통과 예술을 깊이 있게 체험해보세요.");
-                getTheme = "끝";
-                break;
-            case "자연":
-                semiTheme.setText("일상의 번잡함을 내려놓고 마음껏 자연의 품에 안겨보세요. 맑은 공기와 푸른 경관이 선사하는 평온함을 만끽할 수 있습니다.");
-                getTheme = "끝";
-                break;
-            case "생태관광":
-                semiTheme.setText("청정 자연을 보호하며 즐길수 있는 생태관광! \n환경을 생각하는 여행으로 지구와 함께 숨 쉬어보세요");
-                getTheme = "끝";
-                break;
-            case "캠핑":
-                semiTheme.setText("별빛 가득한 하늘 아래 캠핑을 즐기며, 자연 속에서 소박한 행복을 만끽해보세요.");
-                getTheme = "끝";
-                break;
-            case "반려동물":
-                semiTheme.setText("인생의 동반자인 반려동물과 즐거운 여행을 떠나보세요. 몸과 마음을 리프레쉬 할 수 있는 즐거운 경험이 될 것 입니다.");
-                getTheme = "끝";
-                break;
-            default:
-                semiTheme.setText("단조로운 일상에서 벗어나 투어랜드와 함꼐 색다른 여행을 떠나보세요!");
-                break;
-        }
-    }
 }
