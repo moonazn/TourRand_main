@@ -414,7 +414,7 @@ public class RandomPlanViewActivity extends AppCompatActivity {
         Log.d("updateThemeText", "updateThemeText executed");
         TextView themaText = findViewById(R.id.themaText);
         themaText.setText("안타깝게도 선택한 지역에서 생성할 수 있는 일정이 없어요. 대신 유저님에게 더 적절한 지역을 찾았어요! "+ location + "은 어떠세요?");
-        Log.d("updateThemeText내의 setThemeText","실행완");
+        Log.d("updateThemeText내의 setThemeText","실행완: " + location);
     }
     private void setDataWithTripDetailList(ArrayList<TripPlanDetail> tripPlanDetailList) {
         int idx = 0;
@@ -786,8 +786,9 @@ public class RandomPlanViewActivity extends AppCompatActivity {
             result = httpPostBodyConnection(url, data);
             handler.post(() -> {seeNetworkResult(result);
                 if(result != null && !result.isEmpty()) {
-                    tripPlanDetailList = parseTripPlanDetail(result);
+//                    tripPlanDetailList = parseTripPlanDetail(result);
                     newTripPlanDetailList = parseTripPlanDetail(result);
+                    updateThemeText(destination);
                 }
 
             });// 실제 서버 통신 코드로 대체
