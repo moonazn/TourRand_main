@@ -1017,7 +1017,7 @@ public class PlanEditActivity extends AppCompatActivity {
 //            savedTripPlans.add(newTripPlanDetailList);
 //            rerollCount++;
 
-            Log.d(result, "network");
+            Log.d("network", result);
         }
 
         @Override
