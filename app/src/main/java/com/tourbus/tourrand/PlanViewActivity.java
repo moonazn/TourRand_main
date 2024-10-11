@@ -288,9 +288,6 @@ public class PlanViewActivity extends AppCompatActivity {
 
         if ("CustomRouletteActivity".equals(previousActivity)) {
             destination = intent.getStringExtra("selectedLocation");
-            // NavigateTextView 숨기기
-            navigateTextView = findViewById(R.id.fromSrcToDst);
-            navigateTextView.setVisibility(View.GONE);
         } else {
             withAnimal = intent.getBooleanExtra("withAnimal", false);
             departureDocument = intent.getParcelableExtra("departureDocument");
@@ -302,29 +299,29 @@ public class PlanViewActivity extends AppCompatActivity {
                 mainTheme = chooseTheme();
             }
 
-            navigateTextView = findViewById(R.id.fromSrcToDst);
-            navigateTextView.setOnClickListener(v -> {
-                String startAddress = departureDocument.getAddress();
-                ExcelParser.Location endLocation = excelParser.getLocation(destination);
-
-                Log.d("PlanViewActivity", "Start Address: " + startAddress);
-                Log.d("PlanViewActivity", "Destination: " + destination);
-                Log.d("PlanViewActivity", "End Location: " + (endLocation != null ? endLocation.latitude + ", " + endLocation.longitude : "null"));
-
-                geocodingUtils.geocodeAsync(startAddress).thenAccept(startLocation -> {
-                    if (startLocation != null && endLocation != null) {
-                        Log.d("PlanViewActivity", "Start Location: " + startLocation.getLatitude() + ", " + startLocation.getLongitude());
-
-                        runOnUiThread(() -> {
-                            MapUtils.showRoute(PlanViewActivity.this, startLocation, endLocation);
-                        });
-                    } else {
-                        runOnUiThread(() -> {
-                            Log.e("PlanViewActivity", "Geocoding failed or end location is null.");
-                        });
-                    }
-                });
-            });
+//            navigateTextView = findViewById(R.id.fromSrcToDst);
+//            navigateTextView.setOnClickListener(v -> {
+//                String startAddress = departureDocument.getAddress();
+//                ExcelParser.Location endLocation = excelParser.getLocation(destination);
+//
+//                Log.d("PlanViewActivity", "Start Address: " + startAddress);
+//                Log.d("PlanViewActivity", "Destination: " + destination);
+//                Log.d("PlanViewActivity", "End Location: " + (endLocation != null ? endLocation.latitude + ", " + endLocation.longitude : "null"));
+//
+//                geocodingUtils.geocodeAsync(startAddress).thenAccept(startLocation -> {
+//                    if (startLocation != null && endLocation != null) {
+//                        Log.d("PlanViewActivity", "Start Location: " + startLocation.getLatitude() + ", " + startLocation.getLongitude());
+//
+//                        runOnUiThread(() -> {
+//                            MapUtils.showRoute(PlanViewActivity.this, startLocation, endLocation);
+//                        });
+//                    } else {
+//                        runOnUiThread(() -> {
+//                            Log.e("PlanViewActivity", "Geocoding failed or end location is null.");
+//                        });
+//                    }
+//                });
+//            });
         }
 
         scheduleList = findViewById(R.id.scheduleList);
