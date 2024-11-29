@@ -3,6 +3,7 @@
 ## 🎡 Project Overview
 - 프로젝트 이름: 랜덤 룰렛 및 AI 기반의 여행 일정 생성 및 관리 앱 **<u>‘투어랜드(TourRand)’</u>**
 - 프로젝트 설명: 여행(Tour)과 무작위(Random)의 합성어인 **‘투어랜드(TourRand)’**는 공공 데이터를 기반으로 전국 여행지 정보를 지닌 <u>AI와 룰렛을 통해 여행 일정을 생성</u>하고, 카카오 API를 통한 소셜 기능으로 여행 멤버들과 일정을 편리하게 관리할 수 있는 안드로이드 앱 서비스입니다.
+- https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white
 
 ### 다운로드
 [🚀 원스토어 바로가기](https://m.onestore.co.kr/ko-kr/apps/appsDetail.omp?prodId=0000778517&scYn=Y)
@@ -35,22 +36,22 @@
   - 카카오 계정으로 로그인한 사용자들은 생성한 여행 일정에 팀원을 추가하는 기능을 사용할 수 있습니다. 사용자가 각 여행 일정에 대해 그룹 초대 메시지를 보내면, 초대된 팀원은 메시지를 통해 앱에 로그인하고 앱 내에서 초대를 받습니다. 초대 수락 시 같은 그룹으로 추가되어 일정을 공유하고 함께 수정할 수 있습니다. 이를 통해 팀원 간의 원활한 일정 조율이 가능해집니다.
 
 ## 🎡 Technology Stack
-### 언어
+### 👉🏻FE
 
-|  |
+| 언어: Java, XML |
 | :---: |
 | Java |
 | Python |
 | SQL |
 
-### 프레임워크
+### 👉🏻BE
 
-|  |
+| 언어: Python, SQL |
 | :---: |
 | Android Framework |
 | Flask |
 
-### 개발 환경
+### 👉🏻Cooperation
 
 |  |
 | :---: |
@@ -58,23 +59,5 @@
 | Gradle |
 | Visual Studio Code |
 
-### UI
 
-|  |
-| :---: |
-| Figma |
-| XML |
-
-### 데이터베이스
-
-|  |
-| :---: |
-| MySQL |
-
-### 버전 관리
-
-|  |
-| :---: |
-| Git |
-| GitHub |
-| Sourcetree |
+# 🩶Thank you for your interest!🩶
